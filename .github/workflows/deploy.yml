@@ -32,6 +32,8 @@ jobs:
         run: npm ci
 
       - name: Build site
+        env:
+          BASE_PATH: /AI-Workshop
         run: node build.js
 
       - uses: actions/configure-pages@v4

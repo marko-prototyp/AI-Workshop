@@ -7,6 +7,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const src = p => path.join(__dirname, 'src', p);
 const content = p => path.join(__dirname, 'content', p);
 const dist = p => path.join(__dirname, 'dist', p);
+const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/$/, '');
+
+function siteUrl(href) {
+  if (!BASE_PATH || !href.startsWith('/')) return href;
+  return `${BASE_PATH}${href}`;
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -79,7 +85,7 @@ function loadFigmaLoop() {
 
 function buildNavLinks(links) {
   return links.map(({ label, href }) =>
-    `<a href="${href}">${label}</a>`
+    `<a href="${siteUrl(href)}">${label}</a>`
   ).join('\n      ');
 }
 
@@ -627,7 +633,7 @@ function buildFacilitatorHtml(data) {
     buildFacOverflow(data.overflow),
     buildFacJournal(data.journal),
     `<p class="fac-page-closing"><em>${data.closingLine}</em></p>`,
-    `<a class="fac-back" href="/">${data.backLink}</a>`,
+    `<a class="fac-back" href="${siteUrl('/')}">${data.backLink}</a>`,
   ].join('\n  ');
 }
 
@@ -748,27 +754,84 @@ function buildPromptsHtml(prompts) {
 
 // ── Search index ──────────────────────────────────────────────────────────────
 
-function buildSearchIndex(weeks, projects) {
+function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib) {
+  const E = (label, sub, href, type, keywords = '') =>
+    ({ label, sub, href: siteUrl(href), type, keywords });
+
   const entries = [
-    { label: 'The anti-stock principle', href: '/#principle', type: 'section' },
-    { label: '12 Weeks — overview', href: '/#weeks', type: 'section' },
-    ...weeks.map(w => ({
-      label: `Week ${parseInt(w.num)} — ${w.title}`,
-      href: `/#week-${parseInt(w.num)}`,
-      type: 'week',
-    })),
-    { label: 'Five things to make', href: '/#projects', type: 'section' },
-    ...projects.map(p => ({
-      label: `Option ${p.letter} — ${p.name}`,
-      href: `/#project-${p.letter.toLowerCase()}`,
-      type: 'project',
-    })),
-    { label: 'The Figma Loop', href: '/figma-loop/', type: 'page' },
-    { label: 'Figma Loop — Three failure modes', href: '/figma-loop/', type: 'page' },
-    { label: 'Figma Loop — Specificity ladder', href: '/figma-loop/', type: 'page' },
-    { label: 'Facilitator guide', href: '/facilitator/', type: 'page' },
-    { label: 'Prompt library', href: '/prompts/', type: 'page' },
+    // Pages
+    E('Home', 'The program overview', '/', 'page', 'home start program AI designers'),
+    E('The Figma Loop', 'Page', '/figma-loop/', 'page', 'figma design export build claude loop round-trip'),
+    E('Facilitator guide', 'Page', '/facilitator/', 'page', 'facilitator running guide how to program'),
+    E('Prompt library', 'Page', '/prompts/', 'page', 'prompts library copy paste search'),
+
+    // Home sections
+    E('The anti-stock principle', 'Home', '/#principle', 'section', 'principle anti-stock photography originality stock images design'),
+    E('12 Weeks', 'Program curriculum', '/#weeks', 'section', 'weeks curriculum schedule twelve program overview'),
+    E('Five projects to build', 'Home', '/#projects', 'section', 'projects portfolio build make tool site microsite design system'),
+
+    // Weeks
+    ...weeks.map(w => E(
+      `Week ${parseInt(w.num)} — ${w.title}`,
+      w.phase,
+      `/#week-${parseInt(w.num)}`,
+      'week',
+      `${w.capability || ''} ${w.phase || ''} week ${w.num}`,
+    )),
+
+    // Projects
+    ...projects.map(p => E(
+      p.name,
+      `Project ${p.letter} · ${p.bestFor}`,
+      `/#project-${p.letter.toLowerCase()}`,
+      'project',
+      `${p.desc || ''} ${p.bestFor || ''} project ${p.letter}`,
+    )),
+
+    // Figma Loop sub-sections (with anchor to sub ID)
+    ...['sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub8','sub9','sub10'].map((key, i) => {
+      const sub = figmaLoop[key];
+      if (!sub) return null;
+      const num = String(i + 1).padStart(2, '0');
+      return E(
+        sub.title.replace(/\.$/, ''),
+        `Figma Loop · ${sub.eyebrow}`,
+        `/figma-loop/#loop-${num}`,
+        'section',
+        `figma loop export claude ${sub.eyebrow}`,
+      );
+    }).filter(Boolean),
+
+    // Facilitator sub-sections
+    E('FAQ — Team questions', 'Facilitator', '/facilitator/#faq', 'section', 'questions ask team faq facilitator'),
+    E('Handling skeptics', 'Facilitator', '/facilitator/#skeptic', 'section', 'skeptic ambivalence skepticism pushback resistance'),
+    E('Managing overflow', 'Facilitator', '/facilitator/#overflow', 'section', 'too many ideas overflow generating converge diverge'),
+    E('Session journal', 'Facilitator', '/facilitator/#journal', 'section', 'journal record notes memory template write'),
+
+    // Facilitator FAQ questions
+    ...facilitator.faq.items.map(item => {
+      const answerText = item.blocks
+        .flatMap(b => b.paras || (b.rules ? b.rules.map(r => `${r.head} ${r.body}`) : []))
+        .slice(0, 2).join(' ');
+      return E(
+        item.q,
+        `Facilitator FAQ · ${item.num}`,
+        `/facilitator/#faq-${item.num}`,
+        'faq',
+        answerText.slice(0, 200),
+      );
+    }),
+
+    // Prompts
+    ...promptLib.map(p => E(
+      p.title,
+      `${CAT_LABELS[p.category] || p.category} · ${p.useWhen}`,
+      p.featured ? `/prompts/` : `/prompts/#card-${p.id}`,
+      'prompt',
+      `${p.useWhen} ${p.category} ${p.subtitle || ''} ${p.body.slice(0, 150)}`,
+    )),
   ];
+
   return JSON.stringify(entries, null, 2);
 }
 
@@ -828,6 +891,7 @@ function build() {
     'site.title_short': 'AI for Designers',
     'site.description': site.description,
     'site.tagline':     site.tagline,
+    'base':             BASE_PATH,
 
     // nav.* (generated HTML fragments)
     'nav.linkshtml': buildNavLinks(nav.primary),
@@ -892,7 +956,7 @@ function build() {
 
   // Search index for command palette
   fs.mkdirSync(dist(''), { recursive: true });
-  fs.writeFileSync(dist('search-index.json'), buildSearchIndex(weeks, projects));
+  fs.writeFileSync(dist('search-index.json'), buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib));
   console.log('✓ dist/search-index.json');
 
   // Copy static assets
