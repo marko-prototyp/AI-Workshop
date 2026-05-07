@@ -1,0 +1,37 @@
+:root {
+  /* Color */
+  --bg:          #1a1714;
+  --bg-2:        #221e1a;
+  --bg-3:        #2a2520;
+  --rule:        #3a342e;
+  --ink:         #e8e2d8;
+  --ink-bright:  #f4ede0;
+  --muted:       #8a807a;
+  --accent:      #d97757;
+  --accent-soft: #e89a7d;
+
+  /* Borders */
+  --hairline: 1px solid var(--rule);
+
+  /* Typography */
+  --serif: 'Fraunces', ui-serif, Georgia, serif;
+  --sans:  'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+  /* Layout */
+  --max:    1280px;
+  --gutter: clamp(20px, 4vw, 48px);
+}
+
+@media print {
+  :root {
+    --bg:         #ffffff;
+    --bg-2:       #f8f8f8;
+    --bg-3:       #f0f0f0;
+    --ink:        #1a1714;
+    --ink-bright: #000000;
+    --muted:      #555555;
+    --rule:       #cccccc;
+    --accent:     #a04020;
+  }
+}

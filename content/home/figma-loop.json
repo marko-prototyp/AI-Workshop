@@ -1,0 +1,262 @@
+{
+  "steps": [
+    { "num": "01", "title": "Design first.", "body": "Open Figma. Make the section with real content, real type, real spacing. If your comp is bland, your build will be bland." },
+    { "num": "02", "title": "Export at 2×.", "body": "PNG or JPG. Higher resolution lets Claude read details that smaller exports flatten away." },
+    { "num": "03", "title": "Prompt with the standard template.", "body": "Attach the screenshot, paste your tokens, paste your banned moves, name the visual direction." },
+    { "num": "04", "title": "Compare side by side.", "body": "Open Claude's build next to your Figma. Don't accept \"close enough\" — note specific differences." },
+    { "num": "05", "title": "Refine surgically.", "body": "Name the exact change. \"Move X to Y. Don't touch anything else.\" Vague nudges produce vague drift." },
+    { "num": "06", "title": "Hand-edit when faster.", "body": "If you can fix a CSS value yourself in 30 seconds, do it. Don't burn another prompt on a single number." },
+    { "num": "07", "title": "Then repeat — per section.", "body": "Never the whole page at once. One piece, then the next. Anchored to its Figma comp every time." }
+  ],
+
+  "sub1": {
+    "eyebrow": "// 01",
+    "title": "There are three ways AI talks to Figma.",
+    "lead": "Each one fails differently. We default to the one that keeps the designer in charge and needs no setup — but the other two are worth knowing, and one of them is genuinely useful for the bits AI is good at.",
+    "cards": [
+      {
+        "num": "01",
+        "title": "The screenshot.",
+        "status": "DEFAULT",
+        "body": "You design in Figma. You export the frame as a PNG. You paste it into Claude with a prompt. Claude builds the HTML. Works with any AI tool. No setup. The designer leads every decision. The cost: Claude reads the image like a designer at a glance — fast, holistic, and a little imprecise. You'll always need to give it the specific values yourself."
+      },
+      {
+        "num": "02",
+        "title": "Figma's own AI.",
+        "status": "USE FOR HOUSEKEEPING",
+        "body": "Make, First Draft, Replace Content, Vectorize, layer renaming. AI tools built into Figma itself. Genuinely good for the boring stuff — renaming layers, generating placeholder copy, editing images without leaving the canvas. Less good when you want output that reflects your own visual point of view; the \"AI as designer\" tools tend toward the average of everything."
+      },
+      {
+        "num": "03",
+        "title": "Figma MCP.",
+        "status": "LATER",
+        "body": "An integration that lets Claude read your Figma file directly — real tokens, real values, no eyeballing. Powerful, and probably where serious design-system work is heading. Also: more setup, more permissions, more mental model. Worth knowing it exists. Worth learning when you're ready. Not worth centering today."
+      }
+    ],
+    "pullquote": "The screenshot is the default. Figma's AI handles the housekeeping. MCP is the level-up. Three tools, one job each."
+  },
+
+  "sub2": {
+    "eyebrow": "// 02",
+    "title": "What Claude actually sees in your comp.",
+    "lead": "Designers prompt Claude as if it has a measuring tool. It doesn't. It looks at your screenshot the way a designer would at a glance — fast, holistic, intuitive. That's a real superpower for some things and a real blind spot for others. Knowing the difference changes how you prompt.",
+    "readsWell": {
+      "head": "Reads well",
+      "items": [
+        "Layout structure and hierarchy.",
+        "Type contrast and rhythm.",
+        "Color relationships and overall mood.",
+        "Spacing — tight, generous, irregular, gridded.",
+        "Asymmetry, when you give it strong cues to keep it.",
+        "Component patterns: cards, inputs, sections."
+      ]
+    },
+    "readsBadly": {
+      "head": "Reads badly",
+      "items": [
+        "Exact pixel values for type.",
+        "Specific font weights — anything beyond 400 or 700.",
+        "Letter-spacing in fractions of a percent.",
+        "Subtle opacity (it'll render solid).",
+        "Custom font features — small caps, ligatures.",
+        "Hex codes from screenshot pixels.",
+        "The difference between Inter and Inter Tight."
+      ]
+    },
+    "closing": "If you want exact values, you have to give them. The image is for mood. Your tokens are for specifics."
+  },
+
+  "sub3": {
+    "eyebrow": "// 03",
+    "title": "Prompting is stacking, not picking.",
+    "lead": "Most people think prompting Claude well means saying the right thing. It doesn't. It means stacking the right inputs, in the right order. Each layer makes the next one work harder.",
+    "stack": [
+      { "num": "01", "title": "The Figma screenshot.", "body": "The single highest-bandwidth input you have. Worth more than two hundred words of description." },
+      { "num": "02", "title": "Your tokens, pasted as text.", "body": "Colors as hex. Type as font, size, weight, line-height, letter-spacing. Spacing as a numbered scale. This is what fixes the eyeballing problem." },
+      { "num": "03", "title": "Your banned moves.", "body": "Ten to fifteen things this build will not do. Cuts off the easy averages." },
+      { "num": "04", "title": "The visual direction's name.", "body": "Two words. \"Quiet Swiss.\" \"Brutalist Editorial.\" \"Y2K Restraint.\" An anchor for the calls Claude has to make on its own." },
+      { "num": "05", "title": "Reference designers or studios.", "body": "Three names whose work fits this direction. Coordinates for Claude's intuition." },
+      { "num": "06", "title": "Banned generic words from copy.", "body": "If copy is in scope, ban the obvious ones. \"Innovative.\" \"Leverage.\" \"Solutions.\" \"Passionate.\"" }
+    ],
+    "callout": {
+      "title": "The rule.",
+      "body": "Every build prompt needs 1, 2, and 3. Add 4 when there's design judgment to make. Add 5 when Claude has been making safe choices. Add 6 when copy is in scope. Short prompts feel cleaner. They also produce cleaner generic output. For builds, longer wins."
+    }
+  },
+
+  "sub4": {
+    "eyebrow": "// 04",
+    "title": "Three ways your build drifts, and how to catch them.",
+    "lead": "Get these into your bones and most of the frustration disappears. They have specific shapes, specific causes, specific fixes.",
+    "cards": [
+      {
+        "name": "Stock drift.",
+        "symptom": "Your asymmetric, opinionated comp comes back centered. More rounded. More \"professional.\" Your interesting choices got smoothed into safe ones.",
+        "why": "Claude is trying to be helpful by normalizing things that look like potential mistakes. Off-grid placement, hairline rules, unusual color proportions — it reads them as rough edges to polish.",
+        "fix": "Banned moves in every prompt. Then mid-build, ask: \"Has anything drifted toward generic SaaS? Check rounded corners, default colors, normalized spacing, shadows or gradients I didn't ask for.\""
+      },
+      {
+        "name": "Token drift.",
+        "symptom": "First prompt has tokens, build looks right. Three prompts later you're refining a button — and the color quietly switched to a \"standard\" blue.",
+        "why": "Tokens fade from active context as the chat grows. Claude reaches for safe defaults when it can't see your tokens clearly anymore.",
+        "fix": "Re-paste tokens in every refinement. Even when it feels redundant. Past five exchanges, start a fresh chat with the working version pasted in. Long context windows lie about what they remember."
+      },
+      {
+        "name": "Scope creep.",
+        "symptom": "You ask for a hero. You get a hero plus a CTA section plus a feature grid plus a footer.",
+        "why": "Claude pattern-matches \"hero\" to \"landing page\" and helpfully builds the rest of the page it expects to follow.",
+        "fix": "Be explicit, even when it sounds excessive. \"Build only this section. Do not add other sections. Do not add anything I haven't asked for.\""
+      }
+    ],
+    "pullquote": "All three are the same thing wearing different hats: Claude trying to help by smoothing your edges. Constraint is the design tool here, not freedom."
+  },
+
+  "sub5": {
+    "eyebrow": "// 05",
+    "title": "When the build is wrong, get more specific. Not less.",
+    "lead": "Designers escalate badly. When a build doesn't match, the instinct is to simplify the prompt, on the assumption that Claude needs gentler instructions. It's the opposite. Climb the ladder.",
+    "rungs": [
+      { "num": "1", "quote": "Match the comp.", "gloss": "Try this first. Sometimes it's enough." },
+      { "num": "2", "quote": "The hero feels too contained — match the full-bleed treatment.", "gloss": "Describe the difference in design language, not just feeling." },
+      { "num": "3", "quote": "The heading should be 96px. Line-height 0.95. Letter-spacing –2%.", "gloss": "Quote exact values from your comp." },
+      { "num": "4", "quote": "Use my CSS variable: --display-1: 96px / 0.95 / –2%.", "gloss": "Give Claude a token reference, not just a value." },
+      { "num": "5", "quote": "Re-export the comp at 2× or higher.", "gloss": "If Claude is misreading details, the image is too small. A bigger image fixes more than more words ever will." },
+      { "num": "6", "quote": "Annotate the comp directly.", "gloss": "In Figma, drop arrows and labels onto the frame. \"This gap = 64px.\" \"This color = #D97757.\" Export the annotated version. Claude reads annotations beautifully." }
+    ],
+    "note": "Two attempts at the same rung haven't worked? Go up a rung. Rung 6 is the most underused move in this whole program. Try it before you give up on a section."
+  },
+
+  "sub6": {
+    "eyebrow": "// 06",
+    "title": "Build components. Never pages.",
+    "principle": "Never prompt for a whole page. Prompt for one component, get it right, prompt for the next.",
+    "why": {
+      "head": "Why it wins.",
+      "items": [
+        "Each prompt fits cleanly in Claude's attention — no priorities competing for focus.",
+        "Refinement is surgical. You change one thing without drifting the rest.",
+        "You catch problems early instead of in a wall of generated code.",
+        "It maps to how designers actually think — components, not pages.",
+        "You burn fewer tokens. Short focused prompts cost less than long sprawling ones."
+      ]
+    },
+    "how": {
+      "head": "How to do it.",
+      "items": [
+        "Build in this order: hero → primary content → secondary section → nav → footer.",
+        "One prompt per component. Each one: the Figma comp of just that piece, your full token stack, banned moves, the visual direction's name. \"Build only this.\"",
+        "After each component lands, do one refinement pass before moving on.",
+        "Don't go back to refine an earlier component once you've moved past it. It'll start drifting."
+      ]
+    },
+    "exception": "Truly small things — a button, a label, an icon — batching is fine. The threshold: if the thing has multiple sizes, multiple colors, or layout decisions, it's component-level. One job and minimal decisions? Batch it."
+  },
+
+  "sub7": {
+    "eyebrow": "// 07",
+    "title": "Sometimes you stop prompting and just edit the CSS.",
+    "lead": "Most underrated skill in the whole program. Designers spend twenty minutes prompting Claude to nudge a value they could change themselves in ten seconds.",
+    "rule": {
+      "num": "30",
+      "title": "The thirty-second rule.",
+      "body": "If you can fix it yourself in under thirty seconds — by editing a CSS value, swapping a hex, changing a font-weight number — do it. Don't burn another prompt."
+    },
+    "change": {
+      "head": "Change it yourself",
+      "items": [
+        "Color values — find the hex, replace it.",
+        "Font sizes — find the px, change the number.",
+        "Line-height — usually a decimal, easy to nudge.",
+        "Letter-spacing — values like –0.02em or 2px.",
+        "Margins and paddings — find the value, change it.",
+        "Border thickness — same.",
+        "Specific words in copy."
+      ]
+    },
+    "prompt": {
+      "head": "Prompt instead",
+      "items": [
+        "Layout changes — grid or flexbox restructuring.",
+        "Adding interactivity.",
+        "Adding new elements or sections.",
+        "Anything that requires understanding the existing structure."
+      ]
+    },
+    "closing": "AI is the builder, not the secretary. You don't ask a builder to come back and reposition one nail. You take the hammer and tap it yourself."
+  },
+
+  "sub8": {
+    "eyebrow": "// 08",
+    "title": "Figma's own AI: use it for the boring stuff.",
+    "lead": "Figma has been shipping AI features fast. Some are genuinely useful. Some are trying to be the designer. A quick honest map of where each one earns its keep.",
+    "use": {
+      "head": "Worth using",
+      "items": [
+        "<strong>Renaming layers.</strong> AI-driven, content-aware. Saves real time before handoff.",
+        "<strong>Replacing placeholder copy.</strong> Generates contextually appropriate text. Faster than Lorem Ipsum.",
+        "<strong>Image editing in-canvas.</strong> Make Image, Edit Image, Remove Background, Vectorize. Replaces round-trips to Photoshop.",
+        "<strong>Smart search.</strong> Search your team's files by image, screenshot, or description.",
+        "<strong>First Draft.</strong> Generates a wireframe or basic layout from a prompt. Good for breaking blank-canvas paralysis."
+      ]
+    },
+    "skip": {
+      "head": "Less useful here",
+      "items": [
+        "<strong>Make for finished work.</strong> Prompt-to-prototype tends toward generic output unless heavily steered. Use for explorations, not the deliverable.",
+        "<strong>AI as the lead designer.</strong> Any time the tool is making the design decisions, you've inverted the program's hierarchy."
+      ]
+    },
+    "credits": {
+      "title": "A note on AI credits.",
+      "body": "Figma's AI features run on a credit system shared across your team. Heavy use of Make burns credits faster than the basic features. Save credits for the things only Figma can do — image editing, layer renaming, smart search — and use Claude for the builds."
+    }
+  },
+
+  "sub9": {
+    "eyebrow": "// 09",
+    "title": "Figma MCP: the version of this where the eyeballing stops.",
+    "body": "MCP is an open standard that lets AI tools read context from other software. Figma has an official MCP server that connects your file directly to Claude. Set it up, and Claude can read your Figma file natively — extracting real tokens, real layer values, real component specs. The eyeballing problem disappears. Where serious design-system work is heading. Probably the future of this whole workflow.",
+    "why": "It needs setup. It needs the right Figma plan. It needs a different mental model — you stop thinking about \"what am I showing Claude\" and start thinking about \"what can Claude read.\" That's a level-up, and the screenshot workflow gets you 80–90% of the value with 10% of the setup. Climb that mountain first.",
+    "whenToReturn": "After the program. Or in the second half if a project genuinely needs it. We've put links in the next subsection."
+  },
+
+  "sub10": {
+    "eyebrow": "// 10",
+    "title": "Links worth bookmarking.",
+    "lead": "Where to read more, set things up, and calibrate your taste. Figma's been shipping fast — treat this as a starting point, not a canon.",
+    "categories": [
+      {
+        "label": "Figma's official AI",
+        "links": [
+          { "title": "Figma AI overview", "url": "https://figma.com/ai/" },
+          { "title": "Figma Make", "url": "https://figma.com/make/" },
+          { "title": "AI tools in Figma Design (help centre)", "url": null },
+          { "title": "Figma release notes — track new features", "url": null }
+        ]
+      },
+      {
+        "label": "Figma MCP",
+        "links": [
+          { "title": "MCP server overview — what it is and why it matters", "url": null },
+          { "title": "Setting up Figma MCP with Claude", "url": null }
+        ]
+      },
+      {
+        "label": "Wider context",
+        "links": [
+          { "title": "Anthropic — prompting techniques", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" }
+        ]
+      },
+      {
+        "label": "Taste calibration",
+        "links": [
+          { "title": "Koto Studio — type-led editorial work", "url": "https://koto.studio" },
+          { "title": "Manual — restrained brand systems", "url": "https://manual.is" },
+          { "title": "Locomotive — editorial scrolling sites", "url": "https://locomotive.ca" }
+        ]
+      }
+    ]
+  },
+
+  "closingLine": "The loop is the same every time. What you do inside it is what makes the work yours."
+}

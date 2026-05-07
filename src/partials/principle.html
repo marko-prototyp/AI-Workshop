@@ -1,0 +1,40 @@
+<section class="section" id="principle" aria-labelledby="principle-title">
+  <div class="wrap">
+    <header class="section-head">
+      <div class="section-num">{{principle.num}}</div>
+      <h2 class="section-title" id="principle-title">{{principle.titlehtml}}</h2>
+      <p class="section-aside">{{principle.aside}}</p>
+    </header>
+
+    <div class="principle-grid">
+      <div class="principle-prose">
+        <p class="lead">{{principle.leadhtml}}</p>
+        {{principle.bodyhtml}}
+        <p class="pull-quote">{{principle.pullQuote}}</p>
+      </div>
+
+      <div class="compare" role="region" aria-label="Comparison demo">
+        <div class="compare-tabs">
+          <div class="compare-tab" id="tabA">A — Stock</div>
+          <div class="compare-tab active" id="tabB">B — Designer-led</div>
+        </div>
+        <div class="compare-stage" id="compareStage">
+          {{compare.svgB}}
+        </div>
+        <div class="compare-caption" id="compareCaption">Specific. Opinionated. Has a point of view.</div>
+        <div class="toggle">
+          <button data-mode="A">Show stock</button>
+          <button class="active" data-mode="B">Show designer-led</button>
+        </div>
+        <template id="svgA">{{compare.svgA}}</template>
+        <template id="svgB">{{compare.svgB}}</template>
+        <template id="captionA">Generic. Predictable. Forgettable.</template>
+        <template id="captionB">Specific. Opinionated. Has a point of view.</template>
+      </div>
+    </div>
+
+    <div class="techniques" aria-label="Five anti-stock techniques">
+      {{techniques.listhtml}}
+    </div>
+  </div>
+</section>

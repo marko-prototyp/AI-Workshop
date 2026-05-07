@@ -1,0 +1,14 @@
+<svg viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg" aria-label="Designer-led layout sample">
+  <line x1="20" y1="40" x2="200" y2="40" stroke="#d97757" stroke-width="1"/>
+  <text x="20" y="32" font-family="JetBrains Mono" font-size="8" fill="#8a807a" letter-spacing="1">02 / SAMPLE</text>
+  <text x="20" y="80" font-family="Fraunces" font-size="34" fill="#f4ede0" font-weight="300">Editorial</text>
+  <text x="20" y="120" font-family="Fraunces" font-size="34" fill="#d97757" font-style="italic" font-weight="300">restraint.</text>
+  <line x1="20" y1="148" x2="60" y2="148" stroke="#3a342e" stroke-width="1"/>
+  <text x="20" y="172" font-family="Inter Tight" font-size="9" fill="#8a807a">A type pairing of Fraunces + Inter</text>
+  <text x="20" y="186" font-family="Inter Tight" font-size="9" fill="#8a807a">on warm dark, with hairline rules</text>
+  <text x="20" y="200" font-family="Inter Tight" font-size="9" fill="#8a807a">and an asymmetric grid.</text>
+  <rect x="220" y="60" width="100" height="140" fill="none" stroke="#3a342e" stroke-width="1"/>
+  <line x1="220" y1="100" x2="320" y2="100" stroke="#3a342e" stroke-width="0.5"/>
+  <text x="226" y="78" font-family="JetBrains Mono" font-size="7" fill="#8a807a">FIG. 01</text>
+  <circle cx="270" cy="150" r="20" fill="none" stroke="#d97757" stroke-width="1"/>
+</svg>

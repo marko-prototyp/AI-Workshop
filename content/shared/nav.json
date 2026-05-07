@@ -1,0 +1,21 @@
+{
+  "primary": [
+    { "label": "Principle",   "href": "/#principle" },
+    { "label": "12 Weeks",    "href": "/#weeks" },
+    { "label": "Projects",    "href": "/#projects" },
+    { "label": "Figma Loop",  "href": "/figma-loop/" },
+    { "label": "Facilitator", "href": "/facilitator/" },
+    { "label": "Prompts",     "href": "/prompts/" }
+  ],
+  "footerSections": [
+    { "label": "Principle",   "href": "/#principle" },
+    { "label": "12 Weeks",    "href": "/#weeks" },
+    { "label": "Projects",    "href": "/#projects" },
+    { "label": "Figma Loop",  "href": "/figma-loop/" }
+  ],
+  "footerFacilitator": [
+    { "label": "Session Structure", "href": "/facilitator/" },
+    { "label": "Prompt Library",    "href": "/prompts/" },
+    { "label": "All Exercises",     "href": "/#weeks" }
+  ]
+}

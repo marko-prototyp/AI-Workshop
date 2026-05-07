@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{site.title}}</title>
+<meta name="description" content="{{site.description}}" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/styles/tokens.css">
+<link rel="stylesheet" href="/styles/base.css">
+<link rel="stylesheet" href="/styles/components.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+{{include:partials/nav.html}}
+
+<main id="main">
+
+{{include:partials/hero.html}}
+
+{{include:partials/pitch.html}}
+
+{{include:partials/principle.html}}
+
+{{include:partials/weeks.html}}
+
+{{include:partials/projects.html}}
+
+{{include:partials/pages-intro.html}}
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+<script type="module" src="/scripts/main.js"></script>
+</body>
+</html>
