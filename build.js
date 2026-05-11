@@ -472,19 +472,173 @@ function buildJournalEntry(entry) {
   </article>`;
 }
 
-function buildJournalHtml(entries) {
+function buildJournalContents(entries, totalWeeks) {
+  const count = entries.length;
+  const latest = entries[0]; // entries already sorted newest first
+  const latestParticipants = latest && latest.participants !== undefined ? latest.participants : null;
+
+  const metaBits = [
+    `Week ${count} of ${totalWeeks}`,
+    latestParticipants !== null ? `${latestParticipants} participants` : null,
+    `${count} ${count === 1 ? 'entry' : 'entries'} so far`,
+  ].filter(Boolean).join(' · ');
+
+  const items = entries.map(e => {
+    const dateLabel = e.date
+      ? new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      : '';
+    const hook = e.quote
+      ? `<span class="contents-hook">&ldquo;${e.quote}&rdquo;${e.quoteAttribution ? ` <span class="contents-attr">— ${e.quoteAttribution}</span>` : ''}</span>`
+      : '';
+    return `<li class="contents-item">
+      <a class="contents-link" href="#entry-${e.num}">
+        <span class="contents-num">${e.num}</span>
+        <span class="contents-title">${e.title}</span>
+        <span class="contents-date">${dateLabel}</span>
+      </a>
+      ${hook}
+    </li>`;
+  }).join('\n');
+
+  const emptyRow = count === 0
+    ? `<li class="contents-item contents-item--empty"><span class="contents-num">01</span><span class="contents-title contents-pending">First entry lands after Week 1.</span></li>`
+    : '';
+
+  const remaining = totalWeeks - count;
+  const upcoming = remaining > 0 && count > 0
+    ? `<li class="contents-item contents-item--upcoming"><span class="contents-num">${String(count + 1).padStart(2, '0')}–${totalWeeks}</span><span class="contents-title contents-pending">${remaining} more ${remaining === 1 ? 'entry' : 'entries'} to come.</span></li>`
+    : '';
+
+  return `<nav class="journal-contents" aria-label="In this journal">
+    <div class="contents-head">
+      <span class="journal-eyebrow">/contents</span>
+      <span class="contents-meta">${metaBits}</span>
+    </div>
+    <ul class="contents-list">
+      ${items}
+      ${emptyRow}
+      ${upcoming}
+    </ul>
+    <a class="contents-tools-link" href="#journal-prompts">Tools — prompts for facilitators &amp; participants <span aria-hidden="true">↓</span></a>
+  </nav>`;
+}
+
+function buildJournalPromptItem(w) {
+  const num = w.num;
+  const weekNum = parseInt(num);
+  const facId = `journal-prompt-w${num}-fac`;
+  const partId = `journal-prompt-w${num}-part`;
+  const outputsList = (w.outputs || []).join('; ') || '[fill in for your week]';
+
+  const facPrompt = `I just ran Week ${num} of the AI for Designers program — "${w.title}" (focus: ${w.capability}).
+
+Here are my raw notes from today's session:
+
+[PASTE NOTES HERE — bullets are fine, half-thoughts OK]
+
+Synthesise into the facilitator weekly structure:
+1. Session header (week, date, participants present, who was absent)
+2. What each participant did (one block per person, bullets fine)
+3. Patterns across the group (one paragraph)
+4. Individual highlights (one line per participant — the thing worth remembering)
+5. What worked / didn't (3–4 bullets each, honest)
+6. Notes for next week (specific, per-participant where it matters)
+7. Quote of the week (one line, with attribution)
+
+Voice rules: specific, observational, no fluff. Don't paper over what went wrong. Name risks. Don't editorialise beyond what my notes support.
+
+If anything important is missing, ask me one question at a time — don't fabricate.`;
+
+  const partPrompt = `I just finished Week ${num} of the AI for Designers program — "${w.title}" (focus: ${w.capability}). The expected outputs were: ${outputsList}.
+
+Interview me about my experience this week. Ask me one question at a time, eight total:
+
+1. What did you actually make this week? (concrete, one–two sentences)
+2. What's the most useful thing Claude did for you? (specific moment — paste the prompt or describe the exchange)
+3. What did Claude do badly, or what did you fight against?
+4. What's the one decision you made about your project this week?
+5. What are you stuck on right now?
+6. One screenshot or artifact worth keeping (link or describe)
+7. A quote-worthy line — something you said or thought
+8. What do you want to do next week?
+
+After all eight, structure my answers as a clean check-in I can paste back to my facilitator. Don't editorialise — use my words, organised.`;
+
+  return `<details class="week" id="journal-prompts-w${num}">
+      <summary class="week-summary" aria-label="Week ${weekNum} journal prompts: ${w.title}">
+        <span class="week-num">W ${num}</span>
+        <span class="week-title">${w.title}</span>
+        <span class="week-meta">
+          <span class="week-phase">${w.phase}</span>
+          <svg class="week-icon" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1"/>
+            <line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </span>
+      </summary>
+      <div class="week-content">
+        <div class="spacer"></div>
+        <div>
+          <div class="week-section">
+            <h4>Facilitator — synthesise the session</h4>
+            <p>Run after the session. Paste your raw notes; Claude turns them into the weekly facilitator writeup.</p>
+            <div class="prompt-box">
+              <div class="prompt-head">
+                <div class="prompt-label"><span class="star">▸</span> Prompt — Facilitator synthesis</div>
+                <button class="copy-btn" data-copy="${facId}" aria-label="Copy facilitator prompt">
+                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="prompt-body" id="${facId}">${escapeHtml(facPrompt)}</pre>
+            </div>
+          </div>
+          <div class="week-section">
+            <h4>Participant — capture your experience</h4>
+            <p>Each participant runs this in their own Claude. It interviews them and outputs a clean check-in to send back to the facilitator.</p>
+            <div class="prompt-box">
+              <div class="prompt-head">
+                <div class="prompt-label"><span class="star">▸</span> Prompt — Participant check-in</div>
+                <button class="copy-btn" data-copy="${partId}" aria-label="Copy participant prompt">
+                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="prompt-body" id="${partId}">${escapeHtml(partPrompt)}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>`;
+}
+
+function buildJournalPromptsSection(weeks) {
+  const items = weeks.map(buildJournalPromptItem).join('\n');
+  return `<section class="journal-prompts" id="journal-prompts" aria-labelledby="journal-prompts-title">
+    <header class="journal-prompts-head">
+      <span class="journal-eyebrow">/tools</span>
+      <h2 class="journal-prompts-title" id="journal-prompts-title">Prompts for journaling each <em class="italic-wonk">week</em>.</h2>
+      <p class="journal-lead">Two prompts per session. One for the facilitator to synthesise what happened. One for each participant to capture their own experience. The outputs feed back into this journal.</p>
+    </header>
+    <div class="weeks-grid">${items}</div>
+  </section>`;
+}
+
+function buildJournalHtml(entries, weeks) {
   const header = `<header class="journal-header">
     <span class="journal-eyebrow">/journal</span>
-    <h1 class="journal-title display" id="journal-title">Honest notes, week by <em class="italic-wonk">week</em>.</h1>
-    <p class="journal-lead">Three designers. Three real projects. Twelve weeks. We write up what worked, what didn't, and what we'd do differently — while it's still happening.</p>
-    <p class="journal-lead-note">Updated weekly during the program. Final case studies ship at the end of week 12.</p>
+    <h1 class="journal-title display" id="journal-title">I designed a 12-session workshop to see if I could teach my colleagues AI by just doing <em class="italic-wonk">it.</em></h1>
+    <p class="journal-lead">The idea was simple enough — one hour a week, twelve weeks, real projects. Each person picked something based on their own personality, their vision, their goals. So every project ended up being its own universe. And with Claude, we started bringing them to life.</p>
+    <p class="journal-lead-note">There's no better way to learn something than to just try it yourself. The moment you find a solution you weren't expecting, or discover something that actually works — that's the thing that sticks. These are the notes from that process. Tag along.</p>
   </header>`;
 
-  if (!entries.length) {
-    return header + `<div class="journal-empty">No entries yet — first session writeup lands soon.</div>`;
-  }
+  const contents = buildJournalContents(entries, weeks.length);
 
-  return header + entries.map(buildJournalEntry).join('\n');
+  const entriesHtml = entries.length
+    ? entries.map(buildJournalEntry).join('\n')
+    : `<div class="journal-empty">No entries yet — first session writeup lands soon.</div>`;
+
+  return header + contents + entriesHtml + buildJournalPromptsSection(weeks);
 }
 
 // ── Facilitator builders ──────────────────────────────────────────────────────
@@ -831,6 +985,7 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, jo
     E('Facilitator guide', 'Page', '/facilitator/', 'page', 'facilitator running guide how to program'),
     E('Prompt library', 'Page', '/prompts/', 'page', 'prompts library copy paste search'),
     E('Journal', 'Page', '/journal/', 'page', 'journal weekly notes recap session writeup case study participants'),
+    E('Journal — Prompts for journaling each week', 'Journal · Tools', '/journal/#journal-prompts', 'section', 'prompts facilitator participant interview synthesis check-in tools'),
 
     // Home sections
     E('The anti-stock principle', 'Home', '/#principle', 'section', 'principle anti-stock photography originality stock images design'),
@@ -1015,7 +1170,7 @@ function build() {
     'prompts.html': buildPromptsHtml(promptLib),
 
     // journal
-    'journal.html': buildJournalHtml(journal),
+    'journal.html': buildJournalHtml(journal, weeks),
   };
 
   const srcDir = path.join(__dirname, 'src');

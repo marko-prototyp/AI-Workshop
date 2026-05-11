@@ -2,4 +2,4 @@
 num: "/ 02"
 heading: "Who it's *for.*"
 ---
-Small UI/UX teams (3–5 people) mostly new to AI. Mixed experience levels are fine. Designers stay designers. The program teaches technique, not magic.
+UI/UX designers who are mostly new to AI. Mixed experience is fine. You stay a designer — you just stop watching AI happen to your tools and start deciding what it builds.
