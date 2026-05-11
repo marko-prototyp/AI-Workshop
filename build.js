@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
+import { marked } from 'marked';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const src = p => path.join(__dirname, 'src', p);
@@ -79,6 +80,19 @@ function loadProjects() {
 
 function loadFigmaLoop() {
   return JSON.parse(readFile(content('home/figma-loop.json')));
+}
+
+function loadJournal() {
+  const dir = content('journal');
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir)
+    .filter(f => f.endsWith('.md'))
+    .sort()
+    .reverse() // newest first
+    .map(f => {
+      const { data, content: body } = matter(readFile(path.join(dir, f)));
+      return { ...data, body };
+    });
 }
 
 // ── HTML fragment builders ────────────────────────────────────────────────────
@@ -421,6 +435,58 @@ function buildFigmaLoopHtml(data, svg) {
   ].join('\n  ');
 }
 
+// ── Journal builders ──────────────────────────────────────────────────────────
+
+function buildJournalEntry(entry) {
+  const num = entry.num;
+  const dateLabel = entry.date
+    ? new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+  const phase = entry.phase ? `<span class="phase">${entry.phase}</span>` : '';
+  const date  = dateLabel ? `<span class="date">${dateLabel}</span>` : '';
+  const participants = (entry.participants !== undefined)
+    ? `<span class="participants">${entry.participants} present</span>`
+    : '';
+
+  const bodyHtml = marked.parse(entry.body || '');
+
+  const quoteBlock = (entry.quote && entry.quoteAttribution)
+    ? `<aside class="journal-entry-quote">
+        <q>${entry.quote}</q>
+        <span class="attr">— ${entry.quoteAttribution}</span>
+      </aside>`
+    : '';
+
+  return `<article class="journal-entry" id="entry-${num}">
+    <div class="journal-entry-meta">
+      <span class="num">Week ${num}</span>
+      ${phase}
+      ${date}
+      ${participants}
+    </div>
+    <h2 class="journal-entry-title">${entry.title}</h2>
+    ${quoteBlock}
+    <div class="journal-entry-body">
+      ${bodyHtml}
+    </div>
+  </article>`;
+}
+
+function buildJournalHtml(entries) {
+  const header = `<header class="journal-header">
+    <span class="journal-eyebrow">/journal</span>
+    <h1 class="journal-title display" id="journal-title">Honest notes, week by <em class="italic-wonk">week</em>.</h1>
+    <p class="journal-lead">Three designers. Three real projects. Twelve weeks. We write up what worked, what didn't, and what we'd do differently — while it's still happening.</p>
+    <p class="journal-lead-note">Updated weekly during the program. Final case studies ship at the end of week 12.</p>
+  </header>`;
+
+  if (!entries.length) {
+    return header + `<div class="journal-empty">No entries yet — first session writeup lands soon.</div>`;
+  }
+
+  return header + entries.map(buildJournalEntry).join('\n');
+}
+
 // ── Facilitator builders ──────────────────────────────────────────────────────
 
 function loadFacilitator() {
@@ -754,7 +820,7 @@ function buildPromptsHtml(prompts) {
 
 // ── Search index ──────────────────────────────────────────────────────────────
 
-function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib) {
+function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, journal) {
   const E = (label, sub, href, type, keywords = '') =>
     ({ label, sub, href: siteUrl(href), type, keywords });
 
@@ -764,6 +830,7 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib) {
     E('The Figma Loop', 'Page', '/figma-loop/', 'page', 'figma design export build claude loop round-trip'),
     E('Facilitator guide', 'Page', '/facilitator/', 'page', 'facilitator running guide how to program'),
     E('Prompt library', 'Page', '/prompts/', 'page', 'prompts library copy paste search'),
+    E('Journal', 'Page', '/journal/', 'page', 'journal weekly notes recap session writeup case study participants'),
 
     // Home sections
     E('The anti-stock principle', 'Home', '/#principle', 'section', 'principle anti-stock photography originality stock images design'),
@@ -821,6 +888,15 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib) {
         answerText.slice(0, 200),
       );
     }),
+
+    // Journal entries
+    ...journal.map(e => E(
+      `Journal — Week ${e.num}: ${e.title}`,
+      e.phase || 'Journal entry',
+      `/journal/#entry-${e.num}`,
+      'journal',
+      `${e.quote || ''} ${e.title || ''} journal week ${e.num}`,
+    )),
 
     // Prompts
     ...promptLib.map(p => E(
@@ -883,6 +959,7 @@ function build() {
   const figmaLoop  = loadFigmaLoop();
   const facilitator = loadFacilitator();
   const promptLib   = loadPrompts();
+  const journal     = loadJournal();
 
   // Flatten all template variables into a single map
   const vars = {
@@ -936,6 +1013,9 @@ function build() {
 
     // prompts library
     'prompts.html': buildPromptsHtml(promptLib),
+
+    // journal
+    'journal.html': buildJournalHtml(journal),
   };
 
   const srcDir = path.join(__dirname, 'src');
@@ -953,10 +1033,11 @@ function build() {
   emit('figma-loop/index.html',     buildPage(src('pages/figma-loop.html'),     vars, srcDir));
   emit('facilitator/index.html',    buildPage(src('pages/facilitator.html'),    vars, srcDir));
   emit('prompts/index.html',        buildPage(src('pages/prompts.html'),        vars, srcDir));
+  emit('journal/index.html',        buildPage(src('pages/journal.html'),        vars, srcDir));
 
   // Search index for command palette
   fs.mkdirSync(dist(''), { recursive: true });
-  fs.writeFileSync(dist('search-index.json'), buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib));
+  fs.writeFileSync(dist('search-index.json'), buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, journal));
   console.log('✓ dist/search-index.json');
 
   // Copy static assets

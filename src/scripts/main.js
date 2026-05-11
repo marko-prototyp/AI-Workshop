@@ -1,4 +1,5 @@
 import './nav.js';
+import './theme-toggle.js';
 import './compare.js';
 import './copy.js';
 import { initTOC } from './toc.js';

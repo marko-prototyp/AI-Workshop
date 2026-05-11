@@ -1261,3 +1261,232 @@
   pointer-events: none; z-index: 100;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ====== Nav actions group (theme toggle + search) ====== */
+.nav-actions {
+  display: flex; align-items: stretch;
+  border: var(--hairline);
+  transition: border-color 0.2s;
+}
+.nav-actions:has(:hover) { border-color: var(--muted); }
+.nav-actions:has(.theme-toggle:hover),
+.nav-actions:has(.nav-cmd:hover) { border-color: var(--accent); }
+
+.theme-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px;
+  background: none; border: none; border-right: var(--hairline); cursor: pointer;
+  color: var(--muted);
+  transition: color 0.2s, background 0.2s;
+}
+.theme-toggle:hover { color: var(--ink); background: var(--bg-3); }
+
+/* Dark mode → show sun; light mode → show moon */
+.theme-toggle[aria-pressed="false"] .icon-moon { display: none; }
+.theme-toggle[aria-pressed="true"]  .icon-sun  { display: none; }
+
+.nav-actions .nav-cmd {
+  border: none;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-actions .nav-cmd:hover { border-color: transparent; background: var(--bg-3); }
+
+@media (max-width: 880px) {
+  .nav-actions { display: none; }
+}
+
+/* ====== Clarity mode component overrides ====== */
+
+/* Nav — swap hardcoded dark rgba for light glass */
+[data-theme="clarity"] .nav {
+  background: rgba(246, 245, 241, 0.88);
+}
+[data-theme="clarity"] .nav-links.open {
+  background: var(--bg);
+}
+
+/* Command palette overlay — lighter scrim on light bg */
+[data-theme="clarity"] .cmd-overlay {
+  background: rgba(246, 245, 241, 0.85);
+}
+
+/* TOC button — swap dark rgba for light */
+[data-theme="clarity"] .toc-btn {
+  background: rgba(246, 245, 241, 0.92);
+}
+
+/* Prompt boxes — subtle tinted bg instead of dark bg-2 */
+[data-theme="clarity"] .prompt-box {
+  background: var(--bg-2);
+  border-color: var(--rule);
+}
+[data-theme="clarity"] .prompt-body {
+  background: var(--bg-2);
+}
+
+/* Inline code */
+[data-theme="clarity"] code {
+  background: var(--accent-subtle);
+  border-color: var(--rule);
+}
+
+/* Cards on light need a defined border to lift off bg */
+[data-theme="clarity"] .pcard {
+  border-color: var(--rule);
+}
+[data-theme="clarity"] .pcard-body:hover {
+  background: var(--accent-subtle);
+}
+
+/* Compare widget border */
+[data-theme="clarity"] .compare {
+  border-color: var(--rule);
+}
+
+/* Week/project accordions — open state bg */
+[data-theme="clarity"] .week[open] > .week-summary {
+  background: var(--bg-2);
+}
+
+/* Facilitator callout */
+[data-theme="clarity"] .fac-callout {
+  background: var(--accent-subtle);
+  border-color: var(--rule);
+}
+
+/* Journal quote block */
+[data-theme="clarity"] .journal-entry-quote {
+  background: var(--bg-2);
+}
+
+/* Toast on light bg */
+[data-theme="clarity"] .toast {
+  background: var(--ink-bright);
+  color: var(--bg);
+}
+
+/* ====== Journal ====== */
+.journal-section {
+  padding: 140px var(--gutter) 120px;
+}
+.journal-section .wrap {
+  max-width: 760px; margin: 0 auto;
+}
+.journal-header {
+  margin-bottom: 80px;
+}
+.journal-eyebrow {
+  display: inline-block;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.journal-title {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(40px, 6vw, 72px); line-height: 1.05;
+  letter-spacing: -0.02em; color: var(--ink-bright);
+  margin-bottom: 28px;
+}
+.journal-title .italic-wonk {
+  font-style: italic;
+  font-variation-settings: "WONK" 1, "SOFT" 100;
+}
+.journal-lead {
+  font-size: 18px; line-height: 1.55;
+  color: var(--ink); max-width: 60ch;
+}
+.journal-lead-note {
+  margin-top: 16px;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--muted);
+}
+.journal-entry {
+  border-top: var(--hairline);
+  padding: 56px 0;
+}
+.journal-entry:last-child {
+  border-bottom: var(--hairline);
+}
+.journal-entry-meta {
+  display: flex; align-items: baseline; gap: 16px;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.journal-entry-meta .num {
+  color: var(--accent);
+}
+.journal-entry-title {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(28px, 3.6vw, 40px); line-height: 1.15;
+  letter-spacing: -0.01em; color: var(--ink-bright);
+  margin-bottom: 32px;
+}
+.journal-entry-body {
+  font-size: 17px; line-height: 1.65;
+  color: var(--ink);
+}
+.journal-entry-body h2 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: 22px; letter-spacing: -0.01em;
+  color: var(--ink-bright);
+  margin: 48px 0 16px;
+}
+.journal-entry-body h3 {
+  font-family: var(--sans); font-weight: 500;
+  font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--muted);
+  margin: 36px 0 12px;
+}
+.journal-entry-body p {
+  margin-bottom: 18px;
+}
+.journal-entry-body p + p {
+  margin-top: -2px;
+}
+.journal-entry-body strong {
+  color: var(--ink-bright); font-weight: 500;
+}
+.journal-entry-body em {
+  font-style: italic;
+}
+.journal-entry-body blockquote {
+  border-left: 2px solid var(--accent);
+  padding: 4px 0 4px 24px;
+  margin: 32px 0;
+  font-family: var(--serif); font-style: italic;
+  font-size: 22px; line-height: 1.4;
+  color: var(--ink-bright);
+}
+.journal-entry-body blockquote + p {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--muted); letter-spacing: 0.04em;
+  margin-top: -16px;
+}
+.journal-entry-quote {
+  margin: 24px 0 32px;
+  padding: 24px 28px;
+  background: var(--bg-2);
+  border-left: 2px solid var(--accent);
+}
+.journal-entry-quote q {
+  display: block;
+  font-family: var(--serif); font-style: italic; font-weight: 300;
+  font-size: 24px; line-height: 1.35;
+  color: var(--ink-bright);
+  margin-bottom: 12px;
+  quotes: none;
+}
+.journal-entry-quote q::before, .journal-entry-quote q::after { content: ""; }
+.journal-entry-quote .attr {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--muted); letter-spacing: 0.04em;
+}
+.journal-empty {
+  border: var(--hairline);
+  padding: 48px 32px;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em;
+}
+

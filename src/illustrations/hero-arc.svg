@@ -1,25 +1,25 @@
 <svg viewBox="0 0 400 440" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#3a342e" stroke-width="0.5" opacity="0.5"/>
+      <path d="M 40 0 L 0 0 0 40" fill="none" style="stroke:var(--rule)" stroke-width="0.5" opacity="0.5"/>
     </pattern>
   </defs>
   <rect width="400" height="440" fill="url(#grid)" opacity="0.4"/>
   <path class="arc-path" d="M 40 380 Q 80 320 120 320 T 200 280 Q 240 240 280 220 T 360 80"/>
   <g>
-    <circle class="arc-node" style="animation-delay:1s"   cx="40"  cy="380" r="3"   fill="#d97757"/>
+    <circle class="arc-node" style="animation-delay:1s;fill:var(--accent)"   cx="40"  cy="380" r="3"/>
     <text   class="arc-label" style="animation-delay:1s"   x="50"  y="384">01 — Discover</text>
 
-    <circle class="arc-node" style="animation-delay:1.4s" cx="120" cy="320" r="2.5" fill="#e8e2d8"/>
+    <circle class="arc-node" style="animation-delay:1.4s;fill:var(--ink)" cx="120" cy="320" r="2.5"/>
     <text   class="arc-label" style="animation-delay:1.4s" x="130" y="324">03</text>
 
-    <circle class="arc-node" style="animation-delay:1.8s" cx="200" cy="280" r="3"   fill="#d97757"/>
+    <circle class="arc-node" style="animation-delay:1.8s;fill:var(--accent)"   cx="200" cy="280" r="3"/>
     <text   class="arc-label" style="animation-delay:1.8s" x="210" y="284">05 — Bridge</text>
 
-    <circle class="arc-node" style="animation-delay:2.2s" cx="280" cy="220" r="2.5" fill="#e8e2d8"/>
+    <circle class="arc-node" style="animation-delay:2.2s;fill:var(--ink)" cx="280" cy="220" r="2.5"/>
     <text   class="arc-label" style="animation-delay:2.2s" x="290" y="224">08</text>
 
-    <circle class="arc-node" style="animation-delay:2.6s" cx="360" cy="80"  r="4"   fill="#d97757"/>
+    <circle class="arc-node" style="animation-delay:2.6s;fill:var(--accent)"   cx="360" cy="80"  r="4"/>
     <text   class="arc-label" style="animation-delay:2.6s" x="290" y="74">12 — Ship</text>
   </g>
 </svg>

@@ -4,6 +4,7 @@
     { "label": "12 Weeks",    "href": "/#weeks" },
     { "label": "Projects",    "href": "/#projects" },
     { "label": "Figma Loop",  "href": "/figma-loop/" },
+    { "label": "Journal",     "href": "/journal/" },
     { "label": "Facilitator", "href": "/facilitator/" },
     { "label": "Prompts",     "href": "/prompts/" }
   ],

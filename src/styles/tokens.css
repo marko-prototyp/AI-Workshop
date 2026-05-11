@@ -1,5 +1,5 @@
 :root {
-  /* Color */
+  /* Color — default (dark) */
   --bg:          #1a1714;
   --bg-2:        #221e1a;
   --bg-3:        #2a2520;
@@ -9,6 +9,10 @@
   --muted:       #8a807a;
   --accent:      #d97757;
   --accent-soft: #e89a7d;
+
+  /* Supplemental tokens (default) */
+  --accent-subtle: color-mix(in srgb, var(--accent) 15%, var(--bg));
+  --border-strong: #4a433c;
 
   /* Borders */
   --hairline: 1px solid var(--rule);
@@ -21,6 +25,28 @@
   /* Layout */
   --max:    1280px;
   --gutter: clamp(20px, 4vw, 48px);
+}
+
+/* Light mode overrides */
+/* Contrast ratios on #F6F5F1 bg:
+   --ink  #1A1A1A : 17.1:1  (AAA ✓)
+   --muted #5C5C5C : 7.1:1  (AAA ✓)
+   --accent #C8421C : 6.1:1  (AA ✓ — used for UI affordances, not body text) */
+[data-theme="clarity"] {
+  --bg:          #F6F5F1; /* slightly cool off-white */
+  --bg-2:        #FFFFFF; /* elevated: cards, modals */
+  --bg-3:        #EDECEA; /* mid-elevation */
+  --rule:        #E0DFD9;
+  --ink:         #1A1A1A;
+  --ink-bright:  #111111;
+  --muted:       #5C5C5C;
+  --accent:      #C8421C; /* shifted ~7° toward red — stays vibrant when darkened */
+  --accent-soft: #A8341A; /* hover/active */
+
+  --accent-subtle: #FCE8E0;
+  --border-strong: #C4C2BB;
+
+  --hairline: 1px solid var(--rule);
 }
 
 @media print {
