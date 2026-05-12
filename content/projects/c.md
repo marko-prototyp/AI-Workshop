@@ -4,7 +4,7 @@ name: "A tiny tool"
 desc: "A single-purpose utility with personality. Does one thing; you'd send the URL to a friend."
 bestFor: "makers who want utility"
 pickIf: |
-  you like making things and you want a portfolio piece that's also useful. You'd rather ship a working artifact than write about your work.
+  You have a small idea that would genuinely make your work easier, or someone else's. You'd rather ship a working thing than write about your work.
 goesWrong: |
   Scope creep. The contrast checker gets a "while we're at it, let's also export palettes" feature. Then a saved-projects feature. Then accounts. By week 10 the tool is half-built and unfocused. The fix: write down what the tool ISN'T in week 1, and treat that list as load-bearing.
 goodLooks: |
@@ -16,7 +16,7 @@ tinyList:
   - "<strong>No login.</strong> Open the page, use it."
   - "<strong>No backend.</strong> Pure front-end."
   - "<strong>Built in 1–2 sessions.</strong>"
-  - "<strong>Has personality.</strong> A design statement, not just a utility."
+  - "<strong>Has personality.</strong> A design statement, not a utility dressed up."
 ---
 TOOL NAME
 Working name. Will probably change. Keep it short and weird before

@@ -4,9 +4,9 @@ name: "Personal portfolio site"
 desc: "A simple, distinctive single- or multi-page site featuring 2–3 case studies."
 bestFor: "no current portfolio"
 pickIf: |
-  you don't currently have a portfolio, or yours is two years stale and you keep meaning to redo it. The 12 weeks is the forcing function.
+  Your portfolio is two years stale and you keep meaning to fix it. You know roughly what it should look like. This is the twelve hours to actually build it.
 goesWrong: |
-  Designers spend six weeks exploring direction and two weeks panicking. The trap is picking case studies last — the design of the site needs to know what it's framing. Pick the case studies in week 1, even roughly. Two strong studies beat four mediocre ones; resist the urge to include everything.
+  Designers spend most of the time exploring direction and the last sessions panicking. Pick your case studies in session 1, even roughly. Two strong ones beat four mediocre ones. Resist the urge to include everything.
 goodLooks: |
   Visiting the site, you'd recognize this designer's taste in 10 seconds. The case studies are written, not just screenshotted. There's a point of view about what this designer cares about — embedded in the type choices, the section structure, the writing voice. The site itself is the proof.
 trap: |

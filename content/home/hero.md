@@ -1,13 +1,13 @@
 ---
-eyebrow: "A program for design teams"
+eyebrow: "A workshop for design teams"
 h1Lines:
-  - "Twelve hours."
-  - "Your team."
-  - "One real *thing* each."
-sub: "One hour a week, twelve weeks. Designers who want to build with AI without making the generic stuff that gives AI design a bad name."
+  - "Twelve hours to build something"
+  - "that's actually *yours.*"
+sub: "One hour a week, for twelve weeks. For designers who want to work with AI without making the generic stuff that gives AI design a bad name."
 stats:
   - { value: "12", label: "hours total" }
   - { value: "1h", label: "per week" }
+  - { value: "5",  label: "capability areas" }
   - { value: "1",  label: "shipped project" }
 arcLabels:
   - { week: "01", cx: 40,  cy: 380, r: 3,   accent: true,  label: "Discover", labelX: 50,  labelY: 384 }

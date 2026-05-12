@@ -1,5 +1,5 @@
 ---
-participant: "Ivan Komlenić"
+participant: "Ivan"
 project: "Mockup Generator"
 status: "draft"
 weeks_completed: 1

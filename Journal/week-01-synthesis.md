@@ -2,13 +2,13 @@
 ## Meet Claude, pick your project
 
 **Session:** Week 1 of 12
-**Participants present:** 3 (Ivo Anić, Ivan Komlenić, Paula)
+**Participants present:** 3 (Ivo, Ivan, Paula)
 
 ---
 
 ## The participants & their projects
 
-### Ivo Anić — Personal Cycling & Training Dashboard
+### Ivo — Personal Cycling & Training Dashboard
 
 An engineering mindset applied to athletic performance data. The project: a single-purpose web tool that ingests exported training data from Garmin, power meter, and HR monitor, and turns it into clear, actionable insights — power zones, training load, ride history, performance trends.
 
@@ -20,7 +20,7 @@ An engineering mindset applied to athletic performance data. The project: a sing
 
 ---
 
-### Ivan Komlenić — Mockup Generator
+### Ivan — Mockup Generator
 
 A tool built from a genuine workflow frustration. Designers upload a graphic asset and generate realistic mockups — t-shirts, hoodies, posters, decks — by dialing in a visual feeling rather than writing prompts. Four clicks, one generation. The interface does the thinking.
 

@@ -42,7 +42,8 @@ export function initPromptLibrary() {
     let anyVisible = false;
 
     cards.forEach(card => {
-      const match = cat === 'all' || card.dataset.category === cat;
+      const match = cat === 'all'
+        || (cat === 'power' ? card.dataset.power === 'true' : card.dataset.category === cat);
       card.classList.toggle('is-hidden', !match);
       if (match) anyVisible = true;
     });
@@ -54,7 +55,6 @@ export function initPromptLibrary() {
     }
 
     // Empty state
-    const gridEmpty = !anyVisible || (cat === 'power');
-    if (empty) empty.hidden = !(gridEmpty && cat !== 'all');
+    if (empty) empty.hidden = anyVisible || cat === 'all';
   }
 }

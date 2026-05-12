@@ -4,9 +4,9 @@ name: "Mini design system showcase"
 desc: "A self-defined brand or fictional product with components, tokens, type ramp, color system, and live examples."
 bestFor: "systems thinkers"
 pickIf: |
-  you're systems-minded and you want to demonstrate that thinking. A self-defined brand, or a fictional product you invent, with components, tokens, type ramp, color system, and live examples.
+  You think in systems and you want a portfolio piece that proves it. A fictional product with a real design system behind it. Tokens, components, type, color, live examples.
 goesWrong: |
-  Designers build a comprehensive system for a brand that doesn't exist, ending up with 60 components and no story. Without a fictional product to anchor it, the system is decoration. The fix: invent the product first. The fictional product doesn't need to be deep — a name, a one-line description, a single user flow — but it has to exist before the system does.
+  Designers build a comprehensive system for a brand that doesn't exist and end up with 60 components and no story. Without a fictional product to anchor it, the system is just decoration. Invent the product first. A name, a one-line description, a single user flow is enough. But it has to exist before the system does.
 goodLooks: |
   The site reads as if a real product team made it. There's a brand with a voice. The components were designed for actual screens you can see — not just isolated in a Storybook. The tokens have opinions: not just "primary, secondary, tertiary" but "the brand uses a single accent color, deliberately, because [reason]." Decisions are documented.
 trap: |

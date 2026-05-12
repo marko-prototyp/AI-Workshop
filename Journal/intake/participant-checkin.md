@@ -1,6 +1,8 @@
 # Weekly check-in — Week NN
 
 > Send this to each participant within 48 hours of the session. Eight short answers. Should take 10–15 minutes.
+>
+> Write the way you'd talk to a colleague about it later. Don't worry about polish. We'll edit toward the journal voice (no em dashes, sentence-shaped, plain language) when we publish.
 
 ---
 

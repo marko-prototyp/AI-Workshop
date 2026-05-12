@@ -1,7 +1,7 @@
 {
   "primary": [
     { "label": "Principle",   "href": "/#principle" },
-    { "label": "12 Weeks",    "href": "/#weeks" },
+    { "label": "Sessions",    "href": "/#weeks" },
     { "label": "Projects",    "href": "/#projects" },
     { "label": "Figma Loop",  "href": "/figma-loop/" },
     { "label": "Journal",     "href": "/journal/" },
@@ -10,7 +10,7 @@
   ],
   "footerSections": [
     { "label": "Principle",   "href": "/#principle" },
-    { "label": "12 Weeks",    "href": "/#weeks" },
+    { "label": "Sessions",    "href": "/#weeks" },
     { "label": "Projects",    "href": "/#projects" },
     { "label": "Figma Loop",  "href": "/figma-loop/" }
   ],

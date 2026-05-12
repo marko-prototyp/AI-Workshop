@@ -2,47 +2,82 @@
   "opener": {
     "eyebrow": "/facilitator",
     "titleLines": ["Running this is a real job.", "Here's what helps."],
-    "lead": "What to say when someone pushes back. What to do when the room produces a hundred ideas in five minutes. How to keep a record of what you're learning as you go — so the program leaves behind something more than memory.",
-    "leadNote": "Read once before week 1. Come back when something's going sideways.",
+    "lead": "What to say when someone pushes back. What to do when the room produces a hundred ideas in five minutes. How to keep a record of what you're learning as you go, so the workshop leaves behind something more than memory.",
+    "leadNote": "Read once before session 1. Come back when something's going sideways.",
     "toc": [
-      { "num": "01", "label": "Things your team will ask you", "href": "#faq" },
-      { "num": "02", "label": "When someone is skeptical", "href": "#skeptic" },
-      { "num": "03", "label": "When the room produces too much", "href": "#overflow" },
-      { "num": "04", "label": "Keep a real record", "href": "#journal" }
+      { "num": "01", "label": "How to run the hour", "href": "#runbook" },
+      { "num": "02", "label": "Things your team will ask you", "href": "#faq" },
+      { "num": "03", "label": "When someone is skeptical", "href": "#skeptic" },
+      { "num": "04", "label": "When the room produces too much", "href": "#overflow" },
+      { "num": "05", "label": "Keep a real record", "href": "#journal" }
     ]
   },
 
-  "faq": {
+  "runbook": {
     "eyebrow": "// 01",
+    "title": "How to run the hour.",
+    "lead": "Each session is sixty minutes. The shape stays the same even when the content changes. Five blocks. Set them, hit them, the session moves.",
+    "blocks": [
+      {
+        "time": "0–5 min",
+        "title": "Open with the converge.",
+        "body": "Before any AI-heavy exercise, set the constraint out loud. \"In twenty minutes you're going to pick one. Generate as much as you want. At the twenty-minute mark we go around the room and each person names their pick.\" One sentence prevents the overflow problem before it happens. See section 04."
+      },
+      {
+        "time": "5–15 min",
+        "title": "One live demo.",
+        "body": "Show one vague prompt that produces generic output. Then show the specific prompt that produces something usable. The lesson is always the same. Context is everything. Ten minutes, never more. If the demo runs long, the hands-on shrinks."
+      },
+      {
+        "time": "15–55 min",
+        "title": "Hands-on. Walk the room.",
+        "body": "Don't troubleshoot from your laptop. Stand up. Walk between people. Look at their actual screens. The room moves because you move. If a project hits something you can't unlock, bring in someone from the wider team who can."
+      },
+      {
+        "time": "55–60 min",
+        "title": "One sentence each.",
+        "body": "Round the room. Each person names what they'll do before next session. Single sentence. No discussion. This is how the work continues past the hour."
+      },
+      {
+        "time": "after",
+        "title": "File the notes.",
+        "body": "Open Journal/intake/facilitator-notes.md within 24 hours. Send the participant prompt to each participant. It's on /journal already, auto-filled for the session. Tomorrow's recap depends on today's honesty."
+      }
+    ],
+    "callout": "The five blocks aren't about timekeeping. They're about giving the room a shape, so people know where they are in the hour without you announcing it."
+  },
+
+  "faq": {
+    "eyebrow": "// 02",
     "title": "Things your team will ask you.",
     "lead": "Twelve questions, in roughly the order you'll hear them. Each answer is tagged so you know whether to read it aloud or make it your own.",
     "items": [
       {
         "num": "01",
         "q": "Will AI take my job?",
-        "blocks": [{ "tag": "PRINCIPLE", "paras": ["The honest answer is the only one that lands. The parts of design AI is best at are the parts most designers like least — typing out boilerplate, generating variations, drafting copy nobody reads carefully. It's not coming for taste. It's not coming for judgment. It's not coming for the part of the work that's about caring.", "What it does change: the floor goes up. Worse designers can produce decent-looking output. The ceiling — what a really good designer can make — also goes up, by a lot. The middle gets squeezed.", "If they ask what to do about it: get good at the parts AI isn't good at. Taste. Restraint. Knowing what to cut. Telling a client they're wrong. Hearing what the user actually means. None of that is on a roadmap."] }]
+        "blocks": [{ "tag": "PRINCIPLE", "paras": ["The honest answer is the only one that lands. The parts of design AI is best at are the parts most designers like least. Typing out boilerplate. Generating variations. Drafting copy nobody reads carefully. It's not coming for taste. It's not coming for judgment. It's not coming for the part of the work that's about caring.", "What it does change: the floor goes up. Worse designers can produce decent-looking output. The ceiling also goes up, by a lot. What a really good designer can make has more headroom than before. The middle gets squeezed.", "If they ask what to do about it: get good at the parts AI isn't good at. Taste. Restraint. Knowing what to cut. Telling a client they're wrong. Hearing what the user actually means. None of that is on a roadmap."] }]
       },
       {
         "num": "02",
         "q": "How is this different from copying from Pinterest?",
-        "blocks": [{ "tag": "PRINCIPLE", "paras": ["Two ways. First: you're not copying anyone's specific design. AI generates from your prompts, your tokens, your direction. Pinterest is one person's image. AI is a collaborator that builds with your inputs.", "Second, and this is the real point: Pinterest stops at the image. AI keeps going. You can ship what you make. The reference is also the deliverable.", "If they're worried about derivative output — that's the right worry. It's why the anti-stock principle exists. The techniques in the program are how you avoid it."] }]
+        "blocks": [{ "tag": "PRINCIPLE", "paras": ["Two ways. First: you're not copying anyone's specific design. AI generates from your prompts, your tokens, your direction. Pinterest is one person's image. AI is a collaborator that builds with your inputs.", "Second, and this is the real point: Pinterest stops at the image. AI keeps going. You can ship what you make. The reference is also the deliverable.", "If they're worried about derivative output, that's the right worry. It's why the anti-stock principle exists. The techniques in the workshop are how you avoid it."] }]
       },
       {
         "num": "03",
         "q": "I don't know how to code. Is this for me?",
-        "blocks": [{ "tag": "SCRIPT", "paras": ["You'll know more code at the end of week 12 than you do now, but that's a side effect, not the goal.", "The goal is to make a thing you'd be proud to share. Claude writes most of the code. You'll learn to read enough of it to spot when something's wrong, and to change small values yourself when that's faster than re-prompting.", "That's it. If you can change a hex code in CSS, you have all the coding skill the program requires."] }]
+        "blocks": [{ "tag": "SCRIPT", "paras": ["You'll know more code at the end of session 12 than you do now, but that's a side effect, not the goal.", "The goal is to make a thing you'd be proud to share. Claude writes most of the code. You'll learn to read enough of it to spot when something's wrong, and to change small values yourself when that's faster than re-prompting.", "That's it. If you can change a hex code in CSS, you have all the coding skill the workshop requires."] }]
       },
       {
         "num": "04",
         "q": "What if my project is bad?",
-        "blocks": [{ "tag": "PRINCIPLE", "paras": ["Most projects wobble around week 6 or 7. The visual direction gets second-guessed, the scope feels wrong, the build looks generic. This is normal. It's not a sign the project is bad.", "What to do: don't pivot. Refine.", "The instinct to start over almost always loses you a week and lands you somewhere you'd already considered. Discomfort at the midpoint is part of how the work matures.", "The exception: if it's genuinely off-track — wrong scope, wrong scale, doesn't fit them anymore — say so directly. But check first. Most of the time it's the middle, not the end."] }]
+        "blocks": [{ "tag": "PRINCIPLE", "paras": ["Most projects wobble around session 6 or 7. The visual direction gets second-guessed, the scope feels wrong, the build looks generic. This is normal. It's not a sign the project is bad.", "What to do: don't pivot. Refine.", "The instinct to start over almost always loses you a session and lands you somewhere you'd already considered. Discomfort at the midpoint is part of how the work matures.", "The exception is if it's genuinely off-track. Wrong scope, wrong scale, doesn't fit them anymore. Say so directly. But check first. Most of the time it's the middle, not the end."] }]
       },
       {
         "num": "05",
         "q": "This feels like cheating.",
         "blocks": [
-          { "tag": "SCRIPT", "paras": ["It's not.", "The decisions are yours. The taste is yours. The pushback is yours. Claude wrote some words and some lines of code — that's the easiest part of the work, the part that scales with typing speed.", "Nobody hires a designer for typing speed. They hire you for everything around the typing. That's still all you."] },
-          { "tag": "PRINCIPLE", "paras": ["If they keep pressing on this — and some will — the deeper answer is that \"cheating\" is a frame from a context where the rules said \"do this without help.\" That's school. This isn't school. The work gets judged by the result, not the process. If the result is good and it's yours, it's yours."] }
+          { "tag": "SCRIPT", "paras": ["It's not.", "The decisions are yours. The taste is yours. The pushback is yours. Claude wrote some words and some lines of code. That's the easiest part of the work, the part that scales with typing speed.", "Nobody hires a designer for typing speed. They hire you for everything around the typing. That's still all you."] },
+          { "tag": "PRINCIPLE", "paras": ["If they keep pressing on this, and some will, the deeper answer is that \"cheating\" is a frame from a context where the rules said \"do this without help.\" That's school. This isn't school. The work gets judged by the result, not the process. If the result is good and it's yours, it's yours."] }
         ]
       },
       {
@@ -53,7 +88,7 @@
       {
         "num": "07",
         "q": "How is this not just hype?",
-        "blocks": [{ "tag": "PRINCIPLE", "paras": ["Some of it is. There's a lot of breathless content about AI changing everything overnight; most of it is wrong on the timeline and right on the direction.", "What's not hype is the practical thing on your screen — Claude can take a Figma comp and build a working site in twenty minutes. That's not a future capability. That's Tuesday.", "The program isn't betting on the next breakthrough. It's betting that the current capabilities, used well, are already worth twelve weeks of attention. By week 12 they'll have shipped something. That's the test."] }]
+        "blocks": [{ "tag": "PRINCIPLE", "paras": ["Some of it is. There's a lot of breathless content about AI changing everything overnight; most of it is wrong on the timeline and right on the direction.", "What's not hype is the practical thing on your screen. Claude can take a Figma comp and build a working site in twenty minutes. That's not a future capability. That's Tuesday.", "The workshop isn't betting on the next breakthrough. It's betting that the current capabilities, used well, are already worth twelve hours of attention. By session 12 they'll have shipped something. That's the test."] }]
       },
       {
         "num": "08",
@@ -75,12 +110,12 @@
       {
         "num": "10",
         "q": "Am I going to get behind?",
-        "blocks": [{ "tag": "SCRIPT", "paras": ["Maybe. And that's okay.", "The program is designed so each week produces something even if you only show up for the hour. If you fall behind, you don't catch up — you join back in where the group is.", "Don't try to make week 4 perfect after the fact while everyone else is on week 6. Lose week 4 cleanly and stay with the group."] }]
+        "blocks": [{ "tag": "SCRIPT", "paras": ["Maybe. And that's okay.", "The workshop is designed so each session produces something even if you only show up for the hour. If you fall behind, you don't catch up. You join back in where the group is.", "Don't try to make session 4 perfect after the fact while everyone else is on session 6. Lose session 4 cleanly and stay with the group."] }]
       },
       {
         "num": "11",
         "q": "Should I be using Claude every day?",
-        "blocks": [{ "tag": "PRINCIPLE", "paras": ["No. Use it when it's useful.", "Forcing yourself to use a tool to justify having learned it is the worst kind of habit. The point of the program is to build judgment about when AI helps and when it doesn't.", "Great for: first drafts, generating variations, getting unstuck, summarising, building mockups quickly.", "Bad at: figuring out what you actually want, telling you something you needed to hear, sitting with discomfort.", "Notice the difference and act on it."] }]
+        "blocks": [{ "tag": "PRINCIPLE", "paras": ["No. Use it when it's useful.", "Forcing yourself to use a tool to justify having learned it is the worst kind of habit. The point of the workshop is to build judgment about when AI helps and when it doesn't.", "Great for: first drafts, generating variations, getting unstuck, summarising, building mockups quickly.", "Bad at: figuring out what you actually want, telling you something you needed to hear, sitting with discomfort.", "Notice the difference and act on it."] }]
       },
       {
         "num": "12",
@@ -94,7 +129,7 @@
   },
 
   "skeptic": {
-    "eyebrow": "// 02",
+    "eyebrow": "// 03",
     "title": "Skepticism is information. Read what kind.",
     "lead": "Small team, mostly new to AI, you'll have at least one. Don't try to convert them. Engage what they're actually saying. There are two flavours. They look similar from the outside. They need different responses. Mistaking one for the other makes both worse.",
     "columns": [
@@ -104,24 +139,24 @@
         "quote": "I don't see how this applies to me.",
         "recognize": "Quiet during demos. Doesn't push back, but doesn't engage. Says things like \"I'll see how it goes.\" Detached, not hostile. Shows up to every session and barely speaks.",
         "why": "They haven't seen the connection between AI and the work they care about. They're not against it. They just don't have a hook. Forcing engagement makes them more passive, not less.",
-        "what": ["Find their hook. Privately. \"What's the part of your job that takes the most time and feels least valuable?\"", "Whatever they say is their entry point. Build their week-9 automation around that thing. The hook does what argument can't.", "Don't pair them with the most enthusiastic person — the energy mismatch is uncomfortable for both. Pair them with someone steady and curious."]
+        "what": ["Find their hook. Privately. \"What's the part of your job that takes the most time and feels least valuable?\"", "Whatever they say is their entry point. Build their session-9 automation around that thing. The hook does what argument can't.", "Don't pair them with the most enthusiastic person. The energy mismatch is uncomfortable for both. Pair them with someone steady and curious."]
       },
       {
         "num": "02",
         "type": "Skepticism",
         "quote": "This is going to make our work worse.",
-        "recognize": "Active. Argumentative. Brings up ethics, environment, derivative output, deskilling. Often has a strong opinion already formed. Not detached — paying close attention.",
-        "why": "Often a values position, not a tool position. They care about something — craft, originality, sustainability, a worker's relationship to their tools — and they're testing whether the program respects that or steamrolls it.",
-        "what": ["Take the position seriously. Don't \"both sides\" it. Engage the specific point.", "\"You're right that AI generates a lot of generic output. The whole anti-stock principle exists because that's a real problem. Let's see if the techniques actually solve it for your work.\"", "Don't try to win. The skeptic isn't asking to be persuaded. They're asking to be respected. Programs that take their concerns seriously usually end up with skeptics as the strongest contributors.", "Watch for the moment they engage. It usually comes around week 4 or 5, when they see something work that they couldn't dismiss. Don't celebrate it. Just keep the door open."]
+        "recognize": "Active. Argumentative. Brings up ethics, environment, derivative output, deskilling. Often has a strong opinion already formed. Not detached. Paying close attention.",
+        "why": "Often a values position, not a tool position. They care about something. Craft, originality, sustainability, a worker's relationship to their tools. They're testing whether the workshop respects that or steamrolls it.",
+        "what": ["Take the position seriously. Don't \"both sides\" it. Engage the specific point.", "\"You're right that AI generates a lot of generic output. The whole anti-stock principle exists because that's a real problem. Let's see if the techniques actually solve it for your work.\"", "Don't try to win. The skeptic isn't asking to be persuaded. They're asking to be respected. Workshops that take their concerns seriously usually end up with skeptics as the strongest contributors.", "Watch for the moment they engage. It usually comes around session 4 or 5, when they see something work that they couldn't dismiss. Don't celebrate it. Just keep the door open."]
       }
     ],
     "closing": "The thing that ruins this is trying to convert people. Both flavours get worse when you push. Ambivalence becomes withdrawal. Skepticism becomes principled refusal. Don't sell. Don't oversell. Make the work good and let the work do the persuading."
   },
 
   "overflow": {
-    "eyebrow": "// 03",
+    "eyebrow": "// 04",
     "title": "Generating is now free. Choosing isn't.",
-    "lead": "A problem unique to AI workshops, and one that hits hard around week 3 or 4. Five designers, ninety prompts, three hundred ideas, one hour. The chat windows are full. People are scrolling through their own output trying to remember which version they liked. Nothing has been chosen. The session ends and the work hasn't moved.",
+    "lead": "A problem unique to AI workshops, and one that hits hard around session 3 or 4. Five designers, ninety prompts, three hundred ideas, one hour. The chat windows are full. People are scrolling through their own output trying to remember which version they liked. Nothing has been chosen. The session ends and the work hasn't moved.",
     "why": {
       "title": "Why this happens.",
       "body": "AI inverts the cost of generating ideas. What used to take ten minutes now takes thirty seconds. Diverging is free. Converging takes the same time it always did. If you don't reshape the session, you'll generate ten times as much and choose nothing."
@@ -132,85 +167,55 @@
         "num": "01",
         "title": "Set the converge before the diverge.",
         "when": "Always. Preventive. Before any AI-heavy exercise.",
-        "how": ["Open the exercise out loud:", "\"In twenty minutes, you're going to pick one. Generate as many as you want — at the twenty-minute mark we're going around the room and each person names their pick.\"", "The constraint changes how people generate. They start filtering as they go instead of accumulating.", "Set the converge before the diverge. Otherwise people fill the time generating because there's no reason not to."]
+        "how": ["Open the exercise out loud:", "\"In twenty minutes, you're going to pick one. Generate as many as you want. At the twenty-minute mark we're going around the room and each person names their pick.\"", "The constraint changes how people generate. They start filtering as they go instead of accumulating.", "Set the converge before the diverge. Otherwise people fill the time generating because there's no reason not to."]
       },
       {
         "num": "02",
         "title": "Force a stop. Pick one. Defend it.",
         "when": "Mid-session, when the room is generating without choosing. Signal: people are still typing prompts when half the time is up.",
-        "how": ["Stop the room:", "\"Stop generating. Pick one. We're going around — you tell us which and why, in thirty seconds. We start in two minutes.\"", "Set a visible timer.", "The defence matters more than the pick. Saying \"I'm going with this because [reason]\" forces a designer to surface their actual taste. After they've defended a choice once, they know what they think."]
+        "how": ["Stop the room:", "\"Stop generating. Pick one. We're going around. You tell us which and why, in thirty seconds. We start in two minutes.\"", "Set a visible timer.", "The defence matters more than the pick. Saying \"I'm going with this because [reason]\" forces a designer to surface their actual taste. After they've defended a choice once, they know what they think."]
       },
       {
         "num": "03",
         "title": "Cut the input rate.",
-        "when": "Late-program (weeks 6+), when the team is over-generating by habit.",
-        "how": ["Limit the prompt count:", "\"You get three prompts for this exercise. That's it. Make them count.\"", "Most bloat comes from cheap prompting — \"let me try one more variation\" — not from real exploration. When prompting has a cost, the bloat goes away on its own."]
+        "when": "Late in the workshop (sessions 6+), when the team is over-generating by habit.",
+        "how": ["Limit the prompt count:", "\"You get three prompts for this exercise. That's it. Make them count.\"", "Most bloat comes from cheap prompting. \"Let me try one more variation.\" Not from real exploration.", "When prompting has a cost, the bloat goes away on its own."]
       }
     ],
     "closing": "Eighty percent generate, twenty percent converge is a 1990s ratio. AI workshops aren't broken versions of regular workshops. They're a different shape. Plan for less generation time and more selection time. For AI, flip the ratio."
   },
 
   "journal": {
-    "eyebrow": "// 04",
+    "eyebrow": "// 05",
     "title": "Memory fades. The journal is what stays.",
-    "lead": "Twelve weeks of running this without writing anything down means twelve weeks of memory you'll lose. Ten minutes per week. Same structure every time. One section that rotates so it stays fresh. Below is the whole thing — template, file format, and how to keep it going.",
-    "sub4a": {
-      "title": "The template",
-      "intro": "Two parts. Six fixed fields. One rotating prompt.",
-      "fixedTitle": "Part 1.  The fixed core. Same every week.",
-      "fixedItems": [
-        { "num": "01", "title": "Date and session number.", "body": "Helps you sort entries later." },
-        { "num": "02", "title": "Who showed up.", "body": "Names. Note who was missing. Patterns matter — if Mira misses three weeks in a row, that's data." },
-        { "num": "03", "title": "What we actually did.", "body": "Three to five bullets. Concrete things, not summaries. \"Sara worked on her hero\" beats \"we made progress.\" Aim for what a stranger could picture." },
-        { "num": "04", "title": "What worked.", "body": "One paragraph. The thing that landed. The exercise that produced more than expected. The prompt that surprised everyone." },
-        { "num": "05", "title": "What didn't.", "body": "One paragraph. Be honest. Not \"could have been better\" — what specifically didn't work and why you think." },
-        { "num": "06", "title": "What I'd do differently.", "body": "One sentence. The single most important change for next time. If you have multiple, pick the biggest impact and write only that." }
+    "lead": "The journal isn't a side project. It's where the workshop turns into something you can hand to someone else six months from now. We built the system already. Three things to plug into.",
+    "workflow": {
+      "title": "The workflow.",
+      "intro": "Three files do most of the work. Open these once and you'll know how to run each session afterward.",
+      "items": [
+        { "url": "Journal/README.md", "title": "The loop.", "body": "Raw notes from the session get synthesised by Claude, edited by you, then published to /journal. The README walks the whole flow." },
+        { "url": "Journal/intake/facilitator-notes.md", "title": "Your dump template.", "body": "Mirrors the synthesis structure. Bullets, half-thoughts, quotes, names. Fill in within 24 hours so the synthesis stays honest." },
+        { "url": "Journal/intake/participant-checkin.md", "title": "What participants fill in.", "body": "Eight questions, 10 to 15 minutes per person. Send within 48 hours. Their answers fold straight into the session synthesis." }
       ],
-      "rotatingTitle": "Part 2.  One rotating prompt. Changes by week. Two to four sentences.",
-      "rotatingItems": [
-        { "wk": "1",  "title": "Meet Claude, pick projects.",          "q": "Which project pick surprised you, and why? What does it tell you about that person?" },
-        { "wk": "2",  "title": "Research & synthesis.",                "q": "What's one assumption your team had that the research broke? Whose, and what was it?" },
-        { "wk": "3",  "title": "Concept, moodboard, banned moves.",    "q": "Three most distinctive banned-moves lists across the team. Quote one item from each." },
-        { "wk": "4",  "title": "IA & content.",                        "q": "Whose voice was hardest for Claude to match? What did they end up doing about it?" },
-        { "wk": "5",  "title": "Designing in Figma, building with Claude.", "q": "Which Figma comp produced the closest build, and what made it work? Which drifted, and why?" },
-        { "wk": "6",  "title": "Visual system as code.",                "q": "Which token system felt most opinionated to you? Was it also the one that built best?" },
-        { "wk": "7",  "title": "Build the core view.",                  "q": "Where did stock-UI drift show up most? What was the prompt that fixed it?" },
-        { "wk": "8",  "title": "Secondary views & interactivity.",      "q": "Did anyone hit a wall? What kind, and how did they get past it?" },
-        { "wk": "9",  "title": "Workflow automation.",                  "q": "Most surprising day-job task identified for automation. What does it tell you about how the team works?" },
-        { "wk": "10", "title": "Polish #1, critique.",                  "q": "Whose project changed most after critique? What changed, and was the critique right?" },
-        { "wk": "11", "title": "Polish #2, deployment.",                "q": "Who shipped first? What does their final URL feel like compared to your week-1 image of their project?" },
-        { "wk": "12", "title": "Show & tell, retro.",                   "q": "One thing you'd tell a future facilitator running this program. Be specific. Not \"it was great\" — what to do, what to avoid." }
-      ]
+      "callout": "The per-session prompts on /journal also generate ready-to-use facilitator and participant prompts for every week, auto-filled from the curriculum. Copy and run them in your own Claude."
     },
-    "sub4b": {
-      "title": "As a file",
-      "intro": "Drop straight into the site's content folder.",
-      "template": "---\nweek: 3\nsession_date: 2026-05-23\ntitle: \"Concept, moodboard, banned moves\"\nfacilitator: \"Boris\"\nattendees: [\"Sara\", \"Alex\", \"Mira\"]\nmissing: [\"Tomo\"]\ntags: [\"concept\", \"banned-moves\", \"image-gen\"]\nduration_minutes: 75\n---\n\n## What we did\n\n- \n- \n- \n\n## What worked\n\n\n\n## What didn't\n\n\n\n## What I'd do differently\n\n\n\n## Rotating prompt\n\n*[This week's question, and your answer in 2–4 sentences.]*"
-    },
-    "sub4c": {
-      "title": "On the site",
-      "intro": "What journal entries become once live.",
+    "siteShape": {
+      "title": "What it looks like on the site.",
+      "intro": "Three places the journal shows up.",
       "panels": [
-        { "url": "/journal", "title": "The index", "body": "Reverse-chronological list of all entries. Each row: week number, date, title, one-line preview from \"what worked.\" Filters by tag or attendee. Scannable from top to bottom." },
-        { "url": "/journal/03", "title": "An entry", "body": "Title in serif at top. Metadata strip — date, attendees, duration. Body rendered as styled markdown. Footer: link to the original week's plan, prev/next navigation." },
-        { "url": "/journal/themes", "title": "Cross-cutting view", "body": "All rotating prompts grouped by topic. Read just the rotating prompts across twelve weeks and you get the program's actual texture in twelve paragraphs. Build after you have 6+ entries." }
+        { "url": "/journal", "title": "The index.", "body": "Reverse-chronological. Each row shows the session number, the title, the date, and the quote of that session. A contents block at the top summarises where the workshop is up to." },
+        { "url": "/journal/#entry-01", "title": "An entry.", "body": "Markdown body rendered in serif. Session metadata strip on top. Optional quote aside. Built from one .md file in content/journal/. Add NN.md, the entry shows up." },
+        { "url": "/journal/#journal-prompts", "title": "The session prompts.", "body": "Two prompts per session. One for facilitator synthesis, one for participant check-in. Both auto-filled with the session's title, capability, and expected outputs. Copy and use." }
       ]
     },
-    "sub4d": {
-      "title": "How to actually keep this going",
-      "intro": "Most journal systems die in week 3. Here's how to make this one not.",
-      "rules": [
-        { "num": "01", "title": "Write within 24 hours.", "body": "Wait until the next session and you're writing from memory of memory. Block 15 minutes the day after every session. Non-negotiable." },
-        { "num": "02", "title": "Write the bad weeks too.", "body": "Especially the bad weeks. The recap of a session that went poorly is more valuable than the recap of one that went well. Bad sessions teach more if you record them." },
-        { "num": "03", "title": "Don't polish.", "body": "These are notes, not blog posts. The audience is you, three months from now. Spelling mistakes are fine. Half-formed thoughts are fine. Fidelity over finish." },
-        { "num": "04", "title": "Read all entries at week 6.", "body": "Notice patterns. Are the same complaints showing up? Is one designer disengaging across multiple weeks? Are sessions running long every time? Patterns are invisible week-to-week and obvious in aggregate." },
-        { "num": "05", "title": "If you fall behind, don't backfill.", "body": "Lost a week? Write \"missed\" and move on. A backfilled entry from memory is fiction. Continuity matters less than honesty." }
-      ]
+    "voice": {
+      "title": "The voice.",
+      "body": "We have a journal voice. Apply it on the way out. Ask Claude for a voice pass before publishing. The rules: no em dashes in visible copy, sentence-shaped headings, sessions not weeks in narrative prose, one quietly-emphasised italic per line. The skill that codifies all of this is journal-voice."
     },
-    "closingCallout": "The journal is the program's most underrated artifact. Twelve weeks from now, the project the team builds will be the visible output. The journal will be the invisible one — and the one you'll quote from for years. Six months from now, when someone asks how the program went, you won't summarise from memory. You'll send them the journal.",
+    "closingCallout": "The journal is the workshop's most underrated artifact. Twelve weeks from now, the project the team builds will be the visible output. The journal will be the invisible one. And the one you'll quote from for years. Six months from now, when someone asks how the workshop went, you won't summarise from memory. You'll send them the journal.",
     "closingLine": "Memory fades. The journal is what stays."
   },
 
-  "closingLine": "You're running a real program for real people. It's allowed to be hard.",
-  "backLink": "← Back to the program"
+  "closingLine": "You're running a real workshop for real people. It's allowed to be hard.",
+  "backLink": "← Back to the workshop"
 }

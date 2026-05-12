@@ -30,7 +30,8 @@ Journal/
    - `Journal/week-NN-synthesis.md` — facilitator-voice writeup, matching the week-01 voice
    - Updates to each `participants/*/notes.md` and `participants/*/case-study.md`
    - A first draft of `content/journal/NN.md` for the public site
-4. **Review + ship** — Marko edits the public draft, builds the site, pushes.
+4. **Voice pass** — run the public draft through the `journal-voice` skill (which sits on top of `audit-copy`). The voice rules: no em dashes in visible copy, sentence-shaped headlines, "sessions" not "weeks" in prose, "workshop" not "program," one quietly-emphasised italic per line max. Canonical reference: `Claude/home-copy-final.md`.
+5. **Review + ship** — Marko edits the final draft, builds the site, pushes.
 
 ## Week 12
 

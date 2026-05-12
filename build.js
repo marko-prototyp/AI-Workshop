@@ -453,13 +453,13 @@ function buildJournalEntry(entry) {
   const quoteBlock = (entry.quote && entry.quoteAttribution)
     ? `<aside class="journal-entry-quote">
         <q>${entry.quote}</q>
-        <span class="attr">— ${entry.quoteAttribution}</span>
+        <span class="attr">${entry.quoteAttribution}.</span>
       </aside>`
     : '';
 
   return `<article class="journal-entry" id="entry-${num}">
     <div class="journal-entry-meta">
-      <span class="num">Week ${num}</span>
+      <span class="num">Session ${num}</span>
       ${phase}
       ${date}
       ${participants}
@@ -478,8 +478,7 @@ function buildJournalContents(entries, totalWeeks) {
   const latestParticipants = latest && latest.participants !== undefined ? latest.participants : null;
 
   const metaBits = [
-    `Week ${count} of ${totalWeeks}`,
-    latestParticipants !== null ? `${latestParticipants} participants` : null,
+    `Session ${count} of ${totalWeeks}`,
     `${count} ${count === 1 ? 'entry' : 'entries'} so far`,
   ].filter(Boolean).join(' · ');
 
@@ -488,7 +487,7 @@ function buildJournalContents(entries, totalWeeks) {
       ? new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       : '';
     const hook = e.quote
-      ? `<span class="contents-hook">&ldquo;${e.quote}&rdquo;${e.quoteAttribution ? ` <span class="contents-attr">— ${e.quoteAttribution}</span>` : ''}</span>`
+      ? `<span class="contents-hook">&ldquo;${e.quote}&rdquo;${e.quoteAttribution ? ` <span class="contents-attr">${e.quoteAttribution}</span>` : ''}</span>`
       : '';
     return `<li class="contents-item">
       <a class="contents-link" href="#entry-${e.num}">
@@ -519,7 +518,7 @@ function buildJournalContents(entries, totalWeeks) {
       ${emptyRow}
       ${upcoming}
     </ul>
-    <a class="contents-tools-link" href="#journal-prompts">Tools — prompts for facilitators &amp; participants <span aria-hidden="true">↓</span></a>
+    <a class="contents-tools-link" href="#journal-prompts">Prompts for facilitators and participants <span aria-hidden="true">↓</span></a>
   </nav>`;
 }
 
@@ -530,42 +529,44 @@ function buildJournalPromptItem(w) {
   const partId = `journal-prompt-w${num}-part`;
   const outputsList = (w.outputs || []).join('; ') || '[fill in for your week]';
 
-  const facPrompt = `I just ran Week ${num} of the AI for Designers program — "${w.title}" (focus: ${w.capability}).
+  const facPrompt = `I just ran Session ${num} of the AI for Designers workshop. The session was "${w.title}" (focus: ${w.capability}).
 
 Here are my raw notes from today's session:
 
-[PASTE NOTES HERE — bullets are fine, half-thoughts OK]
+[PASTE NOTES HERE. Bullets are fine, half-thoughts OK.]
 
 Synthesise into the facilitator weekly structure:
-1. Session header (week, date, participants present, who was absent)
+1. Session header (session number, date, participants present, who was absent)
 2. What each participant did (one block per person, bullets fine)
 3. Patterns across the group (one paragraph)
-4. Individual highlights (one line per participant — the thing worth remembering)
-5. What worked / didn't (3–4 bullets each, honest)
-6. Notes for next week (specific, per-participant where it matters)
+4. Individual highlights (one line per participant, the thing worth remembering)
+5. What worked, and what didn't (3 to 4 bullets each, honest)
+6. Notes for next session (specific, per-participant where it matters)
 7. Quote of the week (one line, with attribution)
 
 Voice rules: specific, observational, no fluff. Don't paper over what went wrong. Name risks. Don't editorialise beyond what my notes support.
 
-If anything important is missing, ask me one question at a time — don't fabricate.`;
+Apply the journal voice on the way out. No em dashes in visible copy. Sentence-shaped headings ending with a period. "Sessions" not "weeks" in narrative prose ("Week NN" is fine as a label). "Workshop" not "program." One quietly-emphasised italic per line max. Reference: Claude/home-copy-final.md.
 
-  const partPrompt = `I just finished Week ${num} of the AI for Designers program — "${w.title}" (focus: ${w.capability}). The expected outputs were: ${outputsList}.
+If anything important is missing, ask me one question at a time. Don't fabricate.`;
+
+  const partPrompt = `I just finished Session ${num} of the AI for Designers workshop. The session was "${w.title}" (focus: ${w.capability}). The expected outputs were: ${outputsList}.
 
 Interview me about my experience this week. Ask me one question at a time, eight total:
 
-1. What did you actually make this week? (concrete, one–two sentences)
-2. What's the most useful thing Claude did for you? (specific moment — paste the prompt or describe the exchange)
+1. What did you actually make this week? Concrete, one or two sentences.
+2. What's the most useful thing Claude did for you? Pick one specific moment. Paste the prompt or describe the exchange.
 3. What did Claude do badly, or what did you fight against?
 4. What's the one decision you made about your project this week?
 5. What are you stuck on right now?
-6. One screenshot or artifact worth keeping (link or describe)
-7. A quote-worthy line — something you said or thought
+6. One screenshot or artifact worth keeping. Link or describe.
+7. A quote-worthy line. Something you said or thought.
 8. What do you want to do next week?
 
-After all eight, structure my answers as a clean check-in I can paste back to my facilitator. Don't editorialise — use my words, organised.`;
+After all eight, structure my answers as a clean check-in I can paste back to my facilitator. Don't editorialise. Use my words, organised.`;
 
   return `<details class="week" id="journal-prompts-w${num}">
-      <summary class="week-summary" aria-label="Week ${weekNum} journal prompts: ${w.title}">
+      <summary class="week-summary" aria-label="Session ${weekNum} prompts: ${w.title}">
         <span class="week-num">W ${num}</span>
         <span class="week-title">${w.title}</span>
         <span class="week-meta">
@@ -580,8 +581,8 @@ After all eight, structure my answers as a clean check-in I can paste back to my
         <div class="spacer"></div>
         <div>
           <div class="week-section">
-            <h4>Facilitator — synthesise the session</h4>
-            <p>Run after the session. Paste your raw notes; Claude turns them into the weekly facilitator writeup.</p>
+            <h4>For the facilitator: synthesise the session.</h4>
+            <p>Run after the session. Paste your raw notes. Claude turns them into the weekly facilitator writeup.</p>
             <div class="prompt-box">
               <div class="prompt-head">
                 <div class="prompt-label"><span class="star">▸</span> Prompt — Facilitator synthesis</div>
@@ -594,7 +595,7 @@ After all eight, structure my answers as a clean check-in I can paste back to my
             </div>
           </div>
           <div class="week-section">
-            <h4>Participant — capture your experience</h4>
+            <h4>For each participant: capture your experience.</h4>
             <p>Each participant runs this in their own Claude. It interviews them and outputs a clean check-in to send back to the facilitator.</p>
             <div class="prompt-box">
               <div class="prompt-head">
@@ -617,8 +618,8 @@ function buildJournalPromptsSection(weeks) {
   return `<section class="journal-prompts" id="journal-prompts" aria-labelledby="journal-prompts-title">
     <header class="journal-prompts-head">
       <span class="journal-eyebrow">/tools</span>
-      <h2 class="journal-prompts-title" id="journal-prompts-title">Prompts for journaling each <em class="italic-wonk">week</em>.</h2>
-      <p class="journal-lead">Two prompts per session. One for the facilitator to synthesise what happened. One for each participant to capture their own experience. The outputs feed back into this journal.</p>
+      <h2 class="journal-prompts-title" id="journal-prompts-title">Prompts for capturing each <em class="italic-wonk">session</em>.</h2>
+      <p class="journal-lead">Run these after each session. The facilitator synthesises what happened. Each participant captures their own version. Together they build the journal.</p>
     </header>
     <div class="weeks-grid">${items}</div>
   </section>`;
@@ -628,8 +629,8 @@ function buildJournalHtml(entries, weeks) {
   const header = `<header class="journal-header">
     <span class="journal-eyebrow">/journal</span>
     <h1 class="journal-title display" id="journal-title">I designed a 12-session workshop to see if I could teach my colleagues AI by just doing <em class="italic-wonk">it.</em></h1>
-    <p class="journal-lead">The idea was simple enough — one hour a week, twelve weeks, real projects. Each person picked something based on their own personality, their vision, their goals. So every project ended up being its own universe. And with Claude, we started bringing them to life.</p>
-    <p class="journal-lead-note">There's no better way to learn something than to just try it yourself. The moment you find a solution you weren't expecting, or discover something that actually works — that's the thing that sticks. These are the notes from that process. Tag along.</p>
+    <p class="journal-lead">The idea was simple enough. One hour a week, twelve weeks, real projects. Each person picked something based on their own personality, their vision, their goals. So every project ended up being its own universe. And with Claude, we started actually building them.</p>
+    <p class="journal-lead-note">Turns out the best thing you can do is just start. These are the notes from that. Tag along.</p>
   </header>`;
 
   const contents = buildJournalContents(entries, weeks.length);
@@ -689,6 +690,27 @@ function buildFacOpener(d) {
       </ul>
     </nav>
   </header>`;
+}
+
+function buildFacRunbook(d) {
+  const blocks = d.blocks.map(b =>
+    `<div class="fac-runbook-block">
+      <span class="fac-runbook-time">${b.time}</span>
+      <div>
+        <h4 class="fac-runbook-title">${b.title}</h4>
+        <p>${emph(b.body)}</p>
+      </div>
+    </div>`
+  ).join('');
+  return `<div class="fac-part" id="runbook">
+    <header class="fac-part-head">
+      <span class="fac-part-eyebrow">${d.eyebrow}</span>
+      <h2 class="fac-part-title">${d.title}</h2>
+      <p class="fac-part-lead">${d.lead}</p>
+    </header>
+    <div class="fac-runbook">${blocks}</div>
+    <div class="fac-callout"><p>${d.callout}</p></div>
+  </div>`;
 }
 
 function buildFacFAQ(d) {
@@ -777,30 +799,18 @@ function buildFacOverflow(d) {
 }
 
 function buildFacJournal(d) {
-  const fixedItems = d.sub4a.fixedItems.map(item =>
-    `<div class="fac-tmpl-item">
-      <span class="fac-tmpl-num">${item.num}</span>
-      <div><strong>${item.title}</strong><p>${item.body}</p></div>
+  const workflowItems = d.workflow.items.map(item =>
+    `<div class="fac-journal-panel">
+      <span class="fac-panel-url">${item.url}</span>
+      <h4>${item.title}</h4>
+      <p>${item.body}</p>
     </div>`
   ).join('');
-  const rotatingItems = d.sub4a.rotatingItems.map(item =>
-    `<div class="fac-rotating-item">
-      <span class="fac-rotating-wk">Wk ${item.wk}</span>
-      <div><strong>${item.title}</strong><p>${item.q}</p></div>
-    </div>`
-  ).join('');
-  const templateId = 'journal-template';
-  const panels = d.sub4c.panels.map(p =>
+  const panels = d.siteShape.panels.map(p =>
     `<div class="fac-journal-panel">
       <span class="fac-panel-url">${p.url}</span>
       <h4>${p.title}</h4>
       <p>${p.body}</p>
-    </div>`
-  ).join('');
-  const rules = d.sub4d.rules.map(r =>
-    `<div class="fac-tmpl-item">
-      <span class="fac-tmpl-num">${r.num}</span>
-      <div><strong>${r.title}</strong><p>${r.body}</p></div>
     </div>`
   ).join('');
   return `<div class="fac-part" id="journal">
@@ -810,36 +820,19 @@ function buildFacJournal(d) {
       <p class="fac-part-lead">${d.lead}</p>
     </header>
     <div class="fac-sub">
-      <h3 class="fac-sub-title">${d.sub4a.title}</h3>
-      <p>${d.sub4a.intro}</p>
-      <p class="fac-sub-label">${d.sub4a.fixedTitle}</p>
-      <div class="fac-tmpl-list">${fixedItems}</div>
-      <p class="fac-sub-label">${d.sub4a.rotatingTitle}</p>
-      <div class="fac-rotating-list">${rotatingItems}</div>
+      <h3 class="fac-sub-title">${d.workflow.title}</h3>
+      <p>${d.workflow.intro}</p>
+      <div class="fac-journal-panels">${workflowItems}</div>
+      <div class="fac-callout"><p>${d.workflow.callout}</p></div>
     </div>
     <div class="fac-sub">
-      <h3 class="fac-sub-title">${d.sub4b.title}</h3>
-      <p>${d.sub4b.intro}</p>
-      <div class="prompt-box">
-        <div class="prompt-head">
-          <div class="prompt-label"><span class="star">▸</span> Journal entry template</div>
-          <button class="copy-btn" data-copy="${templateId}" aria-label="Copy journal template">
-            <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
-            <span>Copy</span>
-          </button>
-        </div>
-        <pre class="prompt-body" id="${templateId}">${escapeHtml(d.sub4b.template)}</pre>
-      </div>
-    </div>
-    <div class="fac-sub">
-      <h3 class="fac-sub-title">${d.sub4c.title}</h3>
-      <p>${d.sub4c.intro}</p>
+      <h3 class="fac-sub-title">${d.siteShape.title}</h3>
+      <p>${d.siteShape.intro}</p>
       <div class="fac-journal-panels">${panels}</div>
     </div>
     <div class="fac-sub">
-      <h3 class="fac-sub-title">${d.sub4d.title}</h3>
-      <p>${d.sub4d.intro}</p>
-      <div class="fac-tmpl-list">${rules}</div>
+      <h3 class="fac-sub-title">${d.voice.title}</h3>
+      <p>${d.voice.body}</p>
     </div>
     <div class="fac-callout"><p>${d.closingCallout}</p></div>
   </div>`;
@@ -848,6 +841,7 @@ function buildFacJournal(d) {
 function buildFacilitatorHtml(data) {
   return [
     buildFacOpener(data.opener),
+    buildFacRunbook(data.runbook),
     buildFacFAQ(data.faq),
     buildFacSkeptic(data.skeptic),
     buildFacOverflow(data.overflow),
@@ -899,7 +893,7 @@ function buildPromptCard(p, variant) {
   else if (variant === 'capability') pillHtml = `<span class="pcard-pill pcard-pill--capability">Capability</span>`;
   else pillHtml = `<span class="pcard-pill pcard-pill--cat">${catLabel}</span>`;
 
-  return `<div class="pcard pcard--${variant}" data-category="${p.category}" id="card-${p.id}">
+  return `<div class="pcard pcard--${variant}" data-category="${p.category}" data-power="${p.power ? 'true' : 'false'}" id="card-${p.id}">
   <div class="pcard-head">
     ${pillHtml}
     <h3 class="pcard-title">${p.title}${subtitleHtml}</h3>
@@ -1025,6 +1019,7 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, jo
     }).filter(Boolean),
 
     // Facilitator sub-sections
+    E('How to run the hour', 'Facilitator', '/facilitator/#runbook', 'section', 'runbook session structure hour minutes blocks how to run facilitator'),
     E('FAQ — Team questions', 'Facilitator', '/facilitator/#faq', 'section', 'questions ask team faq facilitator'),
     E('Handling skeptics', 'Facilitator', '/facilitator/#skeptic', 'section', 'skeptic ambivalence skepticism pushback resistance'),
     E('Managing overflow', 'Facilitator', '/facilitator/#overflow', 'section', 'too many ideas overflow generating converge diverge'),
@@ -1059,7 +1054,7 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, jo
       `${CAT_LABELS[p.category] || p.category} · ${p.useWhen}`,
       p.featured ? `/prompts/` : `/prompts/#card-${p.id}`,
       'prompt',
-      `${p.useWhen} ${p.category} ${p.subtitle || ''} ${p.body.slice(0, 150)}`,
+      `${p.useWhen} ${p.category} ${p.power ? 'power' : ''} ${p.subtitle || ''} ${p.body.slice(0, 150)}`,
     )),
   ];
 

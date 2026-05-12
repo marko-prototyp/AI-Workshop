@@ -17,7 +17,8 @@
     "useWhen": "Rewriting AI-generated copy to sound like you wrote it.",
     "body": "Here's how I write: [paste 1–2 paragraphs of your own writing — old emails, journal, anything authentic].\n\nNow write [the new piece] in this voice. Then tell me what choices you made to match — sentence rhythm, word choices, what you avoided.\n\nDon't write more than I asked for. Don't add a polite intro or outro.",
     "featured": false,
-    "isCapability": false
+    "isCapability": false,
+    "power": true
   },
   {
     "id": "setup-claude-project",
@@ -97,7 +98,8 @@
     "useWhen": "Found a design you love. Want to articulate what makes it work.",
     "body": "[Attach screenshot of a design you admire]\n\nDon't summarize what's in this design — articulate what makes it visually distinctive. Tell me:\n1. What it does that most designs DON'T do\n2. The specific design decisions (type weight relationships, spacing rhythm, color proportions, what's deliberately missing)\n3. What I could borrow as a technique (vs what's signature to them and would feel like cribbing)\n4. What it tells me about the designer's worldview",
     "featured": false,
-    "isCapability": false
+    "isCapability": false,
+    "power": true
   },
   {
     "id": "accessibility-check",
@@ -157,7 +159,8 @@
     "useWhen": "About to commit to a decision. Want the strongest case against.",
     "body": "I'm considering [decision]. Argue the strongest case AGAINST what I'm planning. Don't be polite. What am I missing? What would a smart person who disagrees with me say?",
     "featured": false,
-    "isCapability": false
+    "isCapability": false,
+    "power": true
   },
   {
     "id": "make-a-decision",
@@ -177,7 +180,8 @@
     "useWhen": "About to commit to a project. Want a reality check on scope.",
     "body": "Here's what I'm planning to build: [describe project + timeline].\n\nSanity check the scope:\n1. What's likely to take 3× longer than I think?\n2. What am I assuming will be easy that won't be?\n3. What's the smallest version of this that would still be worth shipping?\n4. What's the riskiest assumption I haven't tested?\n5. If I had half the time, what would I cut first?\n\nBe skeptical. I'd rather hear it now than at the deadline.",
     "featured": false,
-    "isCapability": false
+    "isCapability": false,
+    "power": true
   },
   {
     "id": "weekly-review",
@@ -207,7 +211,8 @@
     "useWhen": "Need to write a message you've been putting off.",
     "body": "I need to write [type of message — e.g. \"an email pushing back on a deadline\" / \"Slack message saying I disagree with the direction\"] to [recipient and their relationship to me].\n\nHelp me draft 3 versions:\n1. Direct — clear, no softening, professionally honest\n2. Warm — same content but with relationship care\n3. Strategic — leads with what they need to hear before what I need to say\n\nFor each, tell me what I'm trading off. Then I'll pick which to send.",
     "featured": false,
-    "isCapability": false
+    "isCapability": false,
+    "power": true
   },
   {
     "id": "translate-frustration",

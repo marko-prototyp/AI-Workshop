@@ -4,7 +4,7 @@ name: "Interactive case study"
 desc: "One project turned into a scrollable microsite that shows decisions, alternates, and craft over time."
 bestFor: "strong existing work"
 pickIf: |
-  the work in your portfolio is already strong but flat — readers see the screens, not the thinking. The interactive case study turns one project into a scrollable microsite that lets you show decisions, alternates, and craft over time.
+  Your best project looks flat in a PDF. Screenshots, captions, no sense of how it got made. One project becomes a scrollable microsite that shows the thinking, not just the outcome.
 goesWrong: |
   Scope. Designers pick a project and try to interactively narrate the entire arc — research, alternates, ship, reception. By week 8 they've built four sections of twelve. Pick one slice and tell that one slice well: the redesign, the moment of insight, the part the original case study glossed over.
 goodLooks: |

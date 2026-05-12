@@ -1,5 +1,5 @@
 ---
-participant: "Ivo Anić"
+participant: "Ivo"
 project: "Personal Cycling & Training Dashboard"
 status: "draft"
 weeks_completed: 1

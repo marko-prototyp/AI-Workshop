@@ -4,7 +4,7 @@ name: "A playful microsite"
 desc: "A concept-driven one-page site where the writing or idea does as much work as the visual design."
 bestFor: "creative range"
 pickIf: |
-  you want creative range over polish. A manifesto, a "things I learned in 10 years" essay, a generative piece tied to your work — something where the writing or concept is doing as much work as the visual design.
+  You have a take you've never published. An argument, something you believe about design that you've only ever said out loud. Write it, design it, ship it. The concept is the whole project.
 goesWrong: |
   The concept is too small. "A site about my favorite fonts" isn't a concept; it's a list. The concept needs to have a take. "A site arguing that designers should stop using Inter" is a concept. Strong concepts have a thesis, even if the thesis is playful.
 goodLooks: |
