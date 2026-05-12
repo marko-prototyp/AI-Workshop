@@ -1,6 +1,6 @@
 # Week 01 — Raw notes
 
-> Marko's check-in as the fourth (meta-) participant. The three designer participants' check-ins go below this once collected.
+> Marko's check-in (meta-project) plus participant check-ins as they come in. Marin ran the session solo from the handbook and submitted his check-in first.
 
 ---
 
@@ -49,16 +49,68 @@ All three participants seemed really engaged. Sometimes it even brings joy when 
 
 ---
 
-## Participant check-ins (to be collected)
+## Participant check-ins
+
+### Marin Galić
+
+**Project:** Naučimo Hrvatski. A language-learning app for his long-distance girlfriend in Philadelphia, who is learning Croatian and will eventually move to Osijek. Built around the FaceTime calls they actually have.
+
+**Joined:** Ran Session 01 solo at his own desk, following the handbook on the workshop site. Asked to join as a participant after seeing what he could ship in one self-directed hour.
+
+#### Claude's session recap (verbatim, from Marin's chat)
+
+> You got interviewed about yourself. I asked you 8–10 questions about your strengths, what you want to be known for, what energizes vs. drains you, and your target audience. The summary: you're a mobility industry designer and content creator with a gift for punchy communication, drained by manual content pipelines, and wanting to help founders and niche creators look more credible.
+>
+> We explored project directions for the 12-week program. I gave you 3 options first — tiny tool, interactive case study, playful microsite — then pushed further with 4 more when you weren't sold: a newsletter product, a thesis-driven personal brand site, a reel template system, and a pitch communication tool for mobility founders.
+>
+> You brought in a personal project idea. You want to build a Croatian language learning app for your long-distance girlfriend in Philadelphia, who has basic vocabulary and will eventually move to Osijek with you. The key insight: simulate the FaceTime conversations you actually have together, not a generic textbook approach.
+>
+> We built a working prototype together. A fully functional AI-powered app called Naučimo Hrvatski — five scenarios (morning call, evening wind-down, the market, Osijek city tour, planning a visit), each with an AI playing the role of your Croatian boyfriend character, responding in Croatian with English translations in brackets, gently correcting her along the way.
+>
+> You completed your Session 01 check-in. I interviewed you across 8 questions about your week and compiled your answers into a clean document ready to hand to your facilitator. One session. A self-portrait, a project direction, a working prototype, and a documented week. Not bad for an hour.
+
+#### Q1 — What I made this session
+
+Narrowed down the idea of what I want to build. Started with the outline.
+
+#### Q2 — Most useful Claude moment
+
+Claude created a brief structure of the future app.
+
+#### Q3 — What Claude did badly
+
+Nothing to report this week.
+
+#### Q4 — One decision
+
+To work on it super productively once a week for an hour.
+
+#### Q5 — What I'm stuck on
+
+Still trying to figure out the basics of the app. How it will work, and how it will benefit my girlfriend compared to other language learning apps out there. Mainly Duolingo, because it doesn't have Croatian.
+
+#### Q6 — Artifact worth keeping
+
+Screenshot of the *Naučimo Hrvatski* app. Five scenario cards built during the session: *Jutarnji poziv* (morning call), *Večernji razgovor* (evening conversation), *Na tržnici* (at the market), *Grad Osijek* (the city of Osijek), *Planiranje posjeta* (planning a visit).
+
+#### Q7 — Quote
+
+> "Croatian is super hard, and I want to be better than these other apps out there. Find a new way of learning Croatian."
+
+#### Q8 — Next session
+
+Continue figuring out how the app is going to be conceptualized.
+
+---
 
 ### Ivo
 
-_pending — send Q1–Q8 via participant prompt_
+_pending. Send the new 5-question participant prompt._
 
 ### Ivan
 
-_pending — send Q1–Q8 via participant prompt_
+_pending. Send the new 5-question participant prompt._
 
 ### Paula
 
-_pending — send Q1–Q8 via participant prompt_
+_pending. Send the new 5-question participant prompt._

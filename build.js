@@ -552,18 +552,24 @@ If anything important is missing, ask me one question at a time. Don't fabricate
 
   const partPrompt = `I just finished Session ${num} of the AI for Designers workshop. The session was "${w.title}" (focus: ${w.capability}). The expected outputs were: ${outputsList}.
 
-Interview me about my experience this week. Ask me one question at a time, eight total:
+Run this in the same Claude conversation where we did today's session work. You'll need that context.
 
-1. What did you actually make this week? Concrete, one or two sentences.
-2. What's the most useful thing Claude did for you? Pick one specific moment. Paste the prompt or describe the exchange.
-3. What did Claude do badly, or what did you fight against?
-4. What's the one decision you made about your project this week?
-5. What are you stuck on right now?
-6. One screenshot or artifact worth keeping. Link or describe.
-7. A quote-worthy line. Something you said or thought.
-8. What do you want to do next week?
+Do three things, in order.
 
-After all eight, structure my answers as a clean check-in I can paste back to my facilitator. Don't editorialise. Use my words, organised.`;
+PART 1 — Recap what we actually built today.
+Read back through our conversation from this session. In three to five concrete bullets, tell me: what we made, what got rejected, what decisions we landed on. Quote me directly when a line is worth quoting. Concrete, not summary-language. If this is a fresh chat and you don't have our session history, say so and skip to PART 2.
+
+PART 2 — Interview me about the rest.
+Ask one question at a time, five total. Wait for my answer before moving on.
+
+1. What did you make this session? Concrete, one or two sentences.
+2. Best Claude moment and worst Claude moment. One specific exchange that worked, one you fought against.
+3. One decision you made about your project. Scope, direction, constraint, reference. Something you committed to today.
+4. One artifact and one quote-worthy line. A screenshot, file, or link worth keeping. Plus one sentence from the session worth remembering.
+5. What's next and what's stuck. What you want to do before next session, and the thing you'd ask the room about if we had another hour.
+
+PART 3 — Compose the final check-in.
+Merge PART 1 (what you observed in our session) and PART 2 (my answers) into a single clean check-in for my facilitator. Structure: a short session recap at the top, then my five answers as a Q&A. Use my words. Your observations only add what I didn't supply.`;
 
   return `<details class="week" id="journal-prompts-w${num}">
       <summary class="week-summary" aria-label="Session ${weekNum} prompts: ${w.title}">
@@ -581,6 +587,20 @@ After all eight, structure my answers as a clean check-in I can paste back to my
         <div class="spacer"></div>
         <div>
           <div class="week-section">
+            <h4>For each participant: capture your experience.</h4>
+            <p>Run this in the same Claude conversation you used during the session. It recaps your back-and-forth, interviews you with five short questions, and outputs a clean check-in to send back to the facilitator.</p>
+            <div class="prompt-box">
+              <div class="prompt-head">
+                <div class="prompt-label"><span class="star">▸</span> Prompt — Participant check-in</div>
+                <button class="copy-btn" data-copy="${partId}" aria-label="Copy participant prompt">
+                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="prompt-body" id="${partId}">${escapeHtml(partPrompt)}</pre>
+            </div>
+          </div>
+          <div class="week-section">
             <h4>For the facilitator: synthesise the session.</h4>
             <p>Run after the session. Paste your raw notes. Claude turns them into the weekly facilitator writeup.</p>
             <div class="prompt-box">
@@ -594,20 +614,6 @@ After all eight, structure my answers as a clean check-in I can paste back to my
               <pre class="prompt-body" id="${facId}">${escapeHtml(facPrompt)}</pre>
             </div>
           </div>
-          <div class="week-section">
-            <h4>For each participant: capture your experience.</h4>
-            <p>Each participant runs this in their own Claude. It interviews them and outputs a clean check-in to send back to the facilitator.</p>
-            <div class="prompt-box">
-              <div class="prompt-head">
-                <div class="prompt-label"><span class="star">▸</span> Prompt — Participant check-in</div>
-                <button class="copy-btn" data-copy="${partId}" aria-label="Copy participant prompt">
-                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
-                  <span>Copy</span>
-                </button>
-              </div>
-              <pre class="prompt-body" id="${partId}">${escapeHtml(partPrompt)}</pre>
-            </div>
-          </div>
         </div>
       </div>
     </details>`;
@@ -619,7 +625,7 @@ function buildJournalPromptsSection(weeks) {
     <header class="journal-prompts-head">
       <span class="journal-eyebrow">/tools</span>
       <h2 class="journal-prompts-title" id="journal-prompts-title">Prompts for capturing each <em class="italic-wonk">session</em>.</h2>
-      <p class="journal-lead">Run these after each session. The facilitator synthesises what happened. Each participant captures their own version. Together they build the journal.</p>
+      <p class="journal-lead">Run these after each session. Each participant captures their own version. The facilitator synthesises what happened. Together they build the journal.</p>
     </header>
     <div class="weeks-grid">${items}</div>
   </section>`;

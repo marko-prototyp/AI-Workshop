@@ -1,6 +1,6 @@
-# Weekly check-in — Week NN
+# Session check-in — Session NN
 
-> Send this to each participant within 48 hours of the session. Eight short answers. Should take 10–15 minutes.
+> Send this to each participant within 48 hours of the session. Five short answers. Should take 5 to 8 minutes.
 >
 > Write the way you'd talk to a colleague about it later. Don't worry about polish. We'll edit toward the journal voice (no em dashes, sentence-shaped, plain language) when we publish.
 
@@ -8,57 +8,39 @@
 
 **Your name:**
 
-**Week:**
+**Session:**
 
 **Date of session:**
 
 ---
 
-## 1. What did you actually make this week?
+## 1. What did you make this session?
 
-> One or two sentences. A screen, a prompt, a decision, a Figma file — whatever's most concrete. If you didn't make anything tangible, say what you ended up thinking instead.
-
-
-
-## 2. What's the most useful thing Claude did for you this week?
-
-> A specific moment. Not "it was helpful" — the actual exchange or output. Paste the prompt or describe the move.
+> One or two sentences. A screen, a prompt, a decision, a Figma file. Whatever's most concrete. If you didn't make anything tangible, say what you ended up thinking instead.
 
 
 
-## 3. What did Claude do badly, or what did you have to fight against?
+## 2. Best Claude moment and worst Claude moment.
 
-> Be honest. Generic output, missed context, getting talked into something. If it all worked, say that — but most weeks something didn't.
-
-
-
-## 4. What's the one decision you made about your project this week?
-
-> Scope cut, direction shift, naming a non-goal, picking a reference, choosing a constraint. One sentence is fine.
+> One specific exchange that worked. One you fought against, or that produced something off. Paste prompts if you have them. If everything worked, say that. Most sessions have at least one of each.
 
 
 
-## 5. What are you stuck on right now?
+## 3. One decision you made about your project.
 
-> The thing you'd ask the room about if we had another hour. Specific, not "everything."
-
-
-
-## 6. One screenshot, file, or artifact worth keeping.
-
-> Drop a link or attach. Even a sketch on paper. We'll use it later in your case study.
+> Scope cut, direction shift, naming a non-goal, picking a reference, choosing a constraint. The thing you committed to today.
 
 
 
-## 7. A quote-worthy thing you said or thought this week.
+## 4. One artifact and one quote-worthy line.
 
-> Could be about the project, about AI, about the process. We pick one of these for the journal each week.
+> Drop a screenshot, file, or link worth keeping. We'll use it in your case study later. And one sentence from the session worth remembering. About the project, about AI, about the process.
 
 
 
-## 8. What do you want to do next week?
+## 5. What's next and what's stuck.
 
-> One sentence. The thing that would feel like progress. Helps us shape the session.
+> What you want to do before next session. And the thing you'd ask the room about if we had another hour. Specific, not "everything."
 
 
 

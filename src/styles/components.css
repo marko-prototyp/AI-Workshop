@@ -980,6 +980,22 @@
   color: var(--ink);
   transition: border-color 0.25s, background 0.25s;
 }
+.nextpage-card--featured {
+  grid-column: 1 / -1;
+  padding: 56px 48px 48px;
+}
+.nextpage-card--featured .nextpage-title {
+  font-size: clamp(28px, 3.4vw, 40px);
+  max-width: 22ch;
+}
+.nextpage-card--featured .nextpage-desc {
+  max-width: 60ch;
+}
+@media (max-width: 720px) {
+  .nextpage-card--featured {
+    padding: 40px 24px;
+  }
+}
 .nextpage-card:hover {
   border-color: var(--accent);
   background: var(--bg-2);
