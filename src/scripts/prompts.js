@@ -48,10 +48,9 @@ export function initPromptLibrary() {
       if (match) anyVisible = true;
     });
 
-    // Capabilities section: show when 'all' or 'power'
+    // Capabilities section: show only on 'all'
     if (caps) {
-      const showCaps = cat === 'all' || cat === 'power';
-      caps.classList.toggle('is-hidden', !showCaps);
+      caps.classList.toggle('is-hidden', cat !== 'all');
     }
 
     // Empty state

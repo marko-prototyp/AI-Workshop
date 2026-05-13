@@ -1,5 +1,16 @@
 [
   {
+    "id": "ask-claude-how-to-use-claude",
+    "title": "Ask Claude how to use Claude",
+    "subtitle": "Meta-prompting",
+    "category": "power",
+    "useWhen": "You know what you want, not how to ask for it. Get the prompt before you give it.",
+    "body": "I want to use you for [specific situation — e.g. \"reviewing a Figma comp\", \"writing case studies in my voice\", \"planning a sprint\", \"debugging a logic error\"].\n\nBefore I dive in, tell me how to actually use you well for this:\n1. What mode or setting is best (Extended thinking, web search, Projects, Skills, regular chat)?\n2. What context should I share upfront — files, examples, constraints, my role?\n3. What's the common way people prompt for this that gets a mediocre answer?\n4. What's the single change to my prompt that would most improve your output?\n5. Write me the actual prompt I should send. Use [bracketed placeholders] for what I need to fill in.\n\nBe specific. Don't tell me \"give clear context\" — tell me what fields the context needs.",
+    "featured": true,
+    "isCapability": false,
+    "power": true
+  },
+  {
     "id": "figma-comp-to-build",
     "title": "Figma comp → build",
     "subtitle": "The universal handoff",
@@ -17,8 +28,7 @@
     "useWhen": "Rewriting AI-generated copy to sound like you wrote it.",
     "body": "Here's how I write: [paste 1–2 paragraphs of your own writing — old emails, journal, anything authentic].\n\nNow write [the new piece] in this voice. Then tell me what choices you made to match — sentence rhythm, word choices, what you avoided.\n\nDon't write more than I asked for. Don't add a polite intro or outro.",
     "featured": false,
-    "isCapability": false,
-    "power": true
+    "isCapability": false
   },
   {
     "id": "setup-claude-project",
@@ -37,8 +47,9 @@
     "category": "power",
     "useWhen": "Complex problems where you'd rather have a sharp answer than a fast one.",
     "body": "[Toggle on Extended thinking / Planning mode in Claude before sending this]\n\nI have a complex problem: [describe situation in detail].\n\nBefore answering, think through this thoroughly. Consider multiple angles, edge cases, and what could go wrong. I'd rather you take longer and give me a sharper answer than rush to a quick one.\n\nSpecifically work through:\n1. What are the actual constraints (not the stated ones)?\n2. What are 3 different approaches and their tradeoffs?\n3. What's the answer most people give that I should NOT take?\n4. What's your actual recommendation and why?",
-    "featured": true,
-    "isCapability": false
+    "featured": false,
+    "isCapability": false,
+    "power": true
   },
   {
     "id": "build-custom-skill",
@@ -58,7 +69,8 @@
     "useWhen": "Researching something current. Claude needs to search, not pull from memory.",
     "body": "I need to research [topic] thoroughly. Don't give me a summary from memory — actually search the web for current information.\n\nSpecifically:\n1. Find 5–7 high-quality sources from the last 12 months\n2. Identify where sources disagree, not just where they agree\n3. Flag anything that contradicts conventional wisdom\n4. Note gaps — what would I want to know that you couldn't find?\n\nCite sources with links. Be skeptical of marketing content. I'd rather have 3 great sources than 10 mediocre ones.",
     "featured": false,
-    "isCapability": true
+    "isCapability": false,
+    "power": true
   },
   {
     "id": "multi-shot-prompting",
@@ -159,8 +171,7 @@
     "useWhen": "About to commit to a decision. Want the strongest case against.",
     "body": "I'm considering [decision]. Argue the strongest case AGAINST what I'm planning. Don't be polite. What am I missing? What would a smart person who disagrees with me say?",
     "featured": false,
-    "isCapability": false,
-    "power": true
+    "isCapability": false
   },
   {
     "id": "make-a-decision",
@@ -180,8 +191,7 @@
     "useWhen": "About to commit to a project. Want a reality check on scope.",
     "body": "Here's what I'm planning to build: [describe project + timeline].\n\nSanity check the scope:\n1. What's likely to take 3× longer than I think?\n2. What am I assuming will be easy that won't be?\n3. What's the smallest version of this that would still be worth shipping?\n4. What's the riskiest assumption I haven't tested?\n5. If I had half the time, what would I cut first?\n\nBe skeptical. I'd rather hear it now than at the deadline.",
     "featured": false,
-    "isCapability": false,
-    "power": true
+    "isCapability": false
   },
   {
     "id": "weekly-review",
@@ -211,8 +221,7 @@
     "useWhen": "Need to write a message you've been putting off.",
     "body": "I need to write [type of message — e.g. \"an email pushing back on a deadline\" / \"Slack message saying I disagree with the direction\"] to [recipient and their relationship to me].\n\nHelp me draft 3 versions:\n1. Direct — clear, no softening, professionally honest\n2. Warm — same content but with relationship care\n3. Strategic — leads with what they need to hear before what I need to say\n\nFor each, tell me what I'm trading off. Then I'll pick which to send.",
     "featured": false,
-    "isCapability": false,
-    "power": true
+    "isCapability": false
   },
   {
     "id": "translate-frustration",
@@ -233,5 +242,16 @@
     "body": "I disagree with [person] about [decision]. Their position is [their argument]. My position is [your argument].\n\nHelp me write a response that:\n1. Genuinely engages with their strongest point (not a strawman)\n2. States my disagreement clearly without being combative\n3. Offers a path forward — either \"let's run a small test\" or \"here's what would change my mind\" or \"let's escalate to X\"\n\nDon't make it diplomatic to the point of being unclear. Disagreement should be readable.",
     "featured": false,
     "isCapability": false
+  },
+  {
+    "id": "ten-out-of-ten-copy",
+    "title": "10/10 copy, principles first",
+    "subtitle": null,
+    "category": "writing",
+    "useWhen": "Writing copy that needs to be good, not just done.",
+    "body": "I need to write [type of copy — e.g. landing page hero, product description, cold email opener, button label] for [audience and context].\n\nStep 1 — Principles. Before writing anything, list the 5 principles that separate great [type] from average. No generic advice (\"be clear\"). Actual craft moves, with one example sentence per principle.\n\nStep 2 — Apply. Write 3 versions you'd rate 10/10 against those principles. For each, name the principles you leaned on hardest.\n\nStep 3 — Defend. Tell me which one you'd ship and why. Then I'll tell you which I'd ship.\n\nBanned: superlatives, hedging, fake intimacy (\"we get it\"), anything that could appear on a generic SaaS landing page.",
+    "featured": false,
+    "isCapability": false,
+    "power": true
   }
 ]

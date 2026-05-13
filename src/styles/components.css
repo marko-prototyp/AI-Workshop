@@ -54,7 +54,7 @@
 .menu-btn span::after { top: 6px; }
 
 @media (max-width: 880px) {
-  .nav-links, .nav-cmd { display: none; }
+  .nav-links { display: none; }
   .menu-btn { display: flex; }
   .nav-links.open {
     display: flex; flex-direction: column;
@@ -1277,6 +1277,20 @@
   padding: 1px 5px; font-family: var(--mono); font-size: 10px;
 }
 
+@media (max-width: 880px) {
+  /* Drawer-style positioning: closer to the top, edge-to-edge with small margin */
+  .cmd-overlay { padding-top: 16px; padding-left: 12px; padding-right: 12px; }
+  .cmd-modal { width: 100%; max-height: calc(100dvh - 32px); }
+
+  /* Taller input row */
+  .cmd-input-wrap { padding: 22px 20px; }
+  .cmd-input { font-size: 16px; } /* 16px prevents iOS zoom-on-focus */
+
+  /* No keyboard on mobile, so hide the keyboard hint footer and ESC label */
+  .cmd-footer { display: none; }
+  .cmd-esc { display: none; }
+}
+
 /* ====== On this page (TOC) ====== */
 .toc-root {
   position: fixed;
@@ -1364,8 +1378,33 @@
 }
 .nav-actions .nav-cmd:hover { background: var(--bg-3); box-shadow: inset 0 0 0 1px var(--accent); }
 
+/* Mobile-only standalone theme toggle (next to hamburger) */
+.theme-toggle--mobile {
+  display: none;
+  width: 40px; height: 40px;
+  border: var(--hairline); border-right: var(--hairline);
+  margin-left: auto;
+}
+
 @media (max-width: 880px) {
-  .nav-actions { display: none; }
+  /* Show the mobile-only theme toggle in the top bar */
+  .theme-toggle--mobile { display: flex; align-items: center; justify-content: center; }
+
+  /* Hide the in-menu theme toggle and the ⌘K hint on mobile */
+  .nav-links .nav-actions .theme-toggle { display: none; }
+  .nav-links .nav-actions .nav-cmd kbd { display: none; }
+
+  /* Actions box (now just the search button) stretches edge-to-edge */
+  .nav-links.open .nav-actions {
+    order: -1;
+    width: 100%;
+  }
+  .nav-links.open .nav-actions .nav-cmd {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 16px 16px;
+    font-size: 14px;
+  }
 }
 
 /* ====== Clarity mode component overrides ====== */
