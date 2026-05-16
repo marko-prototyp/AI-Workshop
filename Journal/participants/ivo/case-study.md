@@ -1,20 +1,20 @@
 ---
 participant: "Ivo"
-project: "Personal Cycling & Training Dashboard"
+project: "Wattlog"
 status: "draft"
-weeks_completed: 1
-last_updated: "2026-05-08"
+weeks_completed: 2
+last_updated: "2026-05-13"
 hero_image: ""
 final_url: ""
 ---
 
-# Personal Cycling & Training Dashboard
+# Wattlog
 
 > First-person case study — Ivo's voice. Built across 12 weeks. Reviewed by Ivo before publication.
 
 ## TL;DR
 
-A single-purpose web tool I actually use to train smarter. CSV exports from Garmin Connect go in. Power zones, training load, ride history, and trends come out. No live API. No portfolio gloss. Dieter Rams applied to athletic data.
+A single-purpose web tool I actually use to train smarter. Called Wattlog. .fit files from Garmin and the smart trainer go in. Power zones, training load, ride history, and trends come out. No live API. No portfolio gloss. Dieter Rams applied to athletic data.
 
 ---
 
@@ -42,7 +42,16 @@ Came in with a project I already half-knew I wanted. The intake interview surfac
 
 *One screenshot of the brief / first sketch.*
 
-### Week 02 — _to come_
+### Week 02 — Wrote it down.
+
+The session was research and synthesis. I went through eleven training tools in a matrix and wrote a full project brief for Wattlog. Sixteen features ranked P0 through P3. Seven items on the not-building list, including "Strava exists."
+
+What I learned from the matrix: intervals.icu is the closest analytical product to what I want, and it gets the depth right but presents it like a Bloomberg terminal. WHOOP nailed the diagnosis-to-prescription handoff for general fitness. Nobody does that prescriptive layer well for outdoor self-coached cyclists. That's the wedge.
+
+The session closed with Claude pushing back on the brief across six areas. Honestly, the pushback wasn't very useful — I came in with most of this already worked out, and the session structured it rather than changed the direction. That's fine. The brief on paper is what mattered.
+
+*Screenshot: the 11-tool competitive matrix.*
+*Screenshot: the P0–P3 feature ranking.*
 
 ### Week 03 — _to come_
 

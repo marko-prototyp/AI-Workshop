@@ -2,8 +2,8 @@
 participant: "Ivan"
 project: "Mockup Generator"
 status: "draft"
-weeks_completed: 1
-last_updated: "2026-05-08"
+weeks_completed: 2
+last_updated: "2026-05-13"
 hero_image: ""
 final_url: ""
 ---
@@ -46,7 +46,24 @@ The risk Marko flagged: "bad generation fallback." Easy to defer; worth designin
 
 *One screenshot of the brief / first sketch.*
 
-### Week 02 — _to come_
+### Week 02 — Three drafts, two arguments, one brief.
+
+This session got the most pushback of any I've had so far, and most of it was Claude arguing with its own previous draft. The brief went through three versions. Two full rounds where Claude looked at what it just produced and said "this is wrong, here's why."
+
+Things that changed across the drafts:
+
+- Tap-to-refine got cut from v1 and replaced with a lock-and-shuffle pattern. Lock the chips that worked, shuffle the ones that didn't, regenerate. Explicit, not inferred.
+- The input hierarchy got restructured. Subject and Aesthetic Preset are now primary and always visible. The other four dimensions collapse by default. If you only touch the two primary ones, you still get a good result.
+- Background removal moved from a post-generation tool to an input option. "No background" is now just one of the choices inside Environment.
+
+I also ran a research check on the API. GPT Image 2 is confirmed: 16 reference images per call, native 2K output, photorealism that handles lighting properly, both `images.generate` and `images.edit` endpoints. Brother it should be a wrapper that converts your inputs into as perfect as possible prompts for the AI.
+
+The one thing I committed to and want on the record: no text inputs in UI because they force me to think and thinking is tiresome.
+
+What's stuck: I'm scared of the API connection. Marko knows. We're doing a group walkthrough in session 04 or 05.
+
+*Screenshot: the 10-tool competitive matrix.*
+*Screenshot: the final brief with the lock-and-shuffle pattern sketched.*
 
 ### Week 03 — _to come_
 

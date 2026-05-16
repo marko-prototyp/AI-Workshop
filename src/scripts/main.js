@@ -5,7 +5,9 @@ import './copy.js';
 import { initTOC } from './toc.js';
 import { initPromptLibrary } from './prompts.js';
 import { initSearch } from './search.js';
+import { initJournal } from './journal.js';
 
 initTOC();
 initPromptLibrary();
 initSearch();
+initJournal();

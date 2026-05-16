@@ -87,8 +87,7 @@ function loadJournal() {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)
     .filter(f => f.endsWith('.md'))
-    .sort()
-    .reverse() // newest first
+    .sort() // chronological (01, 02, 03, …)
     .map(f => {
       const { data, content: body } = matter(readFile(path.join(dir, f)));
       return { ...data, body };
@@ -154,17 +153,25 @@ function buildWeeksList(weeks) {
   return weeks.map(w => {
     const promptsHtml = (w.prompts || []).map((p, i) => {
       const id = `prompt-w${w.num}-p${i}`;
-      return `          <div class="prompt-box">
-            <div class="prompt-head">
-              <div class="prompt-label"><span class="star">▸</span> Prompt — ${p.title}</div>
-              <button class="copy-btn" data-copy="${id}" aria-label="Copy prompt">
-                <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
-                <span>Copy</span>
-              </button>
+      const preambleHtml = p.preamble
+        ? `<p class="prompt-preamble">${emph(p.preamble)}</p>`
+        : '';
+      return `          <div class="prompt-item">
+            ${preambleHtml}
+            <div class="prompt-box">
+              <div class="prompt-head">
+                <div class="prompt-label"><span class="star">▸</span> Prompt — ${p.title}</div>
+                <button class="copy-btn" data-copy="${id}" aria-label="Copy prompt">
+                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="prompt-body" id="${id}">${p.body.trimEnd()}</pre>
             </div>
-            <pre class="prompt-body" id="${id}">${p.body.trimEnd()}</pre>
           </div>`;
     }).join('\n');
+
+    const aimHtml = w.aim ? `<p class="week-aim">${emph(w.aim)}</p>` : '';
 
     const exerciseItems = (w.exercise || []).map(e => `<li>${e}</li>`).join('');
     const outputItems   = (w.outputs  || []).map(o => `<li>${o}</li>`).join('');
@@ -186,9 +193,9 @@ function buildWeeksList(weeks) {
         <div class="spacer"></div>
         <div>
           <div class="week-section"><h4>Capability focus</h4><p>${w.capability}</p></div>
-          <div class="week-section"><h4>Live demo (10 min)</h4><p>${w.demo}</p></div>
-          <div class="week-section"><h4>Hands-on exercise (40 min)</h4><ul>${exerciseItems}</ul></div>
-          ${promptsHtml ? `<div class="week-section"><h4>Prompts</h4>${promptsHtml}</div>` : ''}
+          ${w.toolkit ? `<div class="week-section week-section--toolkit"><h4>Run it in</h4><p>${w.toolkit}</p></div>` : ''}
+          <div class="week-section"><h4>Hands-on exercise</h4><ul>${exerciseItems}</ul></div>
+          ${promptsHtml ? `<div class="week-section week-section--prompts"><h4>Try it yourself first. Prompts as backup.</h4>${aimHtml}${promptsHtml}</div>` : ''}
           <div class="week-section"><h4>Outputs</h4><ul>${outputItems}</ul></div>
           <div class="week-section"><h4>Watch out for</h4><ul>${watchItems}</ul></div>
         </div>
@@ -472,54 +479,93 @@ function buildJournalEntry(entry) {
   </article>`;
 }
 
-function buildJournalContents(entries, totalWeeks) {
-  const count = entries.length;
-  const latest = entries[0]; // entries already sorted newest first
-  const latestParticipants = latest && latest.participants !== undefined ? latest.participants : null;
+// Build the list items used by both the desktop rail and the mobile sheet.
+// Entries appear newest first (matching the entries column). Future sessions
+// from the weeks data appear below as pending rows.
+function buildRailItems(entries, weeks) {
+  const entryNums = new Set(entries.map(e => e.num));
+  const latestNum = entries[0] ? entries[0].num : null;
 
-  const metaBits = [
-    `Session ${count} of ${totalWeeks}`,
-    `${count} ${count === 1 ? 'entry' : 'entries'} so far`,
-  ].filter(Boolean).join(' · ');
-
-  const items = entries.map(e => {
+  const entryItems = entries.map(e => {
     const dateLabel = e.date
       ? new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       : '';
-    const hook = e.quote
-      ? `<span class="contents-hook">&ldquo;${e.quote}&rdquo;${e.quoteAttribution ? ` <span class="contents-attr">${e.quoteAttribution}</span>` : ''}</span>`
-      : '';
-    return `<li class="contents-item">
-      <a class="contents-link" href="#entry-${e.num}">
-        <span class="contents-num">${e.num}</span>
-        <span class="contents-title">${e.title}</span>
-        <span class="contents-date">${dateLabel}</span>
-      </a>
-      ${hook}
-    </li>`;
+    const isLatest = e.num === latestNum;
+    const cls = `rail-item${isLatest ? ' is-active' : ''}`;
+    return `<li class="${cls}" data-target="entry-${e.num}">
+        <a href="#entry-${e.num}" class="rail-link">
+          <span class="rail-num">${e.num}</span>
+          <span class="rail-text">
+            <span class="rail-title">${e.title}</span>
+            ${dateLabel ? `<span class="rail-date">${dateLabel}</span>` : ''}
+          </span>
+        </a>
+      </li>`;
   }).join('\n');
 
-  const emptyRow = count === 0
-    ? `<li class="contents-item contents-item--empty"><span class="contents-num">01</span><span class="contents-title contents-pending">First entry lands after Week 1.</span></li>`
+  // Hide all greyed-out future entries except the next one up.
+  const nextPending = weeks.find(w => !entryNums.has(w.num));
+  const pendingItems = nextPending
+    ? `<li class="rail-item rail-item--future rail-item--next">
+        <span class="rail-num">${nextPending.num}</span>
+        <span class="rail-text">
+          <span class="rail-title">${nextPending.title}</span>
+          <span class="rail-date">Coming up next</span>
+        </span>
+      </li>`
     : '';
 
-  const remaining = totalWeeks - count;
-  const upcoming = remaining > 0 && count > 0
-    ? `<li class="contents-item contents-item--upcoming"><span class="contents-num">${String(count + 1).padStart(2, '0')}–${totalWeeks}</span><span class="contents-title contents-pending">${remaining} more ${remaining === 1 ? 'entry' : 'entries'} to come.</span></li>`
-    : '';
+  return entryItems + (pendingItems ? '\n' + pendingItems : '');
+}
 
-  return `<nav class="journal-contents" aria-label="In this journal">
-    <div class="contents-head">
+function buildJournalRail(entries, weeks) {
+  const count = entries.length;
+  const totalWeeks = weeks.length;
+  const items = buildRailItems(entries, weeks);
+
+  return `<aside class="journal-rail" aria-label="Sessions">
+    <div class="rail-head">
       <span class="journal-eyebrow">/contents</span>
-      <span class="contents-meta">${metaBits}</span>
+      <span class="rail-meta">${count} of ${totalWeeks}</span>
     </div>
-    <ul class="contents-list">
+    <ol class="rail-list" id="journal-rail-list">
       ${items}
-      ${emptyRow}
-      ${upcoming}
-    </ul>
-    <a class="contents-tools-link" href="#journal-prompts">Prompts for facilitators and participants <span aria-hidden="true">↓</span></a>
-  </nav>`;
+    </ol>
+    <a class="rail-tools-link" href="#journal-prompts">All session prompts <span aria-hidden="true">↓</span></a>
+  </aside>`;
+}
+
+function buildJournalJumpPill(entries, totalWeeks) {
+  const count = entries.length;
+  const latest = entries[0];
+  const latestNum = latest ? latest.num : '01';
+  // Hidden if no entries exist; otherwise visible on mobile only (CSS handles it).
+  return `<button class="journal-jump-pill" id="journal-jump-pill" type="button" aria-haspopup="dialog" aria-controls="journal-jump-sheet" aria-expanded="false"${count === 0 ? ' hidden' : ''}>
+    <span class="pill-label">Jump to session</span>
+    <span class="pill-pos"><span class="pill-now" id="journal-jump-now">${latestNum}</span> <span class="pill-sep">/</span> <span class="pill-total">${String(totalWeeks).padStart(2, '0')}</span></span>
+    <span class="pill-chev" aria-hidden="true">▾</span>
+  </button>`;
+}
+
+function buildJournalJumpSheet(entries, weeks) {
+  const items = buildRailItems(entries, weeks);
+  return `<dialog class="journal-jump-sheet" id="journal-jump-sheet" aria-label="Jump to a session">
+    <div class="sheet-inner">
+      <header class="sheet-head">
+        <span class="journal-eyebrow">/contents</span>
+        <button class="sheet-close" type="button" aria-label="Close">
+          <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+            <line x1="2" y1="2" x2="12" y2="12" stroke="currentColor" stroke-width="1.2"/>
+            <line x1="12" y1="2" x2="2" y2="12" stroke="currentColor" stroke-width="1.2"/>
+          </svg>
+        </button>
+      </header>
+      <ol class="rail-list sheet-list">
+        ${items}
+      </ol>
+      <a class="rail-tools-link" href="#journal-prompts">All session prompts <span aria-hidden="true">↓</span></a>
+    </div>
+  </dialog>`;
 }
 
 function buildJournalPromptItem(w) {
@@ -528,6 +574,99 @@ function buildJournalPromptItem(w) {
   const facId = `journal-prompt-w${num}-fac`;
   const partId = `journal-prompt-w${num}-part`;
   const outputsList = (w.outputs || []).join('; ') || '[fill in for your week]';
+
+  // Session 12 is the close of the workshop. The prompts shift from
+  // per-session capture to a workshop-wide close: participant ratings and
+  // feedback, facilitator's honest read on what the twelve sessions were.
+  if (num === '12') {
+    const partPrompt12 = `This is Session 12. The last one. You probably just shipped (or close to it) a project that didn't exist twelve sessions ago. For most of you, it's the first thing you've built this way.
+
+Run this in the same Claude conversation you used during today's session. Better yet, the one you've used across the whole workshop, if you've kept it. You'll need that history.
+
+Do three things, in order.
+
+PART 1 — Look back at what you actually built.
+Read back through this conversation. In four to six concrete bullets, tell me: what the project became, the moments it almost broke, the decisions that turned out to matter, and the thing you can do now that you couldn't twelve sessions ago. Quote me directly when a line is worth quoting. Concrete, not flattering. If this is a fresh chat and you don't have the history, say so and skip to PART 2.
+
+PART 2 — Closing remarks. Five questions, one at a time.
+Wait for each answer before moving on.
+
+1. What did you build, and what's it for? One short paragraph. Aimed at a designer who's never heard of it.
+2. Rate the workshop out of ten. Then the one-line reason for the number.
+3. The best part of the twelve sessions, and the worst part. A specific moment, not a vibe.
+4. What changed about how you work. A habit, an instinct, or something you'll keep doing on Monday morning.
+5. What you'd cut from the workshop, and what you'd add. Write it like you're talking to whoever runs the next one.
+
+PART 3 — Compose the final check-in.
+Merge PART 1 (what you observed across the workshop) and PART 2 (my answers) into a single closing check-in for the facilitator. Structure: a short look-back at the top, then my five answers as Q&A. Use my words. Your observations only fill in what I didn't supply. End on one line worth quoting, pulled from somewhere in the conversation.`;
+
+    const facPrompt12 = `I just ran the final session of the AI for Designers workshop. Twelve sessions, four designers, real projects. What I want now is an honest read of what I just did.
+
+Here are my raw notes from across the twelve sessions, plus anything from today's retro:
+
+[PASTE NOTES, RETRO LINES, JOURNAL SCRAPS. Bullets fine. Half-thoughts welcome.]
+
+Synthesise into the facilitator close. Structure:
+
+1. What the workshop ended up being. One short paragraph. The shape of it, not the pitch.
+2. What each participant shipped. One block per person, first name only (Ivo, Ivan, Marin, Paula). What it does, what it almost was, what they can now do that they couldn't in Session 1.
+3. What went well. Four bullets. The moves I'd repeat.
+4. What went badly. Four bullets. The moves I wouldn't. Honest, not self-flagellating.
+5. Interventions I made. The two or three times I changed the plan mid-stream, and what happened because of it.
+6. The best part. One short paragraph. The thing I didn't expect.
+7. What I'd run differently next time. Three to five lines, concrete enough that the next facilitator can act on it.
+
+Voice rules: specific, first-person, designer-to-designer. No fluff. No em dashes in visible copy. Sentence-shaped headings ending with a period. "Sessions" not "weeks" in narrative prose ("Week NN" is fine as a label). "Workshop" not "program." First names only for participants. One quietly-emphasised italic per line max. Reference: Claude/home-copy-final.md.
+
+If anything important is missing, ask me one question at a time. Don't fabricate.`;
+
+    return `<details class="week" id="journal-prompts-w${num}">
+      <summary class="week-summary" aria-label="Session ${weekNum} prompts: ${w.title}">
+        <span class="week-num">W ${num}</span>
+        <span class="week-title">${w.title}</span>
+        <span class="week-meta">
+          <span class="week-phase">${w.phase}</span>
+          <svg class="week-icon" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1"/>
+            <line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </span>
+      </summary>
+      <div class="week-content">
+        <div class="spacer"></div>
+        <div>
+          <div class="week-section">
+            <h4>For each participant: closing remarks.</h4>
+            <p>The last session. Look back across the twelve, rate the workshop, leave feedback for whoever runs the next one. Run it in the Claude conversation you've used across the project, so it has the history.</p>
+            <div class="prompt-box">
+              <div class="prompt-head">
+                <div class="prompt-label"><span class="star">▸</span> Prompt — Participant close</div>
+                <button class="copy-btn" data-copy="${partId}" aria-label="Copy participant prompt">
+                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="prompt-body" id="${partId}">${escapeHtml(partPrompt12)}</pre>
+            </div>
+          </div>
+          <div class="week-section">
+            <h4>For the facilitator: the final say.</h4>
+            <p>What the workshop turned out to be. What went well, what went badly, the interventions, the best part. Paste twelve sessions of notes. Claude turns it into the close.</p>
+            <div class="prompt-box">
+              <div class="prompt-head">
+                <div class="prompt-label"><span class="star">▸</span> Prompt — Facilitator close</div>
+                <button class="copy-btn" data-copy="${facId}" aria-label="Copy facilitator prompt">
+                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" stroke="currentColor"/><rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" fill="none"/></svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="prompt-body" id="${facId}">${escapeHtml(facPrompt12)}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>`;
+  }
 
   const facPrompt = `I just ran Session ${num} of the AI for Designers workshop. The session was "${w.title}" (focus: ${w.capability}).
 
@@ -639,13 +778,22 @@ function buildJournalHtml(entries, weeks) {
     <p class="journal-lead-note">Turns out the best thing you can do is just start. These are the notes from that. Tag along.</p>
   </header>`;
 
-  const contents = buildJournalContents(entries, weeks.length);
+  const jumpPill = buildJournalJumpPill(entries, weeks.length);
+  const rail     = buildJournalRail(entries, weeks);
+  const sheet    = buildJournalJumpSheet(entries, weeks);
 
   const entriesHtml = entries.length
     ? entries.map(buildJournalEntry).join('\n')
     : `<div class="journal-empty">No entries yet — first session writeup lands soon.</div>`;
 
-  return header + contents + entriesHtml + buildJournalPromptsSection(weeks);
+  const layout = `<div class="journal-layout">
+    ${rail}
+    <div class="journal-main" id="journal-main">
+      ${entriesHtml}
+    </div>
+  </div>`;
+
+  return header + jumpPill + layout + sheet + buildJournalPromptsSection(weeks);
 }
 
 // ── Facilitator builders ──────────────────────────────────────────────────────

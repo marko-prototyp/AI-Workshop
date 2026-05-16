@@ -376,6 +376,35 @@
   width: 8px; height: 1px; background: var(--accent);
 }
 
+/* Session aim — the "think first" framing question */
+.week-section--prompts .week-aim {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-bright);
+  font-style: italic;
+  letter-spacing: -0.005em;
+  border-left: 2px solid var(--accent);
+  padding: 4px 0 4px 16px;
+  margin: 0 0 28px;
+  max-width: 60ch;
+}
+
+/* Per-prompt preamble — the "before you copy" line */
+.prompt-item { margin-bottom: 20px; }
+.prompt-item .prompt-box { margin-bottom: 0; }
+.prompt-preamble {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0 0 10px;
+  padding-left: 12px;
+  border-left: 1px solid var(--rule);
+  max-width: 62ch;
+}
+
 /* Prompt box */
 .prompt-box { background: var(--bg-2); border: var(--hairline); margin-bottom: 16px; }
 .prompt-head {
@@ -1713,6 +1742,250 @@
     grid-column: 2;
     margin-top: 2px;
   }
+}
+
+/* ====== Journal — Spine layout (sticky rail + main) ====== */
+
+/* Widen the journal wrap on desktop so the rail can sit beside the content
+   without squeezing the reading column. Below 1024px we stay narrow and
+   the rail collapses into a mobile sheet (see .journal-jump-pill). */
+@media (min-width: 1024px) {
+  .journal-section .wrap {
+    max-width: 1120px;
+  }
+}
+
+.journal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 48px;
+  margin-top: 56px;
+}
+@media (min-width: 1024px) {
+  .journal-layout {
+    grid-template-columns: 220px minmax(0, 760px);
+    gap: 96px;
+    align-items: start;
+  }
+}
+
+.journal-main {
+  min-width: 0; /* let grid item shrink instead of overflowing */
+}
+
+/* — The rail — */
+.journal-rail {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .journal-rail {
+    display: block;
+    position: sticky;
+    top: 96px;
+    align-self: start;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 8px;
+    /* hide native scrollbar visually but keep it functional */
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
+  }
+}
+.journal-rail::-webkit-scrollbar { width: 4px; }
+.journal-rail::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 2px; }
+
+.rail-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 4px;
+  border-bottom: var(--hairline);
+}
+.rail-head .journal-eyebrow { margin: 0; }
+.rail-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.rail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sheet-list { margin-top: 8px; }
+
+.rail-item {
+  border-top: 1px solid var(--rule);
+  position: relative;
+}
+.rail-item:first-child { border-top: 0; }
+
+/* Both the link (entry) and the pending row (future) use the same grid */
+.rail-link,
+.rail-item--future {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 12px 4px 12px 0;
+}
+.rail-link {
+  color: var(--ink);
+  transition: color 0.18s ease;
+}
+.rail-link:hover { color: var(--ink-bright); }
+.rail-link:hover .rail-num { color: var(--accent); }
+
+.rail-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  transition: color 0.18s ease;
+}
+.rail-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.rail-title {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: inherit;
+}
+.rail-date {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rail-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  background: var(--accent);
+}
+.rail-item.is-active .rail-num { color: var(--accent); }
+.rail-item.is-active .rail-title { color: var(--ink-bright); }
+
+.rail-item--future {
+  opacity: 0.55;
+}
+.rail-item--future .rail-title {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.rail-tools-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 12px 14px;
+  width: 100%;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  transition: background-color 0.2s, color 0.2s;
+}
+.rail-tools-link:hover {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+/* — Mobile jump pill (visible <1024px) — */
+.journal-jump-pill {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .journal-jump-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin: 40px 0 8px;
+    padding: 10px 18px;
+    background: var(--bg-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .journal-jump-pill:hover { border-color: var(--accent); }
+  .pill-label { color: var(--ink); }
+  .pill-pos {
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    gap: 4px;
+  }
+  .pill-sep { color: var(--muted); }
+  .pill-total { color: var(--muted); }
+  .pill-chev { color: var(--muted); margin-left: 2px; }
+}
+
+/* — Mobile sheet (native <dialog>) — */
+.journal-jump-sheet {
+  border: 1px solid var(--rule);
+  padding: 0;
+  background: var(--bg-2);
+  color: var(--ink);
+  width: min(480px, calc(100vw - 32px));
+  max-height: 80vh;
+  border-radius: 12px;
+}
+.journal-jump-sheet::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+}
+.sheet-inner {
+  padding: 22px 24px 26px;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: var(--hairline);
+  margin-bottom: 8px;
+}
+.sheet-head .journal-eyebrow { margin: 0; }
+.sheet-close {
+  background: transparent;
+  border: 1px solid var(--rule);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.sheet-close:hover { border-color: var(--accent); color: var(--accent); }
+@media (min-width: 1024px) {
+  .journal-jump-sheet { display: none; }
 }
 
 /* ====== Journal prompts (tools) section ====== */

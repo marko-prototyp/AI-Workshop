@@ -2,8 +2,8 @@
 participant: "Marin"
 project: "Naučimo Hrvatski"
 status: "draft"
-sessions_completed: 1
-last_updated: "2026-05-08"
+sessions_completed: 2
+last_updated: "2026-05-13"
 hero_image: ""
 final_url: ""
 ---
@@ -14,7 +14,7 @@ final_url: ""
 
 ## TL;DR
 
-A language-learning app for one specific person. My girlfriend, in Philadelphia, learning Croatian for when she moves to Osijek. Five scenario cards that mirror the FaceTime calls we already have. An AI plays the role of a Croatian boyfriend character, responds in Croatian with English in brackets, corrects gently as she goes. Not Duolingo. Built around one real relationship.
+A language-learning app for one specific person. My girlfriend, in Philadelphia, learning Croatian for when she moves to Osijek. A memory book she reads chapter by chapter. Each chapter is one of our actual trips together. To turn the page she has to do something in Croatian: describe a photo, fill in what she would have said, retell the day. Croatian is the price of admission to her own memories. Not Duolingo. Built around one real relationship.
 
 ---
 
@@ -52,7 +52,31 @@ The thing I haven't done yet, which I'll do before session 02, is name what I'm 
 
 *One screenshot of the five-card prototype.*
 
-### Session 02 — _to come_
+### Session 02 — Changed my mind about the whole thing.
+
+I came in with the FaceTime app from session 01 and left with a completely different concept. The lever was a research check. We looked at ten indie language apps — TutorLily, Univerbal, Gliglish, Langotalk, TalkBits, AI LingoPlay, Langua, LingoStar, Copycat Cafe, Praktika — and the finding was that no app on the market is built around a couple's actual relationship as the core scenario. That gap was the thing.
+
+Once I saw it, the conversation app I built in session 01 felt wrong. Not bad, just wrong for what this project should be. The right shape was a memory book.
+
+So now it's six chapters, mapped to actual trips we've taken since we met:
+
+1. Her first time in Croatia — December 2024 to January 2025
+2. Me in Colorado — April 2025
+3. Me on the Jersey Shore — July 2025
+4. Her second time in Croatia — December 2025 to January 2026
+5. Me back in Colorado — April 2026
+6. Her trip in September 2026, less than four months away
+
+The way it works: each chapter opens at the airport. Each scene inside is a day or a moment from the trip. A photo, two to four sentences in Croatian with a translation toggle, one language interaction. To turn the page she has to do it. Most scenes are "describe the photo." Each chapter ends with a "story rebuild" where she retells the whole trip in Croatian, the AI gently corrects, and the result gets saved as her own in-Croatian version of the trip.
+
+No streaks. No hearts. No guilt notifications. This is a gift, not Duolingo. If she misses a day, the AI character just picks the conversation back up. Marko would describe it as the part where I refuse to make my girlfriend feel bad for missing a day, which is correct.
+
+Claude pushed back on the six-chapter v1 scope. The recommendation was to build chapter 1 fully before touching the others. Hand it over as a working gift, then keep dropping new chapters into it over time. I haven't committed yet. That's the decision I need to make before session 03.
+
+Other thing to figure out: how I feed Claude descriptions of the trips so the app actually has something to teach from. Photos, contexts, what we ate, what we said. That's writing work I haven't started.
+
+*Screenshot: the chapter map.*
+*Screenshot: the "describe the photo" scene template.*
 
 ### Session 03 — _to come_
 

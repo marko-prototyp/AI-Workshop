@@ -2,8 +2,8 @@
 participant: "Paula"
 project: "Classroom Behavior Tracker"
 status: "draft"
-weeks_completed: 1
-last_updated: "2026-05-08"
+weeks_completed: 2
+last_updated: "2026-05-13"
 hero_image: ""
 final_url: ""
 ---
@@ -14,7 +14,7 @@ final_url: ""
 
 ## TL;DR
 
-A mobile-first tool a real teacher opens during a real class to track positive and negative behavior across focus, participation, and disruption. Weekly AI summaries surface patterns and flag students who need attention. Built around one teacher's actual workflow, not a hypothetical persona.
+A teacher-operated classroom tool a real teacher opens during a real class to log positive behavior points fast. The teacher holds the device. The students see a pixel-art scoreboard on a projector — leaderboards, XP, characters they can unlock. Negative consequences happen offline, not on the screen. Built in Claude Code. Built around one specific teacher I know, not a hypothetical persona.
 
 ---
 
@@ -44,7 +44,24 @@ The strongest real-user constraint of the three projects: a specific teacher, a 
 
 *One screenshot of the brief / first sketch.*
 
-### Week 02 — _to come_
+### Week 02 — Committed, and made two cuts.
+
+The first half of the session I was still moving between project ideas. The second half I committed: Classroom Behavior Tracker, built in Claude Code, for one specific teacher I know. Not "teachers in general."
+
+Then I made two scope cuts in the same session that I think will end up being the most important design decisions I make on this thing.
+
+**Students will not use the app.** Only the teacher. The students just look at it. The teacher holds the device, taps points, manages the room. The student view is a scoreboard projected on a screen, not an app on a phone.
+
+**Bad points end up offline.** Negative consequences go to extra homework or a real conversation, not to a public display on the screen. The screen is the reward layer. Punishment lives in real life.
+
+The research was two artifacts. A 6-tool matrix of the direct competitors — ClassDojo, LiveSchool, Lekktura, Bloomz, Be+, Kickboard — with a "one technique to borrow" column. And a deeper 10-reference report on character-driven gamification: TeachQuest, ClassMana, Habitica, Prodigy, Blooket, Gimkit, Joon, Finch, Duolingo Leagues, Mrs Wordsmith.
+
+What I took from it: the best student-facing gamification doesn't live in classroom tools. It lives in habit trackers (Habitica), self-care pets (Finch), and chore apps (Joon). I'm going pixel-art, retro, gamified. Habitica is the starting reference. Duolingo's tiered leagues adapt cleanly to a small class.
+
+What I want to research before I lock in any visible leaderboard: the psychology of public point displays. PBIS literature on what does and doesn't harm kids when their behavior is visible to the class. I'd love to spend real time on that in session 03 or 04.
+
+*Screenshot: the 6-tool comparison matrix.*
+*Screenshot: the Habitica avatar / profile reference.*
 
 ### Week 03 — _to come_
 
