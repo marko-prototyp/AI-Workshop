@@ -106,10 +106,11 @@ export function initJournal() {
       if (e.target === sheet) closeSheet();
     });
 
-    // Close after navigating to a session
+    // Close after navigating to a session, and sync the hash so deep-links work
     sheet.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', () => {
-        // Let the anchor jump happen, then close
+        const href = a.getAttribute('href');
+        if (href && href.length > 1) history.replaceState(null, '', href);
         setTimeout(closeSheet, 0);
       });
     });

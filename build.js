@@ -540,16 +540,18 @@ function buildJournalJumpPill(entries, totalWeeks) {
   const latest = entries[0];
   const latestNum = latest ? latest.num : '01';
   // Hidden if no entries exist; otherwise visible on mobile only (CSS handles it).
-  return `<button class="journal-jump-pill" id="journal-jump-pill" type="button" aria-haspopup="dialog" aria-controls="journal-jump-sheet" aria-expanded="false"${count === 0 ? ' hidden' : ''}>
-    <span class="pill-label">Jump to session</span>
-    <span class="pill-pos"><span class="pill-now" id="journal-jump-now">${latestNum}</span> <span class="pill-sep">/</span> <span class="pill-total">${String(totalWeeks).padStart(2, '0')}</span></span>
-    <span class="pill-chev" aria-hidden="true">▾</span>
-  </button>`;
+  return `<div class="jump-pill-wrap" data-source="journal">
+    <button class="jump-pill" id="journal-jump-pill" type="button" aria-haspopup="dialog" aria-controls="journal-jump-sheet" aria-expanded="false"${count === 0 ? ' hidden' : ''}>
+      <span class="pill-label">Jump to session</span>
+      <span class="pill-pos"><span class="pill-now" id="journal-jump-now">${latestNum}</span> <span class="pill-sep">/</span> <span class="pill-total">${String(totalWeeks).padStart(2, '0')}</span></span>
+      <span class="pill-chev" aria-hidden="true">▾</span>
+    </button>
+  </div>`;
 }
 
 function buildJournalJumpSheet(entries, weeks) {
   const items = buildRailItems(entries, weeks);
-  return `<dialog class="journal-jump-sheet" id="journal-jump-sheet" aria-label="Jump to a session">
+  return `<dialog class="jump-sheet" id="journal-jump-sheet" aria-label="Jump to a session">
     <div class="sheet-inner">
       <header class="sheet-head">
         <span class="journal-eyebrow">/contents</span>

@@ -997,6 +997,11 @@
 
 /* ====== Next pages (Figma Loop + Library intro cards) ====== */
 .nextpages { padding-top: 0; padding-bottom: 140px; }
+.nextpages-title {
+  /* Sits flush-left above the card grid, no num/aside columns needed. */
+  margin-bottom: 56px;
+  max-width: 10ch;
+}
 .nextpages-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
 }
@@ -1320,56 +1325,177 @@
   .cmd-esc { display: none; }
 }
 
-/* ====== On this page (TOC) ====== */
-.toc-root {
+/* ====== Jump pill (unified wayfinding control) ======
+   One component, two contexts:
+     - Desktop: fixed top-right, opens an anchored panel under itself.
+     - Mobile (<1024px): sticky-top, centered, opens a full <dialog> sheet.
+   Used on home, figma-loop, facilitator, and (mobile only) journal. */
+
+/* — Outer wrap controls positioning across breakpoints — */
+.jump-pill-wrap {
+  /* Desktop: pin to top-right, just under the fixed nav (~60–64px tall). */
   position: fixed;
-  top: 72px;
-  right: 20px;
+  top: 76px;
+  right: 24px;
   z-index: 45;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none; /* pill itself re-enables; lets clicks through the empty wrap */
 }
-@media (min-width: 1440px) {
-  .toc-root {
-    right: max(20px, calc((100vw - var(--max)) / 2 - 52px));
+.jump-pill-wrap > * { pointer-events: auto; }
+
+@media (max-width: 1023px) {
+  .jump-pill-wrap {
+    /* Mobile: fixed band at the top, centered, full-width with side padding.
+       Fixed (not sticky) so it doesn't depend on DOM insertion order. */
+    left: 0;
+    right: 0;
+    top: 76px;
+    padding: 0 16px;
+    justify-content: center;
   }
 }
-.toc-btn {
-  width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  border: var(--hairline); background: rgba(26,23,20,0.85);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  color: var(--muted); cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+
+/* — The pill itself — */
+.jump-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;        /* WCAG tap-target */
+  padding: 10px 18px;
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  max-width: 100%;
 }
-.toc-btn:hover,
-.toc-root:has(.toc-panel:not([hidden])) .toc-btn {
-  border-color: var(--accent); color: var(--ink-bright);
+.jump-pill:hover,
+.jump-pill[aria-expanded="true"] { border-color: var(--accent); }
+
+.jump-pill .pill-label { color: var(--ink); white-space: nowrap; }
+.jump-pill .pill-active {
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.toc-panel {
-  position: absolute; top: calc(100% + 6px); right: 0;
-  background: var(--bg-2); border: var(--hairline);
-  min-width: 210px; max-width: 280px;
+.jump-pill .pill-active:empty { display: none; }
+.jump-pill .pill-active:empty + .pill-sep { display: none; }
+.jump-pill .pill-sep { color: var(--rule); }
+.jump-pill .pill-pos {
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  gap: 4px;
+}
+.jump-pill .pill-pos .pill-sep,
+.jump-pill .pill-pos .pill-total { color: var(--muted); }
+.jump-pill .pill-chev {
+  color: var(--muted);
+  margin-left: 2px;
+  transition: transform 0.2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .jump-pill .pill-chev { transition: none; }
+}
+.jump-pill[aria-expanded="true"] .pill-chev {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+/* — Desktop anchored panel — */
+.jump-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  max-width: 320px;
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
   padding: 18px 20px;
-  max-height: calc(100vh - 120px); overflow-y: auto;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
-.toc-heading {
+.jump-panel[hidden] { display: none; }
+.jump-heading {
   display: block;
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
   margin-bottom: 14px;
 }
-.toc-panel ul { list-style: none; padding: 0; margin: 0; }
-.toc-panel li + li { border-top: var(--hairline); }
-.toc-link {
-  display: block; padding: 8px 0;
-  font-size: 13px; color: var(--ink); line-height: 1.3;
+.jump-list { list-style: none; padding: 0; margin: 0; }
+.jump-list li + li { border-top: 1px solid var(--rule); }
+.jump-link {
+  display: block;
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.3;
   transition: color 0.15s;
 }
-.toc-link--sub {
-  padding-left: 12px; font-size: 12px; color: var(--muted);
+.jump-link--sub {
+  padding-left: 12px;
+  font-size: 12px;
+  color: var(--muted);
 }
-.toc-link:hover { color: var(--ink-bright); }
-.toc-link.is-active { color: var(--accent); }
-.toc-link--sub.is-active { color: var(--accent); }
+.jump-link:hover { color: var(--ink-bright); }
+.jump-link.is-active { color: var(--accent); }
+.jump-link--sub.is-active { color: var(--accent); }
+
+/* Hide the desktop panel on mobile; the dialog handles it instead. */
+@media (max-width: 1023px) {
+  .jump-panel { display: none; }
+}
+
+/* — Mobile dialog sheet — */
+.jump-sheet {
+  border: 1px solid var(--rule);
+  padding: 0;
+  background: var(--bg-2);
+  color: var(--ink);
+  width: min(480px, calc(100vw - 32px));
+  max-height: 80vh;
+  border-radius: 12px;
+  /* Force-center on top of the UA defaults — some browsers don't honor
+     inset-inline:0 cleanly when a custom width is set on a :modal dialog. */
+  inset: 0;
+  margin: auto;
+}
+.jump-sheet::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+}
+@media (min-width: 1024px) {
+  .jump-sheet { display: none; }
+}
+
+/* Hide the pill when the mobile nav menu is open (prevents stacking conflict). */
+body:has(.nav-links.open) .jump-pill-wrap { display: none; }
+
+/* Don't print the pill or the sheet. */
+@media print {
+  .jump-pill-wrap, .jump-sheet { display: none !important; }
+}
+
+/* Give scroll targets a comfortable landing under the fixed nav (+ sticky pill on mobile). */
+.section, .loop-sub, .journal-entry, .fac-part {
+  scroll-margin-top: 88px;
+}
+@media (max-width: 1023px) {
+  .section, .loop-sub, .journal-entry, .fac-part {
+    scroll-margin-top: 140px;
+  }
+}
 
 /* Toast */
 .toast {
@@ -1451,9 +1577,9 @@
   background: rgba(246, 245, 241, 0.85);
 }
 
-/* TOC button — swap dark rgba for light */
-[data-theme="clarity"] .toc-btn {
-  background: rgba(246, 245, 241, 0.92);
+/* Jump pill — pill already uses --bg-2 which adapts, but firm up the border in light mode */
+[data-theme="clarity"] .jump-pill {
+  background: var(--bg-2);
 }
 
 /* Prompt boxes — subtle tinted bg instead of dark bg-2 */
@@ -1748,7 +1874,7 @@
 
 /* Widen the journal wrap on desktop so the rail can sit beside the content
    without squeezing the reading column. Below 1024px we stay narrow and
-   the rail collapses into a mobile sheet (see .journal-jump-pill). */
+   the rail collapses into a mobile sheet (see .jump-pill). */
 @media (min-width: 1024px) {
   .journal-section .wrap {
     max-width: 1120px;
@@ -1909,54 +2035,12 @@
   color: var(--bg);
 }
 
-/* — Mobile jump pill (visible <1024px) — */
-.journal-jump-pill {
-  display: none;
-}
-@media (max-width: 1023px) {
-  .journal-jump-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    margin: 40px 0 8px;
-    padding: 10px 18px;
-    background: var(--bg-2);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--ink);
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
-  }
-  .journal-jump-pill:hover { border-color: var(--accent); }
-  .pill-label { color: var(--ink); }
-  .pill-pos {
-    color: var(--accent);
-    letter-spacing: 0.06em;
-    display: inline-flex;
-    gap: 4px;
-  }
-  .pill-sep { color: var(--muted); }
-  .pill-total { color: var(--muted); }
-  .pill-chev { color: var(--muted); margin-left: 2px; }
+/* — Journal-specific: rail does desktop wayfinding, so the pill stays mobile-only.
+     On mobile the universal .jump-pill-wrap rule (fixed top) already handles positioning. */
+@media (min-width: 1024px) {
+  .jump-pill-wrap[data-source="journal"] { display: none; }
 }
 
-/* — Mobile sheet (native <dialog>) — */
-.journal-jump-sheet {
-  border: 1px solid var(--rule);
-  padding: 0;
-  background: var(--bg-2);
-  color: var(--ink);
-  width: min(480px, calc(100vw - 32px));
-  max-height: 80vh;
-  border-radius: 12px;
-}
-.journal-jump-sheet::backdrop {
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(2px);
-}
 .sheet-inner {
   padding: 22px 24px 26px;
   overflow-y: auto;
@@ -1984,9 +2068,6 @@
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 .sheet-close:hover { border-color: var(--accent); color: var(--accent); }
-@media (min-width: 1024px) {
-  .journal-jump-sheet { display: none; }
-}
 
 /* ====== Journal prompts (tools) section ====== */
 .journal-prompts {

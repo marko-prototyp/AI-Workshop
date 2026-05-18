@@ -25,6 +25,57 @@
 
   {{include:partials/journal.html}}
 
+  <section class="section nextpages" aria-label="Keep going">
+    <div class="wrap">
+      <div class="nextpages-grid">
+
+        <a href="{{base}}/" class="nextpage-card">
+          <div class="nextpage-icon" aria-hidden="true">
+            <svg width="52" height="52" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Calendar body -->
+              <rect x="6" y="10" width="36" height="32" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <!-- Header divider -->
+              <line x1="6" y1="18" x2="42" y2="18" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+              <!-- Binding pegs -->
+              <line x1="16" y1="6" x2="16" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="32" y1="6" x2="32" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <!-- Highlighted date cell -->
+              <rect x="20" y="25" width="8" height="8" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="nextpage-eyebrow">/plan</span>
+          <h2 class="nextpage-title">See the whole plan.</h2>
+          <p class="nextpage-desc">What we're building, who's running it, and what each of the twelve sessions is for. Start here if you landed on the journal first.</p>
+          <span class="nextpage-cta">See the plan of the workshop →</span>
+        </a>
+
+        <a href="{{base}}/prompts/" class="nextpage-card">
+          <div class="nextpage-icon" aria-hidden="true">
+            <svg width="52" height="52" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Terminal frame -->
+              <rect x="4" y="8" width="40" height="32" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <!-- Header bar -->
+              <line x1="4" y1="17" x2="44" y2="17" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+              <!-- Three dots -->
+              <circle cx="11" cy="12.5" r="1.5" fill="currentColor" opacity="0.35"/>
+              <circle cx="17" cy="12.5" r="1.5" fill="currentColor" opacity="0.35"/>
+              <circle cx="23" cy="12.5" r="1.5" fill="currentColor" opacity="0.35"/>
+              <!-- > prompt chevron -->
+              <path d="M 13 27 L 19 24 L 13 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- cursor line -->
+              <line x1="22" y1="27" x2="32" y2="27" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="nextpage-eyebrow">/library</span>
+          <h2 class="nextpage-title">The right prompt changes what comes back.</h2>
+          <p class="nextpage-desc">Prompts the team actually uses. Not a megalist. Each one solves a specific problem, filtered by what you're trying to do. Copy any of them.</p>
+          <span class="nextpage-cta">Browse the library →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <script type="module" src="{{base}}/scripts/main.js"></script>
