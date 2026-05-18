@@ -451,10 +451,6 @@ function buildJournalEntry(entry) {
     : '';
   const phase = entry.phase ? `<span class="phase">${entry.phase}</span>` : '';
   const date  = dateLabel ? `<span class="date">${dateLabel}</span>` : '';
-  const participants = (entry.participants !== undefined)
-    ? `<span class="participants">${entry.participants} present</span>`
-    : '';
-
   const bodyHtml = marked.parse(entry.body || '');
 
   const quoteBlock = (entry.quote && entry.quoteAttribution)
@@ -469,7 +465,6 @@ function buildJournalEntry(entry) {
       <span class="num">Session ${num}</span>
       ${phase}
       ${date}
-      ${participants}
     </div>
     <h2 class="journal-entry-title">${entry.title}</h2>
     ${quoteBlock}
