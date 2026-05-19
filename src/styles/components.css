@@ -1482,6 +1482,13 @@
 /* Hide the pill when the mobile nav menu is open (prevents stacking conflict). */
 body:has(.nav-links.open) .jump-pill-wrap { display: none; }
 
+/* Home page on mobile: hide the pill. The home is short and the sections
+   are already in scroll order — wayfinding adds noise more than it helps.
+   Home is the only page whose <main> lacks .page-main, so we key off that. */
+@media (max-width: 1023px) {
+  body:not(:has(main.page-main)) .jump-pill-wrap { display: none; }
+}
+
 /* Don't print the pill or the sheet. */
 @media print {
   .jump-pill-wrap, .jump-sheet { display: none !important; }
