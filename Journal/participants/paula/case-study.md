@@ -63,7 +63,29 @@ What I want to research before I lock in any visible leaderboard: the psychology
 *Screenshot: the 6-tool comparison matrix.*
 *Screenshot: the Habitica avatar / profile reference.*
 
-### Week 03 — _to come_
+### Week 03 — Three sessions to find the right reference images.
+
+The session produced three HTML prototype iterations. The first — dark background, pixel font, scanline overlay — rejected immediately. The second and third arrived at the actual direction: warm cream ground, Nunito, vibrant ranking colors in pink and blue and orange. Five reference images brought and analyzed, each one contributing something to the brief. A 13-item banned moves list written in. Scope decided: a student list and a top-3 leaderboard, those two things built well before anything else.
+
+Then the brief was followed in three separate sessions. Every single one came back looking the same. Saturated mint and purple cards. Rounded Nunito everything. Emoji avatars with thick colored rings. The brief was being followed precisely. The output was still generic.
+
+It took until the third attempt to understand why.
+
+The two screenshots uploaded at the start of the original session were doing more work than the words. Both were children's app UI — saturated colors, mascot blobs, rounded type. Once those were in the conversation, every subsequent prompt got filtered through them regardless of what the brief said. Words can't override images. The model doesn't weigh the brief and the reference equally. It weighs the reference more.
+
+Changing the reference images broke the cycle. Two new ones: a creative kids academy landing page with Fraunces italic headlines mixed with bold sans, and a play-and-learn site with editorial layouts and white-dominant ground. Same audience, opposite visual language. The first build with the new references was the first one that didn't look like the others.
+
+The second thing that helped was a side-by-side comparison. Telling the model "this is too generic" got polite agreement and another generic result. Pasting both versions next to each other and asking it to name the specific differences produced a concrete analysis. The prompt: *"Compare the differences and write down the findings."* That did more diagnostic work than three sessions of brief refinement combined.
+
+The third finding was about the banned-moves list. Describing what not to do reads to the model as confirmation the aesthetic is in scope. It anchors to the world being described, not the negation. Naming the replacement works better than naming the prohibition.
+
+The style guide was fully rewritten with all three lessons in it. It opens with a diagnosis of why the first version failed. Every retired element has a named replacement. It closes with a yes-or-no build checklist.
+
+What's still undefined: the characters. The avatar system needs a decision — abstract blob creatures, something else — before the next build.
+
+*Screenshot: working HTML prototype — warm cream ground, Nunito, student list with avatar circle slots, purple sidebar, top-3 leaderboard.*
+
+### Week 04 — _to come_
 
 *…through Week 12.*
 

@@ -2,8 +2,8 @@
 participant: "Marko Kolić"
 project: "AI for Designers — the program, the website, the journal"
 status: "draft"
-weeks_completed: 2
-last_updated: "2026-05-13"
+weeks_completed: 3
+last_updated: "2026-05-20"
 hero_image: ""
 final_url: ""
 ---
@@ -62,7 +62,57 @@ And I moved my own work over to Claude Cowork. The personal-Jarvis test, with th
 
 *Screenshots: the revised session plan diff, the new contents side panel, the Think Before You Prompt page.*
 
-### Week 03 — _to come_
+### Week 03 — The briefs were thorough. The outputs were all the same.
+
+Three participants ran the visual direction session and came out with design briefs they'd written themselves. Warm palettes, type systems, banned-moves lists. The briefs were good. The designs weren't.
+
+I watched it happen in the session. Claude produced three initial directions per project. Everyone rejected them, went to Pinterest, brought references back in, iterated. The second-pass outputs were better but still recognizable — the stock spacing, the color choices that belong to a template, the typography that's clean in a way that doesn't belong to anything. At the end, Ivo asked "how do I make this look less like AI made it?" Nobody had an answer.
+
+After the session I tried running the same prompts myself in chat and got nearly identical results. So I opened separate sessions and started testing.
+
+**The first thing I found: a thorough specification is not the same as a useful brief.**
+
+Ivo's brief was the most thorough document any participant had written. Every component specified. Exact values. Layout diagrams in ASCII. I audited the output it produced and found 19 specific AI tells — not vague "this feels generic," but concrete things: `letter-spacing: 0.2em` on every label, `font-weight: 300` used decoratively, a rationale strip at the bottom of the dashboard explaining why the design was unconventional. That last one is the clearest tell. Design that defends itself is admitting the defense is necessary.
+
+The original brief was a style guide: it described what the output should look like. What I needed to write instead was a constraint system: something that describes what the output cannot be. The difference is operational. A specification tells the model what to generate. A constraint system closes off the default options — the patterns AI reaches for when there's open space — and forces it to find something that isn't the default.
+
+The rewrite started with two cultural anchors (Braun hardware, Nothing OS) and worked from there. Before touching the dashboard, I built a small testbed component — a 320×420 fitness widget — and derived the constraints from that. By the fifth round of iteration the banned list was longer than the specification. Helvetica Neue instead of Inter. No `font-weight: 300`. No tinted accent variants. No delta arrows. Orange used exactly three times across the whole screen. The widget was the cleanest thing I'd built in the session. We scaled it to the full dashboard with the same constraints applied.
+
+The closing line of the new brief: *a style guide tells you what something looks like; a constraint system tells you what it can never be.*
+
+**The second thing I found: reference images override words, every time.**
+
+Paula's ClassArcade had run through three separate build sessions and come back looking the same every time. Saturated mint and purple. Rounded Nunito everything. Emoji avatars with thick rings. The brief was being followed. The output was still generic. We added a banned-moves list. The output got worse — describing the things to avoid was confirming they were in scope.
+
+The root cause was two screenshots uploaded at the start of the original session. Both were children's app UI. Saturated colors, mascot blobs, rounded type. Once those were in the conversation, every subsequent prompt was filtered through them regardless of what the brief said.
+
+Changing the reference images broke the cycle. Two new ones: a kids academy landing page with Fraunces italic headlines mixed with bold sans, a play-and-learn site with white-dominant layouts and editorial type. Same target audience, opposite visual language. The first build with the new references was the first one that didn't look like the others.
+
+The side-by-side comparison was the technique that made the gap concrete. Telling the model "this is too generic" got polite agreement and another generic result. Pasting both versions and asking it to name the specific differences produced an analysis I could actually work from. The prompt: *"Compare the differences and write down the findings."* Four words. More useful than three sessions of brief refinement combined.
+
+Both briefs got rewritten with these findings built in. The ClassArcade v2 brief opens with a diagnosis of why v1 failed. Every retired element has a named replacement — not just a ban, a replacement. "Retired: Nunito. Replacement: Fraunces italic for expressive text, Plus Jakarta Sans for interface chrome." Ban alone isn't enough. The model anchors to the world being described, not the negation.
+
+**The framework that came out of it:**
+
+The better approach to AI design prompting isn't more detail. It's more operational restriction. Leave fewer degrees of freedom.
+
+The most transferable things I learned from this:
+
+*Govering principle over vibe words.* "Minimal, clean, modern" leaves the model averaging across thousands of interfaces that match those words. "Braun hardware plus Nothing OS" points at a specific design logic — whitespace as structure, typography as hierarchy, restraint as identity — that is much harder to dilute into generic output. Both improved briefs opened with a governing principle that could guide every subsequent decision.
+
+*Typography as identity removes the need for decoration.* Wattlog's TSB at 104px as a typographic object did more than any component spec. ClassArcade's shift from Nunito to Fraunces italic mixed with Plus Jakarta Sans changed how the product felt more than any color decision. When typography carries the personality, color can step back into a signal role. Both improved briefs learned this: restrict color heavily, give it clear roles, no decorative use, no tints. AI overuses color. Good prompts make it scarce.
+
+*Structural instructions changed output more than visual references.* Telling the model to build a table instead of a card list, a ruled ledger instead of stat cards, a hand-drawn chart instead of a chart library — these structural changes produced the most specific output. The model has strong opinions about what a "dashboard" or a "student list" looks like. Structural instructions block those opinions before they form.
+
+*Every ban needs a replacement.* "No emoji avatars" leaves a gap. "No emoji avatars — use two-letter monogram initials in Plus Jakarta Sans 700" closes it. A ban alone reads to the model as confirmation the aesthetic is still in scope. The retired-with-replacement structure is the most effective single tool from this session.
+
+*The prompt structure that works:* product job → governing design principle → hard constraints (typeface, color, layout, components) → AI defaults blacklist → retired/replacement rules → output requirements → success checklist. Each section earns its place. The checklist at the end is yes-or-no, not judgment — "Is Fraunces italic loaded on this screen? Are XP numbers in Fraunces italic 700? Does the headline mix both fonts?"
+
+The deeper lesson, which I didn't expect going into this: the model improves when you understand its failure mode and write the brief against it. The briefs that worked weren't written for a human designer. They were written for the specific ways an AI designer degrades.
+
+*Screenshots: the Wattlog testbed widget, the original vs improved dashboard side-by-side, the ClassArcade v1 vs v2 comparison.*
+
+### Week 04 — _to come_
 
 *…through Week 12.*
 

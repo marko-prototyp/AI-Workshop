@@ -53,7 +53,28 @@ The session closed with Claude pushing back on the brief across six areas. Hones
 *Screenshot: the 11-tool competitive matrix.*
 *Screenshot: the P0–P3 feature ranking.*
 
-### Week 03 — _to come_
+### Week 03 — The brief was the wrong shape.
+
+The session was visual direction. Two dashboard iterations in the room: the first too flat, everything at the same weight; the second better after one hard note — "more hierarchy." TSB promoted to 64px in accent orange. Prescription text unboxed as a statement. Secondary metrics collapsed to a ruled hairline strip. The brief got written: warm off-white ground, single accent color, two type weights (400 and 500 only), 0.5px borders, no shadows. Art direction committed.
+
+But I didn't like the result.
+
+My original brief was thorough. Every component specified. ASCII layout diagrams. Exact values for color, weight, spacing, and radius. It produced exactly what I specified, and what I specified turned out to be the wrong thing. So the session kept going.
+
+We started the post-session audit with two reference interfaces: the Framer Dieter Rams remix page and the Nothing OS widget grid. Both extreme constraint systems. Both legible because of what they remove. Then we read the dashboard my first brief had produced — not to tweak it, but to find everything wrong with it. Six AI tells on first pass. Nineteen by the time we'd read the file carefully. `letter-spacing: 0.2em` on every label. `font-weight: 300` used decoratively. A rationale strip at the bottom explaining why the design was unconventional. That last one became the finding of the day. Design that has to announce its own unconventionality is admitting it isn't.
+
+Then we built something small first — a 320×420 compact fitness widget — and used it as a testbed for the constraints we actually wanted. Helvetica Neue instead of Inter. Two weights, 600 and 400. No 300. A near-black base with a single off-white card. Braun orange at full saturation or not at all, no rgba variants. One dial with spherical shading pulled from the Rams references. A seven-day history rendered as dot-matrix cells. No pill badges. No delta arrows. No tooltip on hover. By the fifth round the banned list was longer than the specification. The widget that came out was the cleanest thing we'd built.
+
+We scaled it up to the full dashboard with the same constraints applied. TSB rendered at 104px as a typographic object sitting on the page with no card around it. A ruled metric strip with no card backgrounds. A PMC chart hand-drawn in canvas, no chart library, no axis box. Orange used three times across the whole screen.
+
+The new brief is a constraint system, not a specification. It opens with a cultural anchor — Dieter Rams and Nothing OS — and the specifications exist mostly as refusals. No Inter. No tinted accent variants. No three-column stat grid. No pill badges. No `font-weight: 300`. The closing line: *a style guide tells you what something looks like; a constraint system tells you what it can never be.*
+
+Both briefs are in the repo. The contrast between them is the actual artefact.
+
+*Screenshot: the second-iteration dashboard from the session — tabbed nav, "Productive." at large weight, CTL/ATL/TSB in a clean three-column strip, PMC chart with a RACE marker.*
+*Screenshot: the widget testbed — Helvetica Neue, dot-matrix history, Braun orange once.*
+
+### Week 04 — _to come_
 
 *…through Week 12.*
 

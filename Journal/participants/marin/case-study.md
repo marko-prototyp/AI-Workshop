@@ -78,7 +78,23 @@ Other thing to figure out: how I feed Claude descriptions of the trips so the ap
 *Screenshot: the chapter map.*
 *Screenshot: the "describe the photo" scene template.*
 
-### Session 03 — _to come_
+### Session 03 — Locked the direction. Built the first real scene.
+
+The session focused on visual direction. Three distinct directions generated — Memory Press, Tender Thread, Adriatic Dusk — I selected Adriatic Dusk and iterated from there. Two rounds of mockups, a type system locked, and the first real scene screen built.
+
+The direction: glassmorphic. Full-bleed trip photography as the background, frosted glass containers floating over it, Playfair Display italic for the Croatian language and the scene titles, DM Sans for the UI chrome. Every screen should feel like opening a private memory. It should never feel like an app.
+
+The first scene built was Scena 3 · Sarma kod bake. Warm amber background. Playfair italic at display scale for the scene title. Frosted glass narration card. A Marko pill. Word hint chips. Nastavi at the bottom. The line on the narration card: *Bakina kuhinja miriše na nedjelju, na dim i na sarmu.* That's what the whole project is aiming at — one specific kitchen, one specific Sunday, one specific smell.
+
+The friction through the session was the typeface. I had defined DM Sans for the UI layer. Claude kept defaulting to something else. It took a direct correction and a round of uploaded references to hold it. Once it landed, it landed.
+
+By the end of the session I had the direction I wanted. The brief is written: five colors inside the warm amber to terracotta to ivory range, two typefaces that never swap roles, a 15-item banned moves list (no bottom tab bars, no green/red feedback, no gradient text, no "Great job!," no "Streak").
+
+What's next: feeding Claude the actual trip content. Stories, context, photos. That writing work hasn't started, and the scenes can't feel personal and specific until it has.
+
+*Screenshot: the Scena 3 · Sarma kod bake mockup — glassmorphic, full-bleed warm amber, Playfair italic, frosted card, Marko pill.*
+
+### Session 04 — _to come_
 
 *…through Session 12.*
 
