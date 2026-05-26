@@ -2,14 +2,13 @@
   "opener": {
     "eyebrow": "/facilitator",
     "titleLines": ["Running this is a real job.", "Here's what helps."],
-    "lead": "What to say when someone pushes back. What to do when the room produces a hundred ideas in five minutes. How to keep a record of what you're learning as you go, so the workshop leaves behind something more than memory.",
+    "lead": "What to say when someone pushes back. What to do when the room runs away from itself. How to leave a record that's worth reading six months from now.",
     "leadNote": "Read once before session 1. Come back when something's going sideways.",
     "toc": [
       { "num": "01", "label": "How to run the hour", "href": "#runbook" },
       { "num": "02", "label": "Things your team will ask you", "href": "#faq" },
       { "num": "03", "label": "When someone is skeptical", "href": "#skeptic" },
-      { "num": "04", "label": "When the room produces too much", "href": "#overflow" },
-      { "num": "05", "label": "Keep a real record", "href": "#journal" }
+      { "num": "04", "label": "Keep a real record", "href": "#journal" }
     ]
   },
 
@@ -21,7 +20,7 @@
       {
         "time": "0–5 min",
         "title": "Open with the converge.",
-        "body": "Before any AI-heavy exercise, set the constraint out loud. \"In twenty minutes you're going to pick one. Generate as much as you want. At the twenty-minute mark we go around the room and each person names their pick.\" One sentence prevents the overflow problem before it happens. See section 04."
+        "body": "Before any AI-heavy exercise, set the constraint out loud. \"In twenty minutes you're going to pick one. Generate as much as you want. At the twenty-minute mark we go around the room and each person names their pick.\" One sentence prevents the overflow problem before it happens."
       },
       {
         "time": "5–15 min",
@@ -41,16 +40,16 @@
       {
         "time": "after",
         "title": "File the notes.",
-        "body": "Open Journal/intake/facilitator-notes.md within 24 hours. Send the participant prompt to each participant. It's on /journal already, auto-filled for the session. Tomorrow's recap depends on today's honesty."
+        "body": "Open Journal/intake/facilitator-notes.md within 24 hours. Send participants the check-in link — five questions, takes about 10 minutes. The synthesis depends on both."
       }
     ],
-    "callout": "The five blocks aren't about timekeeping. They're about giving the room a shape, so people know where they are in the hour without you announcing it."
+    "callout": "The five blocks aren't rigid timekeeping. They give the room a shape — so people know where they are in the hour without you announcing it."
   },
 
   "faq": {
     "eyebrow": "// 02",
     "title": "Things your team will ask you.",
-    "lead": "Twelve questions, in roughly the order you'll hear them. Each answer is tagged so you know whether to read it aloud or make it your own.",
+    "lead": "Fifteen questions, in roughly the order you'll hear them. Each answer is tagged so you know whether to read it aloud or make it your own.",
     "items": [
       {
         "num": "01",
@@ -124,6 +123,21 @@
           { "tag": "SCRIPT", "paras": ["That's fine.", "The show & tell isn't a performance review. Skip presenting and just listen if you want to. Show three slides instead of fifteen if you want to. The only thing that's mandatory is showing up. The rest is yours to shape."] },
           { "tag": "PRINCIPLE", "paras": ["But check why. Sometimes \"I don't want to share\" means \"I'm proud of this and afraid of the room.\" That fear is worth pushing through. If it's genuine privacy or readiness, respect it. Read which one it is."] }
         ]
+      },
+      {
+        "num": "13",
+        "q": "Do participants need a Claude account or API access?",
+        "blocks": [{ "tag": "SCRIPT", "paras": ["They need a Claude account — claude.ai Pro works fine. No API key, no setup beyond that.", "Sort out access before session 1, not during it. If someone is blocked on day one, the session loses momentum before it starts."] }]
+      },
+      {
+        "num": "14",
+        "q": "How much time should participants expect to put in between sessions?",
+        "blocks": [{ "tag": "PRINCIPLE", "paras": ["The session is one hour. That's enough to make real progress.", "Time outside the session is optional — but it's also where the projects start to separate. One hour a week and you'll finish. More than that and the work gets good. The more they put in, the better the result. That's a promise, not a pitch."] }]
+      },
+      {
+        "num": "15",
+        "q": "Do participants need to read the brief before the session?",
+        "blocks": [{ "tag": "SCRIPT", "paras": ["Yes. They wrote the brief themselves — it's what they agreed they'd build with Claude. Reading it before the session means they arrive with a plan, not a blank page.", "If most of the room hasn't read it, spend five minutes at the top walking it. Don't skip the session content to catch up stragglers."] }]
       }
     ]
   },
@@ -153,64 +167,56 @@
     "closing": "The thing that ruins this is trying to convert people. Both flavours get worse when you push. Ambivalence becomes withdrawal. Skepticism becomes principled refusal. Don't sell. Don't oversell. Make the work good and let the work do the persuading."
   },
 
-  "overflow": {
-    "eyebrow": "// 04",
-    "title": "Generating is now free. Choosing isn't.",
-    "lead": "A problem unique to AI workshops, and one that hits hard around session 3 or 4. Five designers, ninety prompts, three hundred ideas, one hour. The chat windows are full. People are scrolling through their own output trying to remember which version they liked. Nothing has been chosen. The session ends and the work hasn't moved.",
-    "why": {
-      "title": "Why this happens.",
-      "body": "AI inverts the cost of generating ideas. What used to take ten minutes now takes thirty seconds. Diverging is free. Converging takes the same time it always did. If you don't reshape the session, you'll generate ten times as much and choose nothing."
-    },
-    "cardsIntro": "Three fixes. In order of severity. Try the gentle one first.",
-    "cards": [
-      {
-        "num": "01",
-        "title": "Set the converge before the diverge.",
-        "when": "Always. Preventive. Before any AI-heavy exercise.",
-        "how": ["Open the exercise out loud:", "\"In twenty minutes, you're going to pick one. Generate as many as you want. At the twenty-minute mark we're going around the room and each person names their pick.\"", "The constraint changes how people generate. They start filtering as they go instead of accumulating.", "Set the converge before the diverge. Otherwise people fill the time generating because there's no reason not to."]
-      },
-      {
-        "num": "02",
-        "title": "Force a stop. Pick one. Defend it.",
-        "when": "Mid-session, when the room is generating without choosing. Signal: people are still typing prompts when half the time is up.",
-        "how": ["Stop the room:", "\"Stop generating. Pick one. We're going around. You tell us which and why, in thirty seconds. We start in two minutes.\"", "Set a visible timer.", "The defence matters more than the pick. Saying \"I'm going with this because [reason]\" forces a designer to surface their actual taste. After they've defended a choice once, they know what they think."]
-      },
-      {
-        "num": "03",
-        "title": "Cut the input rate.",
-        "when": "Late in the workshop (sessions 6+), when the team is over-generating by habit.",
-        "how": ["Limit the prompt count:", "\"You get three prompts for this exercise. That's it. Make them count.\"", "Most bloat comes from cheap prompting. \"Let me try one more variation.\" Not from real exploration.", "When prompting has a cost, the bloat goes away on its own."]
-      }
-    ],
-    "closing": "Eighty percent generate, twenty percent converge is a 1990s ratio. AI workshops aren't broken versions of regular workshops. They're a different shape. Plan for less generation time and more selection time. For AI, flip the ratio."
-  },
-
   "journal": {
-    "eyebrow": "// 05",
+    "eyebrow": "// 04",
     "title": "Memory fades. The journal is what stays.",
-    "lead": "The journal isn't a side project. It's where the workshop turns into something you can hand to someone else six months from now. We built the system already. Three things to plug into.",
+    "lead": "The journal isn't a side project. It's how the workshop turns into something you can hand to someone else six months from now — or run again next year without starting from scratch. The system is already set up. Here's how to run it each week.",
     "workflow": {
       "title": "The workflow.",
-      "intro": "Three files do most of the work. Open these once and you'll know how to run each session afterward.",
+      "intro": "Five steps after every session. The first two are yours. The rest runs through Claude.",
       "items": [
-        { "url": "Journal/README.md", "title": "The loop.", "body": "Raw notes from the session get synthesised by Claude, edited by you, then published to /journal. The README walks the whole flow." },
-        { "url": "Journal/intake/facilitator-notes.md", "title": "Your dump template.", "body": "Mirrors the synthesis structure. Bullets, half-thoughts, quotes, names. Fill in within 24 hours so the synthesis stays honest." },
-        { "url": "Journal/intake/participant-checkin.md", "title": "What participants fill in.", "body": "Eight questions, 10 to 15 minutes per person. Send within 48 hours. Their answers fold straight into the session synthesis." }
+        {
+          "url": "Journal/intake/facilitator-notes.md",
+          "title": "File your notes.",
+          "body": "Bullets, half-thoughts, quotes, names, what worked, what didn't. Do it within 24 hours. Don't write for an audience — the synthesis handles shaping. The goal is honest raw material before memory starts editing it."
+        },
+        {
+          "url": "Journal/intake/participant-checkin.md",
+          "title": "Send the check-in.",
+          "body": "Five questions, about 10 minutes per person. Send within 48 hours of the session. Their answers fold into the synthesis. Without them, the entry is half a picture."
+        },
+        {
+          "url": "/journal → session prompts",
+          "title": "Generate the session report.",
+          "body": "Run the facilitator synthesis prompt from /journal in Claude (model: claude-sonnet-4-6). Paste your notes. It produces a structured session report — what happened, what landed, what fell flat, one line worth keeping. Save to Journal/reports/NN-report.md."
+        },
+        {
+          "url": "Cowork → journal-entry skill",
+          "title": "Synthesise the entry.",
+          "body": "Open Cowork. Run the journal-entry skill with the report as your source. Then run journal-voice for the voice pass — it removes em dashes, shapes the tone, and brings it in line with the rest of the site. Two skills, two passes, done."
+        },
+        {
+          "url": "content/journal/NN.md",
+          "title": "Publish.",
+          "body": "Drop the finished file into content/journal/. Run the build. The entry appears on /journal automatically."
+        }
       ],
-      "callout": "The per-session prompts on /journal also generate ready-to-use facilitator and participant prompts for every week, auto-filled from the curriculum. Copy and run them in your own Claude."
+      "callout": "The session prompts on /journal are pre-filled with each session's title, capability, and expected outputs. Copy and run — they're built to be used directly in Claude."
     },
     "siteShape": {
       "title": "What it looks like on the site.",
-      "intro": "Three places the journal shows up.",
+      "intro": "Entries live at /journal. Add NN.md to content/journal/, run the build, and it appears automatically. The index, the entry body, and the session prompts are all generated from that one file.",
       "panels": [
-        { "url": "/journal", "title": "The index.", "body": "Reverse-chronological. Each row shows the session number, the title, the date, and the quote of that session. A contents block at the top summarises where the workshop is up to." },
-        { "url": "/journal/#entry-01", "title": "An entry.", "body": "Markdown body rendered in serif. Session metadata strip on top. Optional quote aside. Built from one .md file in content/journal/. Add NN.md, the entry shows up." },
-        { "url": "/journal/#journal-prompts", "title": "The session prompts.", "body": "Two prompts per session. One for facilitator synthesis, one for participant check-in. Both auto-filled with the session's title, capability, and expected outputs. Copy and use." }
+        {
+          "url": "/journal",
+          "title": "The journal index.",
+          "body": "Reverse-chronological. Each row shows the session number, title, date, and closing quote. A summary block at the top shows where the workshop is up to."
+        }
       ]
     },
     "voice": {
       "title": "The voice.",
-      "body": "We have a journal voice. Apply it on the way out. Ask Claude for a voice pass before publishing. The rules: no em dashes in visible copy, sentence-shaped headings, sessions not weeks in narrative prose, one quietly-emphasised italic per line. The skill that codifies all of this is journal-voice."
+      "body": "We have a journal voice. Apply it on the way out. The journal-voice skill in Cowork codifies the full ruleset — run it on any draft before it publishes."
     },
     "closingCallout": "The journal is the workshop's most underrated artifact. Twelve weeks from now, the project the team builds will be the visible output. The journal will be the invisible one. And the one you'll quote from for years. Six months from now, when someone asks how the workshop went, you won't summarise from memory. You'll send them the journal.",
     "closingLine": "Memory fades. The journal is what stays."

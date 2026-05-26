@@ -995,7 +995,7 @@ function buildFacilitatorHtml(data) {
     buildFacRunbook(data.runbook),
     buildFacFAQ(data.faq),
     buildFacSkeptic(data.skeptic),
-    buildFacOverflow(data.overflow),
+    data.overflow ? buildFacOverflow(data.overflow) : '',
     buildFacJournal(data.journal),
     `<p class="fac-page-closing"><em>${data.closingLine}</em></p>`,
     `<a class="fac-back" href="${siteUrl('/')}">${data.backLink}</a>`,
@@ -1173,7 +1173,6 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, jo
     E('How to run the hour', 'Facilitator', '/facilitator/#runbook', 'section', 'runbook session structure hour minutes blocks how to run facilitator'),
     E('FAQ — Team questions', 'Facilitator', '/facilitator/#faq', 'section', 'questions ask team faq facilitator'),
     E('Handling skeptics', 'Facilitator', '/facilitator/#skeptic', 'section', 'skeptic ambivalence skepticism pushback resistance'),
-    E('Managing overflow', 'Facilitator', '/facilitator/#overflow', 'section', 'too many ideas overflow generating converge diverge'),
     E('Session journal', 'Facilitator', '/facilitator/#journal', 'section', 'journal record notes memory template write'),
 
     // Facilitator FAQ questions

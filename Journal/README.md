@@ -27,7 +27,7 @@ Journal/
 1. **During / right after the session** — Marko fills `intake/facilitator-notes.md` (copy it to `raw/week-NN-raw.md`) with anything worth remembering.
 2. **Within 48h** — send `intake/participant-checkin.md` to each participant. Paste their answers into the bottom of the same `raw/week-NN-raw.md`.
 3. **When ready** — ask Claude to synthesise: *"Synthesise Journal/raw/week-NN-raw.md into the synthesis + per-participant updates."* That produces:
-   - `Journal/week-NN-synthesis.md` — facilitator-voice writeup, matching the week-01 voice
+   - `Journal/synthesis/week-NN-synthesis.md` — facilitator-voice writeup, matching the week-01 voice
    - Updates to each `participants/*/notes.md` and `participants/*/case-study.md`
    - A first draft of `content/journal/NN.md` for the public site
 4. **Voice pass** — run the public draft through the `journal-voice` skill (which sits on top of `audit-copy`). The voice rules: no em dashes in visible copy, sentence-shaped headlines, "sessions" not "weeks" in prose, "workshop" not "program," one quietly-emphasised italic per line max. Canonical reference: `Claude/home-copy-final.md`.
