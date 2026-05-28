@@ -1,12 +1,15 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DIST = path.join(__dirname, 'dist');
-const PORT = 3000;
+const DIST        = path.join(__dirname, 'dist');
+const DASHBOARD   = path.join(__dirname, 'dashboard');
+const WEEK_IMAGES = path.join(__dirname, 'Journal', 'week-images');
+const PORT        = parseInt(process.env.PORT || '3000', 10);
 
 const MIME = {
   '.html': 'text/html',
@@ -20,7 +23,7 @@ const MIME = {
 };
 
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin':  '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
@@ -38,106 +41,187 @@ function readBody(req) {
   });
 }
 
+function sha256(content) {
+  return 'sha256-' + crypto.createHash('sha256').update(content).digest('hex');
+}
+
+function resolveRepoPath(requestedPath) {
+  if (!requestedPath || typeof requestedPath !== 'string') throw new Error('Missing path');
+  if (requestedPath.includes('\0')) throw new Error('Invalid path');
+  if (path.isAbsolute(requestedPath)) throw new Error('Absolute paths not allowed');
+  const target = path.resolve(__dirname, requestedPath);
+  const inside = target === __dirname || target.startsWith(__dirname + path.sep);
+  if (!inside) throw new Error('Path escapes repo root');
+  return target;
+}
+
 async function handleApi(req, res) {
-  const url = req.url.split('?')[0];
+  const url   = req.url.split('?')[0];
+  const query = new URL(req.url, 'http://localhost').searchParams;
 
-  // CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204, CORS); res.end(); return;
-  }
+  if (req.method === 'OPTIONS') { res.writeHead(204, CORS); res.end(); return; }
 
-  // Health check
+  // GET /api/status
   if (url === '/api/status' && req.method === 'GET') {
-    return jsonRes(res, { ok: true, root: __dirname });
+    return jsonRes(res, { ok: true, root: __dirname, port: PORT });
   }
 
-  // Write a file (path relative to project root, must stay inside it)
+  // GET /api/read-file?path=...
+  if (url === '/api/read-file' && req.method === 'GET') {
+    try {
+      const relPath = query.get('path');
+      const full    = resolveRepoPath(relPath);
+      if (!fs.existsSync(full) || !fs.statSync(full).isFile()) {
+        return jsonRes(res, { ok: true, path: relPath, exists: false, content: '', hash: '', mtime: null, size: 0 });
+      }
+      const content = fs.readFileSync(full, 'utf8');
+      const stat    = fs.statSync(full);
+      return jsonRes(res, { ok: true, path: relPath, exists: true, content, hash: sha256(content), mtime: stat.mtime.toISOString(), size: stat.size });
+    } catch (e) {
+      return jsonRes(res, { ok: false, error: e.message }, 400);
+    }
+  }
+
+  // GET /api/list-dir?path=...
+  if (url === '/api/list-dir' && req.method === 'GET') {
+    try {
+      const relPath = query.get('path');
+      const full    = resolveRepoPath(relPath);
+      if (!fs.existsSync(full) || !fs.statSync(full).isDirectory()) {
+        return jsonRes(res, { ok: true, path: relPath, exists: false, entries: [] });
+      }
+      const entries = fs.readdirSync(full).map(name => {
+        const entryFull = path.join(full, name);
+        const stat      = fs.statSync(entryFull);
+        return { name, path: path.join(relPath, name), type: stat.isDirectory() ? 'directory' : 'file', mtime: stat.mtime.toISOString(), size: stat.size };
+      });
+      return jsonRes(res, { ok: true, path: relPath, exists: true, entries });
+    } catch (e) {
+      return jsonRes(res, { ok: false, error: e.message }, 400);
+    }
+  }
+
+  // GET /api/stat?path=...
+  if (url === '/api/stat' && req.method === 'GET') {
+    try {
+      const relPath = query.get('path');
+      const full    = resolveRepoPath(relPath);
+      if (!fs.existsSync(full)) {
+        return jsonRes(res, { ok: true, path: relPath, exists: false, type: null, mtime: null, size: 0 });
+      }
+      const stat = fs.statSync(full);
+      return jsonRes(res, { ok: true, path: relPath, exists: true, type: stat.isDirectory() ? 'directory' : 'file', mtime: stat.mtime.toISOString(), size: stat.size });
+    } catch (e) {
+      return jsonRes(res, { ok: false, error: e.message }, 400);
+    }
+  }
+
+  // POST /api/write-file
   if (url === '/api/write-file' && req.method === 'POST') {
     try {
       const { filePath, content } = JSON.parse(await readBody(req));
-      const full = path.resolve(__dirname, filePath);
-      if (!full.startsWith(__dirname)) return jsonRes(res, { ok: false, error: 'Path outside project' }, 400);
+      const full = resolveRepoPath(filePath);
       fs.mkdirSync(path.dirname(full), { recursive: true });
       fs.writeFileSync(full, content, 'utf8');
-      jsonRes(res, { ok: true, wrote: filePath });
+      const stat = fs.statSync(full);
+      return jsonRes(res, { ok: true, path: filePath, hash: sha256(content), mtime: stat.mtime.toISOString(), size: stat.size });
     } catch (e) {
-      jsonRes(res, { ok: false, error: e.message }, 500);
+      return jsonRes(res, { ok: false, error: e.message }, e.message.includes('Path') || e.message.includes('path') ? 400 : 500);
     }
-    return;
   }
 
-  // Write a binary image file from a data URL
+  // POST /api/write-image
   if (url === '/api/write-image' && req.method === 'POST') {
     try {
       const { filePath, dataUrl } = JSON.parse(await readBody(req));
-      const full = path.resolve(__dirname, filePath);
-      if (!full.startsWith(__dirname)) return jsonRes(res, { ok: false, error: 'Path outside project' }, 400);
+      const full   = resolveRepoPath(filePath);
       const base64 = dataUrl.split(',')[1];
       if (!base64) return jsonRes(res, { ok: false, error: 'Invalid dataUrl' }, 400);
       fs.mkdirSync(path.dirname(full), { recursive: true });
       fs.writeFileSync(full, Buffer.from(base64, 'base64'));
-      jsonRes(res, { ok: true, wrote: filePath });
+      return jsonRes(res, { ok: true, wrote: filePath });
     } catch (e) {
-      jsonRes(res, { ok: false, error: e.message }, 500);
+      return jsonRes(res, { ok: false, error: e.message }, e.message.includes('Path') || e.message.includes('path') ? 400 : 500);
     }
-    return;
   }
 
-  // Git add + commit (no push — push requires user's credentials in Terminal)
+  // POST /api/git-commit
   if (url === '/api/git-commit' && req.method === 'POST') {
     try {
       const { message, files } = JSON.parse(await readBody(req));
       const addTargets = (files || ['Journal/', 'content/journal/']).join(' ');
-      const safeMsg = (message || 'Journal update').replace(/"/g, "'");
-      const cmd = `cd "${__dirname}" && git add ${addTargets} 2>/dev/null; git diff --cached --quiet && echo "nothing-to-commit" || git commit -m "${safeMsg}"`;
-      const output = execSync(cmd, { encoding: 'utf8', timeout: 15000 });
-      jsonRes(res, { ok: true, output });
+      const safeMsg    = (message || 'Journal update').replace(/"/g, "'");
+      const cmd        = `cd "${__dirname}" && git add ${addTargets} 2>/dev/null; git diff --cached --quiet && echo "nothing-to-commit" || git commit -m "${safeMsg}"`;
+      const output     = execSync(cmd, { encoding: 'utf8', timeout: 15000 });
+      return jsonRes(res, { ok: true, output });
     } catch (e) {
-      jsonRes(res, { ok: false, error: e.message, output: (e.stdout || '') + (e.stderr || '') });
+      return jsonRes(res, { ok: false, error: e.message, output: (e.stdout || '') + (e.stderr || '') });
     }
-    return;
   }
 
-  // Keep old /api/git-push for backward compat
-  if (url === '/api/git-push' && req.method === 'POST') {
-    try {
-      const { message, files } = JSON.parse(await readBody(req));
-      const addTargets = (files || ['Journal/', 'content/journal/']).join(' ');
-      const safeMsg = (message || 'Journal update').replace(/"/g, "'");
-      const cmd = `cd "${__dirname}" && git add ${addTargets} 2>/dev/null; git diff --cached --quiet || git commit -m "${safeMsg}"`;
-      const output = execSync(cmd, { encoding: 'utf8', timeout: 15000 });
-      jsonRes(res, { ok: true, output });
-    } catch (e) {
-      jsonRes(res, { ok: false, error: e.message, output: (e.stdout || '') + (e.stderr || '') });
-    }
-    return;
-  }
-
-  res.writeHead(404, CORS); res.end('Not found');
+  jsonRes(res, { ok: false, error: 'Not found' }, 404);
 }
 
 const server = http.createServer(async (req, res) => {
-  // API routes
-  if (req.url.startsWith('/api/')) {
-    return handleApi(req, res);
-  }
+  if (req.url.startsWith('/api/')) return handleApi(req, res);
 
   let urlPath = req.url.split('?')[0];
-  if (urlPath === '/' || urlPath === '') urlPath = '/index.html';
 
-  // Resolve directory requests to their index.html
-  let filePath = path.join(DIST, urlPath);
-  if (!path.extname(filePath)) {
-    filePath = path.join(filePath, 'index.html');
+  // Dashboard
+  if (urlPath === '/dashboard' || urlPath === '/dashboard/') {
+    const filePath = path.join(DASHBOARD, 'index.html');
+    if (fs.existsSync(filePath)) {
+      res.writeHead(200, { 'Content-Type': 'text/html', ...CORS });
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      res.writeHead(404, CORS); res.end('Dashboard not built yet');
+    }
+    return;
   }
+
+  // Week images: serve Journal/week-images/ for dashboard thumbnail previews
+  if (urlPath.startsWith('/week-images/')) {
+    const relPath  = decodeURIComponent(urlPath.slice('/week-images/'.length));
+    const filePath = path.join(WEEK_IMAGES, relPath);
+    if (!path.resolve(filePath).startsWith(WEEK_IMAGES + path.sep) &&
+        path.resolve(filePath) !== WEEK_IMAGES) {
+      res.writeHead(403, CORS); res.end('Forbidden'); return;
+    }
+    const ext = path.extname(filePath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', ...CORS });
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      res.writeHead(404, CORS); res.end('Not found');
+    }
+    return;
+  }
+
+  if (urlPath.startsWith('/dashboard/')) {
+    const relPath  = urlPath.slice('/dashboard/'.length);
+    const filePath = path.join(DASHBOARD, relPath);
+    if (!path.resolve(filePath).startsWith(DASHBOARD)) { res.writeHead(403, CORS); res.end('Forbidden'); return; }
+    const ext = path.extname(filePath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      res.writeHead(200, { 'Content-Type': MIME[ext] || 'text/plain', ...CORS });
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      res.writeHead(404, CORS); res.end('Not found');
+    }
+    return;
+  }
+
+  // Public site
+  if (urlPath === '/' || urlPath === '') urlPath = '/index.html';
+  let filePath = path.join(DIST, urlPath);
+  if (!path.extname(filePath)) filePath = path.join(filePath, 'index.html');
   const ext = path.extname(filePath);
 
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
     res.writeHead(200, { 'Content-Type': MIME[ext] || 'text/plain', ...CORS });
     fs.createReadStream(filePath).pipe(res);
   } else {
-    res.writeHead(404, CORS);
-    res.end('Not found');
+    res.writeHead(404, CORS); res.end('Not found');
   }
 });
 
@@ -145,18 +229,14 @@ server.listen(PORT, () => {
   console.log(`Dev server running at http://localhost:${PORT}`);
 });
 
-// Re-build on changes to src/ or content/
 let debounce;
 function watch(dir) {
   if (!fs.existsSync(dir)) return;
   fs.watch(dir, { recursive: true }, () => {
     clearTimeout(debounce);
     debounce = setTimeout(() => {
-      try {
-        execSync('node build.js', { stdio: 'inherit' });
-      } catch {
-        console.error('Build failed');
-      }
+      try { execSync('node build.js', { stdio: 'inherit' }); }
+      catch { console.error('Build failed'); }
     }, 120);
   });
 }

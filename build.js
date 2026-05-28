@@ -1345,6 +1345,9 @@ function build() {
   copyDir(src('scripts'),       dist('scripts'));
   copyDir(src('illustrations'),  dist('illustrations'));
   copyDir(src('assets'),        dist('assets'));
+
+  // Copy week images (Journal/week-images/NN/ → dist/assets/weeks/NN/)
+  copyDir(path.join(__dirname, 'Journal', 'week-images'), dist('assets/weeks'));
 }
 
 build();
