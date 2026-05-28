@@ -49,4 +49,30 @@ Not yet defined. The product premise is sharp (real-relationship scenarios, AI c
 
 ### Session 02
 
-- _tbd_
+- Reframed the whole project. Research check on 10 indie language apps → no app is built around a couple's actual relationship. That's the gap.
+- New shape: a memory book, not a conversation app. Six chapters mapped to actual trips since they met. Each chapter opens at the airport.
+- Mechanic: to turn the page you do something in Croatian. Most scenes are "describe the photo." Each chapter ends with a story rebuild in Croatian.
+- No streaks, no hearts, no guilt notifications. Described himself as refusing to make his girlfriend feel bad for missing a day.
+- Claude pushed back on six-chapter v1 scope. Recommended building chapter 1 fully first. Hadn't committed yet.
+- Content work flagged as the unstarted task — photos, contexts, what they ate, what they said.
+- **Push for session 03:** Visual direction. Also: commit on chapter scope (1 fully or all six).
+
+### Session 03
+
+- Visual direction locked. Three directions generated (Memory Press, Tender Thread, Adriatic Dusk), selected Adriatic Dusk.
+- Direction: glassmorphic, full-bleed trip photography as background, frosted glass containers, Playfair Display italic for Croatian language and scene titles, DM Sans for UI chrome.
+- First scene built: Scena 3 · Sarma kod bake. Quote from the narration card: *Bakina kuhinja miriše na nedjelju, na dim i na sarmu.*
+- Friction: Claude kept defaulting away from DM Sans despite the brief. Took a direct correction and reference uploads to hold it.
+- 15-item banned moves list. Direction fully committed.
+- Most satisfied participant in the session. His visual reference was specific and unusual enough that the model didn't have a direct shortcut to it.
+- **Content work still not started.** The scenes can't be specific until the writing exists.
+- **Push for session 04:** Feed Claude the actual trip content. Stories, context, photos. Do this before any build work.
+
+### Session 04
+
+- Hit 100% usage limit 30 minutes in. Switched to Sonnet, continued, then moved to manual content writing.
+- Vision and Claude delivery mostly in sync before the limit hit. Happy with the results where Claude engaged.
+- The manual content writing was the right call. The trip descriptions are the foundation; everything else is decoration without them.
+- **1:1 follow-up scheduled Friday 29 May 2026.** Will cover the bases and pick up from the content pass.
+- Note: usage limit forcing manual work produced the right outcome. Framing for the case study: not friction — a forced scope clarification that happened at the right time.
+- **Push for session 05:** Come in with written content for at least Chapter 1. Build the first real scene from real material.

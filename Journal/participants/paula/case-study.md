@@ -2,8 +2,8 @@
 participant: "Paula"
 project: "Classroom Behavior Tracker"
 status: "draft"
-weeks_completed: 2
-last_updated: "2026-05-13"
+weeks_completed: 4
+last_updated: "2026-05-27"
 hero_image: ""
 final_url: ""
 ---
@@ -85,7 +85,24 @@ What's still undefined: the characters. The avatar system needs a decision — a
 
 *Screenshot: working HTML prototype — warm cream ground, Nunito, student list with avatar circle slots, purple sidebar, top-3 leaderboard.*
 
-### Week 04 — _to come_
+### Week 04 — The structure in four screens.
+
+The session produced the full app architecture. Four screens and two overlays: Class Picker, Main Arcade, a two-step New Classroom flow, an Edit Roster modal, and the Give Points panel and Classroom dropdown that live on the Arcade.
+
+The structural move I'm most pleased with: the two-step create flow requires at least one student before you can land on the Arcade. The empty-student-list state doesn't need to be handled because it can't be reached. Designing out a problem rather than solving it.
+
+Mid-session, I overrode the Nunito-only rule from the visual brief. It felt right at the time; now I think it was obviously right. The replacement system is cleaner: Plus Jakarta Sans 800 for operational text, Fraunces italic for names. The rule in one sentence: *names get serif italic, numbers and verbs get sans 800.* It applies everywhere — list rows, podium cards, the edit modal, quick-add inputs. Even the editable name fields in the roster modal render in Fraunces italic. Nunito is banned alongside Inter, Roboto, and the rest.
+
+Things cut this session: the ticker strip (row flash and podium re-ranking already cover the moment a point lands), the "pts" suffix on totals (bare integer only — "24" not "24 pts"), the raised first-place podium card (rank signaled by position and color, not size), per-row edit and delete controls (all roster changes go through the Edit Roster modal), and a history-of-deleted-students view. The last one became a 30-second undo instead. That handles the real mistake case without building a screen for a situation that almost never happens.
+
+Sort rule: points descending, last-name alphabetical tiebreaker, displayed first-name-first. The sort key is invisible to the class watching the board.
+
+Four questions still open from the spec: what negative point display looks like for the class, whether the leaderboard shows all students or top 3 only, day-one avatar state, and what the teacher's current system is. None of them block the build, but the negative point display probably needs a decision before the first working prototype.
+
+*Screenshot: Main Arcade wireframe — student list left, flat podium right.*
+*Screenshot: New Classroom flow — two-step modal, Class Picker view.*
+
+### Week 05 — _to come_
 
 *…through Week 12.*
 

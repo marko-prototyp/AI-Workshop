@@ -2,8 +2,8 @@
 participant: "Ivo"
 project: "Wattlog"
 status: "draft"
-weeks_completed: 2
-last_updated: "2026-05-13"
+weeks_completed: 4
+last_updated: "2026-05-27"
 hero_image: ""
 final_url: ""
 ---
@@ -74,7 +74,24 @@ Both briefs are in the repo. The contrast between them is the actual artefact.
 *Screenshot: the second-iteration dashboard from the session — tabbed nav, "Productive." at large weight, CTL/ATL/TSB in a clean three-column strip, PMC chart with a RACE marker.*
 *Screenshot: the widget testbed — Helvetica Neue, dot-matrix history, Braun orange once.*
 
-### Week 04 — _to come_
+### Week 04 — The architecture is fixed. The form factor isn't.
+
+The session produced four artifacts: a sitemap, wireframes for nine screens, state maps for every screen, and a content sourcing inventory. Three of the four are markdown files in the repo. The sitemap lives as an in-conversation diagram alongside the rationale that built it.
+
+The cut list is where the session actually lives. An onboarding flow, a flat rides list, notifications, a public profile, global search, a generic stats hub — all cut. Each one documented with a reason it would weaken the product, not just that I decided against it. The line I want to keep: *"If a flat list ever feels necessary, Calendar isn't doing its job."* That's the whole thesis in one sentence.
+
+Cross-screen commitments came out of the wireframing pass. One hero per screen. No terminal error states — every error loops back somewhere. Every destructive action through exactly one modal. Editable fields autosave on blur; no Save buttons. Acronyms get a single tooltip on first encounter, app-wide. Empty states are honest data statements or they collapse to nothing.
+
+The content brief produced a position I didn't expect to commit to this early: zero AI-generated content in scope for v1. Daily prescription, status explanations, personal-best callouts, acronym tooltips — all hardcoded libraries, fully drafted. Anything AI-generated in those slots would undermine the clinical credibility the tool is trying to earn.
+
+There's something to name about the content-brief session itself. Claude's elicitation came one question at a time, each with a recommended option. I took the recommendation three of four times. The recommendations were defensible — they were the more conservative MVP choices — but I'm not sure I evaluated them. I may have deferred to a confident voice rather than thinking each one through. That's a smell whether or not the outcomes were right.
+
+What's genuinely stuck: web, native mobile, or both. The answer gates the tech stack. I don't have a defensible position yet.
+
+*Screenshot: sitemap diagram with cut list rationale.*
+*Screenshot: sample screen wireframe — Calendar or Power Profile.*
+
+### Week 05 — _to come_
 
 *…through Week 12.*
 

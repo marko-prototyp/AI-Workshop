@@ -2,8 +2,8 @@
 participant: "Marin"
 project: "Naučimo Hrvatski"
 status: "draft"
-sessions_completed: 2
-last_updated: "2026-05-13"
+sessions_completed: 4
+last_updated: "2026-05-27"
 hero_image: ""
 final_url: ""
 ---
@@ -94,7 +94,17 @@ What's next: feeding Claude the actual trip content. Stories, context, photos. T
 
 *Screenshot: the Scena 3 · Sarma kod bake mockup — glassmorphic, full-bleed warm amber, Playfair italic, frosted card, Marko pill.*
 
-### Session 04 — _to come_
+### Session 04 — The content work starts.
+
+Hit the usage limit thirty minutes in. Switched to Sonnet, kept going, then moved to manual work — writing the trip content the scenes need to feel like something real happened in them.
+
+This was the right thing to do. I've been circling it since the visual direction session. The scenes have a shape now; they don't have content. No amount of design work makes Scena 3 feel like the actual Sunday at baka's kitchen without the writing behind it. The usage limit forced the decision early. Better now than mid-build.
+
+A 1:1 follow-up is scheduled to pick up from here and cover what didn't get resolved in the main session.
+
+*Notes on trip content to come — what got written, what's still missing.*
+
+### Session 05 — _to come_
 
 *…through Session 12.*
 

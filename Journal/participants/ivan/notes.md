@@ -38,3 +38,11 @@ Simple to the point of feeling obvious. Six input dimensions combine into pre-en
 
 ### Week 02
 - _tbd_
+
+### Week 03
+- No check-in submitted. No update.
+
+### Week 04
+- Absent again. Two sessions missed in a row.
+- A lot to cover. Will hopefully tag along week 05.
+- **Action before week 05:** Real conversation about the path back in. Compressed onboarding or join live session 05?

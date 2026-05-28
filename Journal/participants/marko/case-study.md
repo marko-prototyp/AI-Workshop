@@ -2,8 +2,8 @@
 participant: "Marko Kolić"
 project: "AI for Designers — the program, the website, the journal"
 status: "draft"
-weeks_completed: 3
-last_updated: "2026-05-20"
+weeks_completed: 4
+last_updated: "2026-05-27"
 hero_image: ""
 final_url: ""
 ---
@@ -112,7 +112,22 @@ The deeper lesson, which I didn't expect going into this: the model improves whe
 
 *Screenshots: the Wattlog testbed widget, the original vs improved dashboard side-by-side, the ClassArcade v1 vs v2 comparison.*
 
-### Week 04 — _to come_
+### Week 04 — Building the tool that closes the loop.
+
+The session this week ran without me. Participants opened the handbook, worked through it independently, no questions. That left time to build something I'd been putting off: a journal entry editor dashboard.
+
+The workflow I wanted: Claude Cowork drafts the journal entry using the writing skills we've built, I open the dashboard, add images, make any final tweaks, and publish. Right now that last step happens in raw markdown with no preview and no image handling. The dashboard closes the gap.
+
+I spent the first two days of the week building a Claude artifact as a prototype. Fast and disposable — the point was to test the interface concept before committing to a real build. By the end of day two I had enough to work with: broke it down, identified the pain points, changed the direction where needed. Then I wrote a detailed brief with everything learned from that prototype pass.
+
+That brief is what the real build runs from. The plan in five steps: prototype and test, write the brief with lessons from that prototype, prepare the brief for Claude Code, review it with other agents, get a document tight enough that Claude Code can work through the build without needing hand-holding on every decision. The goal is a foolproof brief, not a good developer.
+
+Running into token limits on the build itself — this is a full week of work, not a session. The prototype pass was the right investment. Having figured out the hard problems on a throwaway artifact means the real build has real constraints behind it.
+
+*Screenshot: the Claude artifact prototype.*
+*Screenshot: the brief structure.*
+
+### Week 05 — _to come_
 
 *…through Week 12.*
 
