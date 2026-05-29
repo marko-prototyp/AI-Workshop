@@ -70,9 +70,11 @@ Not yet defined. The product premise is sharp (real-relationship scenarios, AI c
 
 ### Session 04
 
-- Hit 100% usage limit 30 minutes in. Switched to Sonnet, continued, then moved to manual content writing.
-- Vision and Claude delivery mostly in sync before the limit hit. Happy with the results where Claude engaged.
-- The manual content writing was the right call. The trip descriptions are the foundation; everything else is decoration without them.
-- **1:1 follow-up scheduled Friday 29 May 2026.** Will cover the bases and pick up from the content pass.
-- Note: usage limit forcing manual work produced the right outcome. Framing for the case study: not friction — a forced scope clarification that happened at the right time.
+- Hit 100% usage limit 30 minutes in. Switched to Sonnet, continued, then moved to manual content writing. The session then continued as a 1:1 follow-up that closed the gap.
+- **Build brief:** Moved from rough draft to build-ready spec in four moves. Critiqued v1, reviewed two parallel agent rewrites, merged into v2.0 resolving five open problems: the Saved Retelling artifact, the no-redo framing, the correction logic, the AI's runtime scope, the learning model. Then came the pivotal decision: cut free typing entirely in favour of chip-based answers. That became v2.1.
+- **V2.1 tradeoff:** Removed all runtime AI, eliminated Croatian-validation risk, solved the diacritic-keyboard problem, lowered build cost. Cost: some active-recall depth, partly recovered through per-scene difficulty ramp. The call landed on buildability, made deliberately.
+- **Wireframes:** Six screens covering every required state from the spec, in priority order. Architectural pivot validated. Content-sourcing decisions locked for every authored piece per scene.
+- Quote: *"We decided not to make Kenzie write anything herself because that is too complicated."*
+- **Five open prototype questions:** chip placement gesture, sentence-end gesture in Story Rebuild, Word Bank drawer height, stall nudge timing, HR/EN toggle position. None block the build; all need answers before the interactive prototype.
+- The usage limit forcing manual content writing was the right outcome. The trip descriptions are the foundation; everything else is decoration without them.
 - **Push for session 05:** Come in with written content for at least Chapter 1. Build the first real scene from real material.

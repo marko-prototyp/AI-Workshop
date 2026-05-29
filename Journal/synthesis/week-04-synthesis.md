@@ -17,7 +17,7 @@ Both projects that ran the full wireframing pass came out with committed structu
 
 The handbook held. Participants went in without questions and ran the session close to solo. That's the first real proof it works without facilitation in the room. Worth noting for the program documentation.
 
-**Between-session meta-project work:** Marko built a journal entry editor dashboard in the days between sessions. The intended workflow: Cowork drafts the entry, Marko opens the dashboard to add images and make final edits before publishing. Two days of Claude artifact prototyping, then a direction change based on what was learned, then a full brief written from that. Now building from scratch off the brief. Token limits are making this a full week of work rather than a session. Five-step plan: prototype and test, brief with lessons learned, prepare for Claude Code, review with agents, get a foolproof brief that guides the build without constant hand-holding.
+**Between-session meta-project work:** Marko built a journal entry editor dashboard in the days between sessions. The intended workflow: Cowork drafts the entry, Marko opens the dashboard to add images and make final edits before publishing. Two days of Claude artifact prototyping, then a direction change based on what was learned, then a full brief written from that, then a build from scratch off the brief. Completed by Thursday. Five-step plan executed: prototype and test, brief with lessons learned, prepare for Claude Code, review with agents, get a foolproof brief that guides the build without constant hand-holding.
 
 ---
 
@@ -56,15 +56,21 @@ Absent again. Two sessions missed in a row. A lot to cover. Will tag along next 
 
 ---
 
-### Marin — Naučimo Hrvatski (content pass, partial)
+### Marin — Naučimo Hrvatski (build brief + wireframes)
 
-Hit 100% usage limit 30 minutes into the session. Switched to Sonnet and continued. Eventually moved to manual work — writing trip content, descriptions, context that the scenes need to feel specific. This is the right work to be doing. The scenes can't feel personal until the writing exists, and no design pass will fix that.
+Hit 100% usage limit 30 minutes into the session. Switched to Sonnet and continued, then moved to manual content writing. The 1:1 follow-up on Friday closed the gap and turned a partial session into a complete one.
 
-Vision and Claude delivery were mostly in sync before the limit hit. He was happy with the results where Claude engaged.
+**Build brief:** Moved from rough draft to build-ready spec in four moves. Critiqued v1, reviewed two parallel agent rewrites, merged into v2.0 resolving five open problems: the Saved Retelling artifact, the no-redo framing, the correction logic, the AI's runtime scope, the learning model. Then the pivotal call: cut free typing entirely in favour of chip-based answers. That became v2.1.
 
-**1:1 scheduled Friday 29 May** to cover the bases. Will continue from wherever the content work landed.
+**V2.1 tradeoffs:** Removed all runtime AI, eliminated Croatian-validation risk, solved the diacritic-keyboard problem, lowered build cost. Cost: some active-recall depth, partly recovered through per-scene difficulty ramp. The call landed on buildability — made deliberately, not by drift.
 
-**Note for the case study:** The usage limit forcing manual work turned into the right move — he had to do this writing eventually, and doing it now before the build starts is better than doing it mid-build. Frame it as a scope clarification, not a friction point.
+**Wireframes:** Six screens, every required state from the spec, in priority order. Architectural pivot validated. Content-sourcing decisions locked for every authored piece per scene.
+
+Quote: *"We decided not to make Kenzie write anything herself because that is too complicated."*
+
+**Five open prototype questions carried forward:** chip placement gesture, sentence-end gesture in Story Rebuild, Word Bank drawer height, stall nudge timing, HR/EN toggle position. None block the build; all need answers before the interactive prototype.
+
+**Note for the case study:** The usage limit forcing manual content writing was the right outcome. The trip descriptions are where the app's specificity lives. Doing that writing before the build starts is better than doing it mid-build. Frame it as a scope clarification, not friction.
 
 ---
 

@@ -94,15 +94,22 @@ What's next: feeding Claude the actual trip content. Stories, context, photos. T
 
 *Screenshot: the Scena 3 · Sarma kod bake mockup — glassmorphic, full-bleed warm amber, Playfair italic, frosted card, Marko pill.*
 
-### Session 04 — The content work starts.
+### Session 04 — The brief, then the wireframes.
 
-Hit the usage limit thirty minutes in. Switched to Sonnet, kept going, then moved to manual work — writing the trip content the scenes need to feel like something real happened in them.
+The session started badly. Hit the usage limit thirty minutes in, switched to Sonnet, kept going, then hit it again and moved to manual work — writing the trip content that was always going to need writing. Better to do it before the build than during it.
 
-This was the right thing to do. I've been circling it since the visual direction session. The scenes have a shape now; they don't have content. No amount of design work makes Scena 3 feel like the actual Sunday at baka's kitchen without the writing behind it. The usage limit forced the decision early. Better now than mid-build.
+The 1:1 follow-up closed the gap. The build brief moved from rough draft to build-ready spec in four moves. We critiqued v1, then reviewed two parallel agent rewrites and merged them into a single canonical v2.0 — resolving five open problems: the Saved Retelling artifact, the no-redo framing, the correction logic, the AI's runtime scope, and the learning model. Then came the pivotal decision: cut free typing entirely in favor of chip-based answers, with the mechanic chosen per scene. That became v2.1.
 
-A 1:1 follow-up is scheduled to pick up from here and cover what didn't get resolved in the main session.
+What v2.1 did: removed all runtime AI, eliminated the Croatian-validation risk, solved the diacritic-keyboard problem, lowered the build cost. What it cost: some active-recall depth, partly recovered through a per-scene difficulty ramp. The call landed on buildability, made deliberately rather than by drift.
 
-*Notes on trip content to come — what got written, what's still missing.*
+With the brief locked, the wireframes followed. Six screens, every required state from the spec, in priority order. The architectural pivot validated. Content-sourcing decisions locked for every authored piece per scene.
+
+The simplification ran through everything. The app got easier to build and easier for Kenzie to use. *"We decided not to make Kenzie write anything herself because that is too complicated."*
+
+Still open: five prototype questions — chip placement gesture, sentence-end gesture in Story Rebuild, Word Bank drawer height, stall nudge timing, HR/EN toggle position. None of them block the build. They need answers before the interactive prototype.
+
+*Artifact: Wireframes v1 markdown — six screens, all required states, grayscale schematic SVGs embedded inline.*
+*Keep alongside: Build Brief v2.1, the spec the wireframes implement against.*
 
 ### Session 05 — _to come_
 

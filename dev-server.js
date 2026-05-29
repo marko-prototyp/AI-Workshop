@@ -4,6 +4,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { marked } from 'marked';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST        = path.join(__dirname, 'dist');
@@ -101,8 +102,8 @@ async function handleApi(req, res) {
     }
   }
 
-  // GET /api/stat?path=...
-  if (url === '/api/stat' && req.method === 'GET') {
+  // GET /api/probe?path=...
+  if (url === '/api/probe' && req.method === 'GET') {
     try {
       const relPath = query.get('path');
       const full    = resolveRepoPath(relPath);
@@ -142,6 +143,37 @@ async function handleApi(req, res) {
       return jsonRes(res, { ok: true, wrote: filePath });
     } catch (e) {
       return jsonRes(res, { ok: false, error: e.message }, e.message.includes('Path') || e.message.includes('path') ? 400 : 500);
+    }
+  }
+
+  // POST /api/backup-file
+  if (url === '/api/backup-file' && req.method === 'POST') {
+    try {
+      const { filePath } = JSON.parse(await readBody(req));
+      const absPath      = resolveRepoPath(filePath);
+      if (!fs.existsSync(absPath)) return jsonRes(res, { ok: false, error: 'File not found' });
+
+      const ts          = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').slice(0, 19);
+      const backupRoot  = path.join(__dirname, '.dashboard-backup');
+      const backupDir   = path.join(backupRoot, path.dirname(filePath));
+      fs.mkdirSync(backupDir, { recursive: true });
+      const backupDest  = path.join(backupDir, path.basename(filePath) + '.' + ts);
+      fs.copyFileSync(absPath, backupDest);
+
+      return jsonRes(res, { ok: true, backupPath: path.relative(__dirname, backupDest) });
+    } catch (e) {
+      return jsonRes(res, { ok: false, error: e.message });
+    }
+  }
+
+  // POST /api/render-markdown
+  if (url === '/api/render-markdown' && req.method === 'POST') {
+    try {
+      const { markdown } = JSON.parse(await readBody(req));
+      const html         = marked.parse(String(markdown || ''));
+      return jsonRes(res, { ok: true, html });
+    } catch (e) {
+      return jsonRes(res, { ok: false, error: e.message });
     }
   }
 
