@@ -10,6 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST        = path.join(__dirname, 'dist');
 const DASHBOARD   = path.join(__dirname, 'dashboard');
 const WEEK_IMAGES = path.join(__dirname, 'Journal', 'week-images');
+const ARTIFACTS   = path.join(__dirname, 'content', 'artifacts');
 const PORT        = parseInt(process.env.PORT || '3000', 10);
 
 const MIME = {
@@ -218,6 +219,29 @@ const server = http.createServer(async (req, res) => {
     if (!path.resolve(filePath).startsWith(WEEK_IMAGES + path.sep) &&
         path.resolve(filePath) !== WEEK_IMAGES) {
       res.writeHead(403, CORS); res.end('Forbidden'); return;
+    }
+    const ext = path.extname(filePath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', ...CORS });
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      res.writeHead(404, CORS); res.end('Not found');
+    }
+    return;
+  }
+
+  // Artifact preview: serve content/artifacts/ so the dashboard can preview
+  // participant prototypes in an iframe before a build runs. Directory paths
+  // resolve to index.html, mirroring the published /artifacts/<slug>/ page.
+  if (urlPath.startsWith('/artifact-preview/')) {
+    const relPath = decodeURIComponent(urlPath.slice('/artifact-preview/'.length));
+    let filePath  = path.join(ARTIFACTS, relPath);
+    if (!path.resolve(filePath).startsWith(ARTIFACTS + path.sep) &&
+        path.resolve(filePath) !== ARTIFACTS) {
+      res.writeHead(403, CORS); res.end('Forbidden'); return;
+    }
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+      filePath = path.join(filePath, 'index.html');
     }
     const ext = path.extname(filePath);
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {

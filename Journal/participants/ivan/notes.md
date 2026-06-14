@@ -46,3 +46,8 @@ Simple to the point of feeling obvious. Six input dimensions combine into pre-en
 - Absent again. Two sessions missed in a row.
 - A lot to cover. Will hopefully tag along week 05.
 - **Action before week 05:** Real conversation about the path back in. Compressed onboarding or join live session 05?
+
+### Week 05
+- Absent again. Three sessions missed in a row (03, 04, 05).
+- The path-back-in conversation flagged after week 04 hasn't produced a return.
+- **Action before week 06:** Decide the re-entry plan for real. Compressed onboarding, or rejoin at the build phase with reduced scope. Past the point where "tag along" works.

@@ -9,6 +9,7 @@ const src = p => path.join(__dirname, 'src', p);
 const content = p => path.join(__dirname, 'content', p);
 const dist = p => path.join(__dirname, 'dist', p);
 const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/$/, '');
+const IS_PROD = process.env.NODE_ENV === 'production';
 
 function siteUrl(href) {
   if (!BASE_PATH || !href.startsWith('/')) return href;
@@ -442,6 +443,112 @@ function buildFigmaLoopHtml(data, svg) {
   ].join('\n  ');
 }
 
+// ── Artifacts ───────────────────────────────────────────────────────────────
+//
+// A journal recap may embed live interactive tools ("artifacts") with a tag:
+//   <artifact slug="week-05/ivo-wattlog"></artifact>
+//   <artifact slug="week-05/ivo-wattlog" height="640" />
+// The build validates the slug, reads meta.json + index.html from
+// content/artifacts/<slug>/, and replaces the tag with an iframe wrapper.
+// Artifact folders are copied wholesale to dist/artifacts/ separately, so a
+// dedicated /artifacts/<slug>/ page exists whether or not it is embedded.
+
+const ARTIFACT_TAG_RE = /<artifact\b([^>]*?)\/?>(?:\s*<\/artifact>)?/gi;
+const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*\/[a-z0-9]+(-[a-z0-9]+)*$/;
+
+function escapeAttr(str) {
+  return escapeHtml(String(str)).replace(/"/g, '&quot;');
+}
+
+function artifactUrl(slug) {
+  return `${BASE_PATH}/artifacts/${slug}/`;
+}
+
+function buildArtifactWrapper(slug, meta, height) {
+  const titleAttr = escapeAttr(`${meta.title} by ${meta.participant}`);
+  const url = artifactUrl(slug);
+  return `<section class="journal-artifact" data-artifact="${escapeAttr(slug)}">
+      <header class="journal-artifact__header">
+        <p class="journal-artifact__title">${escapeHtml(meta.title)}</p>
+        <p class="journal-artifact__byline">by ${escapeHtml(meta.participant)}, for ${escapeHtml(meta.project)}</p>
+        <a class="journal-artifact__open"
+           href="${url}"
+           target="_blank" rel="noopener">Open full</a>
+      </header>
+      <iframe
+        src="${url}"
+        title="${titleAttr}"
+        sandbox="allow-scripts allow-same-origin"
+        loading="lazy"
+        width="100%"
+        height="${height}">
+      </iframe>
+    </section>`;
+}
+
+function buildArtifactPlaceholder(meta) {
+  return `<section class="journal-artifact journal-artifact--draft">
+      <p class="journal-artifact__draft-label">Artifact in progress: ${escapeHtml(meta.title)}</p>
+    </section>`;
+}
+
+// Scan rendered HTML for <artifact> tags and replace each in place.
+// `source` is the recap path, used only for build-failure messages.
+function processArtifacts(html, source) {
+  return html.replace(ARTIFACT_TAG_RE, (_match, rawAttrs) => {
+    const attrs = rawAttrs || '';
+
+    const slugMatch = attrs.match(/\bslug\s*=\s*"([^"]*)"/i);
+    const slug = slugMatch ? slugMatch[1].trim() : '';
+    if (!slug) {
+      throw new Error(`Artifact tag in ${source} is missing a slug attribute.`);
+    }
+    if (slug.includes('..') || slug.startsWith('/') || !SLUG_RE.test(slug)) {
+      throw new Error(`Artifact in ${source} has an invalid slug: "${slug}". Expected "<week>/<name>", lowercase, no "..".`);
+    }
+
+    let heightOverride = null;
+    const heightMatch = attrs.match(/\bheight\s*=\s*"([^"]*)"/i);
+    if (heightMatch) {
+      const raw = heightMatch[1].trim();
+      if (!/^\d+$/.test(raw) || parseInt(raw, 10) <= 0) {
+        throw new Error(`Artifact "${slug}" in ${source} has an invalid height: "${raw}". Expected a positive integer.`);
+      }
+      heightOverride = parseInt(raw, 10);
+    }
+
+    const dir = content(path.join('artifacts', slug));
+    const metaPath = path.join(dir, 'meta.json');
+    const indexPath = path.join(dir, 'index.html');
+
+    if (!fs.existsSync(metaPath)) {
+      throw new Error(`Artifact "${slug}" in ${source} has no meta.json (expected ${path.relative(__dirname, metaPath)}).`);
+    }
+    if (!fs.existsSync(indexPath)) {
+      throw new Error(`Artifact "${slug}" in ${source} has no index.html (expected ${path.relative(__dirname, indexPath)}).`);
+    }
+
+    let meta;
+    try {
+      meta = JSON.parse(readFile(metaPath));
+    } catch (e) {
+      throw new Error(`Artifact "${slug}" in ${source} has unparseable meta.json: ${e.message}`);
+    }
+
+    const height = heightOverride ?? meta.height;
+    if (height == null || !Number.isInteger(height) || height <= 0) {
+      throw new Error(`Artifact "${slug}" in ${source} has no usable height. Set a tag override or meta.height (positive integer).`);
+    }
+
+    if (meta.status === 'draft') {
+      // Dev: show an editorial placeholder. Prod: omit the wrapper entirely.
+      return IS_PROD ? '' : buildArtifactPlaceholder(meta);
+    }
+
+    return buildArtifactWrapper(slug, meta, height);
+  });
+}
+
 // ── Journal builders ──────────────────────────────────────────────────────────
 
 function buildJournalEntry(entry) {
@@ -451,7 +558,7 @@ function buildJournalEntry(entry) {
     : '';
   const phase = entry.phase ? `<span class="phase">${entry.phase}</span>` : '';
   const date  = dateLabel ? `<span class="date">${dateLabel}</span>` : '';
-  const bodyHtml = marked.parse(entry.body || '');
+  const bodyHtml = processArtifacts(marked.parse(entry.body || ''), `content/journal/${num}.md`);
 
   const quoteBlock = (entry.quote && entry.quoteAttribution)
     ? `<aside class="journal-entry-quote">
@@ -1348,6 +1455,10 @@ function build() {
 
   // Copy week images (Journal/week-images/NN/ → dist/assets/weeks/NN/)
   copyDir(path.join(__dirname, 'Journal', 'week-images'), dist('assets/weeks'));
+
+  // Copy artifacts (content/artifacts/<week>/<slug>/ → dist/artifacts/...).
+  // Copied wholesale so /artifacts/<slug>/ exists even when no recap embeds it.
+  copyDir(content('artifacts'), dist('artifacts'));
 }
 
 build();

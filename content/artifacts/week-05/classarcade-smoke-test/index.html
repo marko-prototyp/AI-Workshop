@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClassArcade — smoke test v3</title>
+<style>
+  /* Smoke test: minimum styling to read hierarchy. No polish. */
+  body { font-family: sans-serif; margin: 0; background: #faf7f2; color: #222; }
+  button { font: inherit; cursor: pointer; }
+  button:disabled { opacity: .4; cursor: default; }
+  input[type=text], select { font: inherit; padding: 4px 6px; }
+  .hidden { display: none !important; }
+
+  header.app { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid #ccc; background: #fff; }
+  header.app .appname { font-style: italic; font-weight: bold; }
+  header.app .spacer { flex: 1; }
+  #undoChip { background: #fff8d6; border: 1px solid #d8c860; padding: 4px 10px; font-size: 13px; }
+
+  /* Class Picker */
+  #picker .block { max-width: 560px; margin: 60px auto; }
+  #picker h1 { font-size: 20px; }
+  .classtile { display: block; width: 100%; text-align: left; padding: 14px; margin-bottom: 8px; border: 1px solid #bbb; background: #fff; }
+  .classtile .cname { font-style: italic; font-weight: bold; }
+  .classtile .ccount { color: #666; font-size: 13px; }
+
+  /* Main Arcade */
+  #arcade .canvas { display: flex; gap: 16px; padding: 16px; align-items: flex-start; }
+  #arcade .left { flex: 6; }
+  #arcade .right { flex: 4; position: sticky; top: 16px; }
+  .actionrow { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+  .filterrow { display: flex; gap: 8px; margin-bottom: 10px; }
+  .filterrow input { flex: 1; }
+  .srow { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border: 1px solid #ddd; background: #fff; margin-bottom: 4px; position: relative; }
+  .srow.flash-pos { background: #e0f5f2; }
+  .srow.flash-neg { background: #f3eee2; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; background: #fff; flex-shrink: 0; }
+  .nameblock { flex: 1; min-width: 0; }
+  .nameblock .sname { font-style: italic; display: block; }
+  .nameblock .cats { font-size: 11px; color: #777; }
+  .srow .pts { font-weight: 800; font-size: 16px; min-width: 28px; text-align: right; }
+  .srow .rowbtn { width: 28px; height: 28px; font-weight: bold; }
+  .floatlabel { position: absolute; right: 90px; top: -8px; background: #fff; border: 1px solid #aaa; border-radius: 10px; padding: 1px 8px; font-size: 12px; font-weight: 800; }
+  #noMatch { color: #666; padding: 12px; }
+
+  /* Leaderboard — top 3 stacked vertically, 1st on top */
+  #podium { display: flex; flex-direction: column; gap: 8px; }
+  .pcard { display: flex; align-items: center; gap: 10px; border: 1px solid #ccc; border-left: 6px solid #999; background: #fff; padding: 10px; }
+  .pcard.r1 { border-left-color: #ff4d8d; }
+  .pcard.r2 { border-left-color: #2196f3; }
+  .pcard.r3 { border-left-color: #ff6d00; }
+  .pcard .nameblock .sname { font-size: 15px; }
+  .pcard .ppts { font-weight: 800; font-size: 20px; }
+  .pcard .rank { color: #666; font-size: 12px; width: 24px; }
+  #waiting { font-weight: 800; font-size: 18px; text-align: center; padding: 40px 10px; }
+
+  /* Overlays */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.3); display: flex; align-items: flex-start; justify-content: center; padding-top: 60px; }
+  .modal { background: #fff; border: 1px solid #999; padding: 16px; width: 440px; max-height: 70vh; overflow: auto; }
+  .modal h2 { margin-top: 0; font-size: 16px; }
+  .modal .row { margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+  .modal footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+  .removedrow input { text-decoration: line-through; color: #999; }
+
+  /* Dropdown */
+  .dd { position: relative; }
+  .ddmenu { position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #999; min-width: 180px; z-index: 5; }
+  .ddmenu button { display: block; width: 100%; text-align: left; padding: 8px 10px; border: none; background: none; }
+  .ddmenu button:hover { background: #eee; }
+  .ddmenu .cname { font-style: italic; }
+
+  /* Toast */
+  #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 8px 16px; border-radius: 6px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- ===================== CLASS PICKER ===================== -->
+<div id="picker">
+  <header class="app"><span class="appname">ClassArcade</span></header>
+  <div class="block">
+    <h1>Pick a class</h1>
+    <p id="pickerEmpty" class="hidden">No classes yet. Create your first one to get started.</p>
+    <div id="pickerTiles"></div>
+    <button class="classtile" onclick="openNewClassroom('picker')">+ New classroom</button>
+  </div>
+</div>
+
+<!-- ===================== MAIN ARCADE ===================== -->
+<div id="arcade" class="hidden">
+  <header class="app">
+    <span class="appname">ClassArcade</span>
+    <div class="dd">
+      <button id="ddBtn" onclick="toggleDropdown(event)"><span class="cname" id="activeClassName"></span> ▾</button>
+      <div id="ddMenu" class="ddmenu hidden"></div>
+    </div>
+    <span class="spacer"></span>
+    <button id="undoChip" class="hidden" onclick="undoLastEvent()"></button>
+  </header>
+  <div class="canvas">
+    <div class="left">
+      <div class="actionrow">
+        <button onclick="openGivePoints()"><strong>Give Points</strong></button>
+      </div>
+      <div class="filterrow">
+        <input type="text" id="searchInput" placeholder="Search players by name" oninput="renderArcade()">
+        <select id="sortMode" onchange="renderArcade()">
+          <option value="points">Points</option>
+          <option value="name">Student name</option>
+        </select>
+        <button onclick="openEditRoster()">✎ Edit</button>
+      </div>
+      <div id="studentList"></div>
+      <div id="noMatch" class="hidden">No players match.</div>
+    </div>
+    <div class="right">
+      <div id="podium"></div>
+      <div id="waiting" class="hidden">Waiting for the first points.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== GIVE POINTS PANEL ===================== -->
+<div id="gpOverlay" class="overlay hidden">
+  <div class="modal">
+    <h2>Give Points</h2>
+    <div class="row">
+      <label><input type="radio" name="gpPol" value="1"> + Points</label>
+      <label><input type="radio" name="gpPol" value="-1"> − Points</label>
+    </div>
+    <div class="row">
+      <label><input type="radio" name="gpAmt" value="1"> 1</label>
+      <label><input type="radio" name="gpAmt" value="2"> 2</label>
+      <label><input type="radio" name="gpAmt" value="3"> 3</label>
+    </div>
+    <div class="row" style="flex-wrap:wrap">
+      <label><input type="radio" name="gpCat" value="Homework"> Homework</label>
+      <label><input type="radio" name="gpCat" value="Helping others"> Helping others</label>
+      <label><input type="radio" name="gpCat" value="Answering questions"> Answering questions</label>
+    </div>
+    <div class="row"><label><input type="checkbox" id="gpAll" onchange="gpSelectAll(this.checked)"> Select all</label></div>
+    <div id="gpStudents"></div>
+    <footer>
+      <button onclick="closeGivePoints()">Cancel</button>
+      <button id="gpConfirm" onclick="confirmGivePoints()"><strong>Confirm</strong></button>
+    </footer>
+  </div>
+</div>
+
+<!-- ===================== ROSTER MODAL (new classroom + edit roster, same component) ===================== -->
+<div id="rosterOverlay" class="overlay hidden">
+  <div class="modal">
+    <!-- Step 1: class name -->
+    <div id="rosterStep1">
+      <h2>New classroom</h2>
+      <div class="row"><input type="text" id="rosterClassName" placeholder="Class name" style="flex:1" oninput="rosterValidate()"></div>
+      <footer>
+        <button onclick="closeRoster()">Cancel</button>
+        <button id="rosterContinue" onclick="rosterGoStep2()">Continue</button>
+      </footer>
+    </div>
+    <!-- Step 2: roster -->
+    <div id="rosterStep2" class="hidden">
+      <h2 id="rosterTitle2">Roster</h2>
+      <div id="editClassNameRow" class="row hidden"><input type="text" id="editClassName" style="flex:1" placeholder="Class name"></div>
+      <div id="rosterRows"></div>
+      <button onclick="rosterAddRow()">+ Add student</button>
+      <footer>
+        <button id="rosterBack" onclick="rosterGoStep1()">Back</button>
+        <button onclick="closeRoster()">Cancel</button>
+        <button id="rosterDone" onclick="rosterDone()"><strong>Done</strong></button>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- fake data ---------- */
+const CATS = ['Homework', 'Helping others', 'Answering questions'];
+
+let state = {
+  classrooms: [
+    { id: 'c1', name: '5.A', students: [
+      { id: 's1', name: 'Ana Horvat', points: 42 },
+      { id: 's2', name: 'Marko Kovačević', points: 36 },
+      { id: 's3', name: 'Petra Novak', points: 31 },
+      { id: 's4', name: 'Lucija Blažević', points: 27 },
+      { id: 's5', name: 'Ivan Jurić', points: 22 },
+      { id: 's6', name: 'Sara Pešić', points: 19 },
+      { id: 's7', name: 'Tomislav Rešetar', points: 14 },
+      { id: 's8', name: 'Maja Đurić', points: 9 } ] },
+    { id: 'c2', name: '5.B', students: [
+      { id: 's9', name: 'Filip Barić', points: 28 },
+      { id: 's10', name: 'Ema Čolić', points: 24 },
+      { id: 's11', name: 'Roko Perić', points: 19 },
+      { id: 's12', name: 'Nina Vuković', points: 15 },
+      { id: 's13', name: 'Luka Šimić', points: 11 },
+      { id: 's14', name: 'Tena Horvat', points: 7 } ] }
+  ],
+  activeId: null
+};
+/* seed fake per-category splits that sum to each student's total */
+state.classrooms.forEach(c => c.students.forEach(s => {
+  const hw = Math.floor(s.points * 0.5), help = Math.floor(s.points * 0.3);
+  s.cats = { 'Homework': hw, 'Helping others': help, 'Answering questions': s.points - hw - help };
+}));
+
+let uid = 100;
+const newId = () => 'x' + (uid++);
+let lastEvent = null; // { classId, changes: [{id, applied, category}], label }
+
+/* ---------- helpers ---------- */
+const activeClass = () => state.classrooms.find(c => c.id === state.activeId);
+const lastName = n => n.trim().split(/\s+/).slice(-1)[0].toLowerCase();
+const initials = n => {
+  const p = n.trim().split(/\s+/);
+  return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();
+};
+const byPoints = (a, b) => b.points - a.points || lastName(a.name).localeCompare(lastName(b.name));
+const byName = (a, b) => lastName(a.name).localeCompare(lastName(b.name)) || a.name.localeCompare(b.name);
+const emptyCats = () => ({ 'Homework': 0, 'Helping others': 0, 'Answering questions': 0 });
+const catsLine = s => CATS.map(c => `${c.split(' ')[0]} ${s.cats[c]}`).join(' · ');
+
+/* ---------- screens ---------- */
+function show(screen) {
+  document.getElementById('picker').classList.toggle('hidden', screen !== 'picker');
+  document.getElementById('arcade').classList.toggle('hidden', screen !== 'arcade');
+}
+
+function renderPicker() {
+  const tiles = document.getElementById('pickerTiles');
+  tiles.innerHTML = '';
+  const classes = [...state.classrooms].sort((a, b) => a.name.localeCompare(b.name));
+  document.getElementById('pickerEmpty').classList.toggle('hidden', classes.length > 0);
+  classes.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'classtile';
+    b.innerHTML = `<span class="cname"></span> <span class="ccount">· ${c.students.length} students</span>`;
+    b.querySelector('.cname').textContent = c.name;
+    b.onclick = () => { activateClass(c.id); };
+    tiles.appendChild(b);
+  });
+}
+
+function activateClass(id) {
+  state.activeId = id;
+  lastEvent = null;
+  hideUndoChip();
+  show('arcade');
+  renderArcade();
+}
+
+/* ---------- main arcade render ---------- */
+function renderArcade() {
+  const c = activeClass();
+  document.getElementById('activeClassName').textContent = c.name;
+
+  // search filters by name; sort mode: 1) points, 2) student name
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const mode = document.getElementById('sortMode').value;
+  const visible = [...c.students]
+    .filter(s => !q || s.name.toLowerCase().includes(q))
+    .sort(mode === 'name' ? byName : byPoints);
+
+  const list = document.getElementById('studentList');
+  list.innerHTML = '';
+  document.getElementById('noMatch').classList.toggle('hidden', visible.length > 0 || c.students.length === 0);
+  visible.forEach(s => {
+    const r = document.createElement('div');
+    r.className = 'srow';
+    r.dataset.id = s.id;
+    r.innerHTML = `<span class="avatar">${initials(s.name)}</span>
+      <span class="nameblock"><span class="sname"></span><span class="cats">${catsLine(s)}</span></span>
+      <button class="rowbtn" title="−1">−</button><span class="pts">${s.points}</span><button class="rowbtn" title="+1">+</button>`;
+    r.querySelector('.sname').textContent = s.name;
+    const [minus, plus] = r.querySelectorAll('.rowbtn');
+    plus.onclick = () => applyPointEvent([s.id], 1, null);
+    minus.onclick = () => applyPointEvent([s.id], -1, null);
+    list.appendChild(r);
+  });
+
+  renderPodium();
+}
+
+/* top 3, stacked vertically, 1st on top */
+function renderPodium() {
+  const c = activeClass();
+  const podium = document.getElementById('podium');
+  const waiting = document.getElementById('waiting');
+  const maxPts = c.students.length ? Math.max(...c.students.map(s => s.points)) : 0;
+  if (maxPts === 0) {
+    podium.classList.add('hidden');
+    waiting.classList.remove('hidden');
+    return;
+  }
+  waiting.classList.add('hidden');
+  podium.classList.remove('hidden');
+  const top = [...c.students].sort(byPoints).slice(0, 3);
+  podium.innerHTML = '';
+  top.forEach((s, i) => {
+    const rank = i + 1;
+    const card = document.createElement('div');
+    card.className = 'pcard r' + rank;
+    card.innerHTML = `<span class="rank">#${rank}</span><span class="avatar">${initials(s.name)}</span>
+      <span class="nameblock"><span class="sname"></span></span><span class="ppts">${s.points}</span>`;
+    card.querySelector('.sname').textContent = s.name;
+    podium.appendChild(card);
+  });
+}
+
+/* ---------- point events: flash first, re-sort second ---------- */
+function applyPointEvent(ids, delta, category) {
+  const c = activeClass();
+  const changes = [];
+  ids.forEach(id => {
+    const s = c.students.find(x => x.id === id);
+    const before = s.points;
+    s.points = Math.max(0, s.points + delta);   // floor at 0
+    const applied = s.points - before;
+    if (category && applied !== 0) {
+      s.cats[category] = Math.max(0, s.cats[category] + applied);
+    }
+    changes.push({ id, applied, category });
+  });
+
+  lastEvent = { classId: c.id, changes, label: eventLabel(ids, delta, category) };
+  showUndoChip();
+
+  // feedback at CURRENT positions, then re-sort
+  changes.forEach(ch => {
+    const row = document.querySelector(`.srow[data-id="${ch.id}"]`);
+    if (!row) return;
+    const s = c.students.find(x => x.id === ch.id);
+    row.classList.add(delta > 0 ? 'flash-pos' : 'flash-neg');
+    row.querySelector('.pts').textContent = s.points;
+    row.querySelector('.cats').textContent = catsLine(s);
+    const fl = document.createElement('span');
+    fl.className = 'floatlabel';
+    fl.textContent = ch.applied === 0 ? '0' : (ch.applied > 0 ? '+' + ch.applied : '−' + Math.abs(ch.applied));
+    row.appendChild(fl);
+  });
+  setTimeout(renderArcade, 600);
+}
+
+function eventLabel(ids, delta, category) {
+  const c = activeClass();
+  const sign = delta > 0 ? '+' : '−';
+  const who = ids.length === 1
+    ? c.students.find(s => s.id === ids[0]).name
+    : ids.length + ' players';
+  return `${who} ${sign}${Math.abs(delta)}` + (category ? ' · ' + category : '');
+}
+
+function showUndoChip() {
+  const chip = document.getElementById('undoChip');
+  chip.textContent = 'Undo: ' + lastEvent.label;
+  chip.classList.remove('hidden');
+}
+function hideUndoChip() {
+  document.getElementById('undoChip').classList.add('hidden');
+}
+function undoLastEvent() {
+  if (!lastEvent || lastEvent.classId !== state.activeId) return;
+  const c = activeClass();
+  lastEvent.changes.forEach(ch => {
+    const s = c.students.find(x => x.id === ch.id);
+    if (!s) return;
+    s.points = Math.max(0, s.points - ch.applied);
+    if (ch.category) s.cats[ch.category] = Math.max(0, s.cats[ch.category] - ch.applied);
+  });
+  lastEvent = null;
+  hideUndoChip();
+  renderArcade();
+}
+
+/* ---------- classroom dropdown ---------- */
+function toggleDropdown(e) {
+  e.stopPropagation();
+  const m = document.getElementById('ddMenu');
+  if (!m.classList.contains('hidden')) { m.classList.add('hidden'); return; }
+  m.innerHTML = '';
+  [...state.classrooms].sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="cname"></span>';
+    b.querySelector('.cname').textContent = c.name;
+    b.onclick = () => { m.classList.add('hidden'); activateClass(c.id); };
+    m.appendChild(b);
+  });
+  const nb = document.createElement('button');
+  nb.textContent = '+ New classroom';
+  nb.onclick = () => { m.classList.add('hidden'); openNewClassroom('arcade'); };
+  m.appendChild(nb);
+  m.classList.remove('hidden');
+}
+
+document.addEventListener('click', e => {
+  const m = document.getElementById('ddMenu');
+  if (!m.classList.contains('hidden') && !e.target.closest('.dd')) m.classList.add('hidden');
+});
+
+/* ---------- give points panel ---------- */
+function openGivePoints() {
+  // panel always opens fresh: + Points, amount 1, first category
+  document.querySelector('input[name=gpPol][value="1"]').checked = true;
+  document.querySelector('input[name=gpAmt][value="1"]').checked = true;
+  document.querySelector('input[name=gpCat][value="Homework"]').checked = true;
+  document.getElementById('gpAll').checked = false;
+  const box = document.getElementById('gpStudents');
+  box.innerHTML = '';
+  [...activeClass().students].sort(byPoints).forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'row';
+    d.innerHTML = `<label><input type="checkbox" class="gpChk" value="${s.id}" onchange="gpUpdateConfirm()"> <span class="sname" style="font-style:italic"></span> — <strong>${s.points}</strong></label>`;
+    d.querySelector('.sname').textContent = s.name;
+    box.appendChild(d);
+  });
+  gpUpdateConfirm();
+  document.getElementById('gpOverlay').classList.remove('hidden');
+}
+function closeGivePoints() { document.getElementById('gpOverlay').classList.add('hidden'); }
+function gpSelectAll(on) {
+  document.querySelectorAll('.gpChk').forEach(c => c.checked = on);
+  gpUpdateConfirm();
+}
+function gpUpdateConfirm() {
+  const any = [...document.querySelectorAll('.gpChk')].some(c => c.checked);
+  document.getElementById('gpConfirm').disabled = !any;
+}
+function confirmGivePoints() {
+  const pol = +document.querySelector('input[name=gpPol]:checked').value;
+  const amt = +document.querySelector('input[name=gpAmt]:checked').value;
+  const cat = document.querySelector('input[name=gpCat]:checked').value;
+  const ids = [...document.querySelectorAll('.gpChk:checked')].map(c => c.value);
+  closeGivePoints();
+  applyPointEvent(ids, pol * amt, cat);
+}
+
+/* ---------- roster modal (shared: new classroom / edit roster) ---------- */
+let rosterMode = null;          // 'new' | 'edit'
+let rosterOrigin = null;        // 'picker' | 'arcade'
+let rosterDraft = null;         // working copy; nothing real until Done/Save
+
+function openNewClassroom(origin) {
+  rosterMode = 'new';
+  rosterOrigin = origin;
+  rosterDraft = { name: '', students: [] };
+  document.getElementById('rosterClassName').value = '';
+  document.getElementById('rosterTitle2').textContent = 'Add students';
+  document.getElementById('editClassNameRow').classList.add('hidden');
+  document.getElementById('rosterBack').classList.remove('hidden');
+  rosterShowStep(1);
+  rosterValidate();
+  document.getElementById('rosterOverlay').classList.remove('hidden');
+}
+function openEditRoster() {
+  rosterMode = 'edit';
+  rosterOrigin = 'arcade';
+  const c = activeClass();
+  rosterDraft = { name: c.name, students: c.students.map(s => ({ ...s, cats: { ...s.cats }, removed: false })) };
+  document.getElementById('rosterTitle2').textContent = 'Edit roster';
+  document.getElementById('editClassNameRow').classList.remove('hidden');
+  document.getElementById('editClassName').value = c.name;
+  document.getElementById('rosterBack').classList.add('hidden');
+  rosterShowStep(2);
+  renderRosterRows();
+  document.getElementById('rosterOverlay').classList.remove('hidden');
+}
+function rosterShowStep(n) {
+  document.getElementById('rosterStep1').classList.toggle('hidden', n !== 1);
+  document.getElementById('rosterStep2').classList.toggle('hidden', n !== 2);
+}
+function rosterValidate() {
+  document.getElementById('rosterContinue').disabled = !document.getElementById('rosterClassName').value.trim();
+}
+function rosterGoStep2() {
+  rosterDraft.name = document.getElementById('rosterClassName').value.trim();
+  if (rosterDraft.students.length === 0) rosterDraft.students.push({ id: newId(), name: '', points: 0, cats: emptyCats(), removed: false });
+  rosterShowStep(2);
+  renderRosterRows();
+}
+function rosterGoStep1() { rosterShowStep(1); }
+
+function renderRosterRows() {
+  const box = document.getElementById('rosterRows');
+  box.innerHTML = '';
+  rosterDraft.students.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'row' + (s.removed ? ' removedrow' : '');
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.value = s.name; inp.placeholder = 'Student name'; inp.style.flex = '1';
+    inp.disabled = !!s.removed;
+    inp.oninput = () => { s.name = inp.value; rosterUpdateDone(); };
+    const pts = document.createElement('span');
+    pts.innerHTML = `<strong>${s.points}</strong>`;
+    const btn = document.createElement('button');
+    btn.textContent = s.removed ? 'Restore' : 'Remove';
+    btn.onclick = () => { s.removed = !s.removed; renderRosterRows(); };
+    d.append(inp, pts, btn);
+    box.appendChild(d);
+  });
+  rosterUpdateDone();
+}
+function rosterAddRow() {
+  rosterDraft.students.push({ id: newId(), name: '', points: 0, cats: emptyCats(), removed: false });
+  renderRosterRows();
+}
+function rosterUpdateDone() {
+  const ok = rosterDraft.students.some(s => !s.removed && s.name.trim());
+  document.getElementById('rosterDone').disabled = !ok;
+}
+function rosterDone() {
+  const kept = rosterDraft.students.filter(s => !s.removed && s.name.trim())
+                                   .map(({ removed, ...s }) => s);
+  if (rosterMode === 'new') {
+    const c = { id: newId(), name: rosterDraft.name, students: kept };
+    state.classrooms.push(c);
+    closeRosterModal();
+    if (rosterOrigin === 'picker') {
+      activateClass(c.id);
+    } else {
+      renderArcade();
+      toast(`${c.name} created`);
+    }
+  } else {
+    const c = activeClass();
+    c.name = document.getElementById('editClassName').value.trim() || c.name;
+    c.students = kept;
+    lastEvent = null;
+    hideUndoChip();
+    closeRosterModal();
+    renderArcade();
+  }
+}
+function closeRoster() {  // Cancel: discard the entire draft, removals included
+  closeRosterModal();
+  if (rosterOrigin === 'picker') renderPicker();
+}
+function closeRosterModal() {
+  document.getElementById('rosterOverlay').classList.add('hidden');
+}
+
+/* ---------- toast ---------- */
+function toast(msg) {
+  const t = document.createElement('div');
+  t.id = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+/* ---------- boot ----------
+   No persistence in this smoke test, so every load is a "first launch"
+   and the Class Picker is the correct entry screen. In the real build:
+   if activeClassroomId exists in localStorage, boot straight to the Arcade. */
+renderPicker();
+show('picker');
+</script>
+</body>
+</html>

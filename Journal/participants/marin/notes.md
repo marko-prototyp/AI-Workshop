@@ -78,3 +78,14 @@ Not yet defined. The product premise is sharp (real-relationship scenarios, AI c
 - **Five open prototype questions:** chip placement gesture, sentence-end gesture in Story Rebuild, Word Bank drawer height, stall nudge timing, HR/EN toggle position. None block the build; all need answers before the interactive prototype.
 - The usage limit forcing manual content writing was the right outcome. The trip descriptions are the foundation; everything else is decoration without them.
 - **Push for session 05:** Come in with written content for at least Chapter 1. Build the first real scene from real material.
+
+### Session 05
+- End-to-end clickable smoke test, single HTML file: recap → chapter shelf → Chapter 1 cover → scene player → story rebuild → chapter complete → vocab shelf + texting bridge. Working nav, fake data, no polish. Exactly what the session asked for.
+- Two fast corrections mid-build: cast locked to two (Marin and Kenzie, one invented character removed entirely), and interaction model changed from typing to drag-a-word-into-the-blank on every screen. The second extends the W04 no-free-typing call into a concrete mechanic.
+- Claude kept inserting imaginary characters despite the locked cast. His repeated correction: "No Marko, just Marin here." Keep the quote.
+- Chapter 1 scope fixed: 11 scenes, one photo and one interaction per scene. He has picked the 11 photos and written 11 descriptions. The content work flagged since session 02 has started, ahead of the build. Big.
+- Clicked through as Kenzie. Findings are the v2 requirements list: wrong-answer state gates but doesn't teach, no flipping back to an earlier photo, vocab shelf unlocks after she needs it, no saved-place reassurance, chapter dead-ends.
+- Process miss: the planned W04 wireframe/state-map comparison didn't run, files weren't available in the session. Fix: keep project artifacts reachable in-session.
+- Mood: "Only good moments today." Positive, wants to keep iterating. Said he'll work on it at home.
+- First peer-review round: clicked through the others' prototypes and gave and took suggestions. Took part in the group agreeing a shared set of UX rules.
+- **Push for session 06:** Structure the Chapter 1 content with Cowork before the session, so the 11 descriptions become per-scene content the prototype can absorb. Then the v2 state fixes.

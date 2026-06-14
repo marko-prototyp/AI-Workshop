@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wattlog — smoke test v3</title>
+<style>
+  :root{
+    --ground:#F4F3EF; --surface:#ECEAE4; --ink:#2C2C2A;
+    --ink-2:#888780; --ink-3:#B4B2A9; --line:rgba(0,0,0,0.09);
+    --accent:#E8420A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ground);color:var(--ink);
+    font:400 15px/1.45 Inter,"Helvetica Neue",Helvetica,sans-serif;}
+  main{max-width:680px;margin:0 auto;padding:20px 20px 96px}
+  section[data-screen]{display:none}
+  section[data-screen].on{display:block}
+
+  h1{font-size:22px;font-weight:500}
+  h2{font-size:11px;font-weight:400;color:var(--ink-2);letter-spacing:.06em;margin:24px 0 8px}
+  .sub{font-size:12px;color:var(--ink-3)}
+  .val{font-weight:500}
+  .accent{color:var(--accent)}
+  button{font:inherit;background:none;border:none;color:inherit;cursor:pointer;text-align:left}
+  input{font:inherit;background:var(--ground);border:0.5px solid var(--line);border-radius:6px;padding:2px 8px;width:90px;text-align:right}
+
+  header.row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .back{font-size:15px;color:var(--ink-2);margin-bottom:12px;display:inline-block}
+
+  .card{background:var(--surface);border:0.5px solid var(--line);border-radius:6px;padding:14px 16px;width:100%}
+  .card + .card{margin-top:8px}
+  .pill{font-size:11px;border:0.5px solid var(--line);border-radius:20px;padding:3px 10px;color:#5F5E5A;letter-spacing:.04em}
+  .pill.race{color:var(--accent);border-color:rgba(232,66,10,.35)}
+  .pb{font-size:10px;color:var(--accent);border:0.5px solid rgba(232,66,10,.3);border-radius:20px;padding:2px 7px;letter-spacing:.03em}
+
+  .strip{display:flex;background:var(--surface);border:0.5px solid var(--line);border-radius:6px}
+  .strip > div{flex:1;padding:14px 16px;border-left:0.5px solid var(--line)}
+  .strip > div:first-child{border-left:none}
+  .strip .lbl{font-size:10px;color:var(--ink-2);letter-spacing:.06em}
+  .strip .num{font-size:18px;font-weight:500;margin:2px 0}
+  .strip .ctx{font-size:11px;color:var(--ink-3)}
+
+  .chart{border:0.5px solid var(--line);margin-top:4px}
+  svg text{font:400 11px Inter,sans-serif;fill:var(--ink-2)}
+
+  .listrow{display:flex;justify-content:space-between;gap:12px;padding:11px 2px;border-bottom:0.5px solid var(--line);width:100%;align-items:baseline}
+  .listrow.sel{border-left:2px solid var(--accent);padding-left:8px;background:var(--surface)}
+
+  nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--ground);border-top:0.5px solid var(--line);z-index:5}
+  nav.tabs ul{max-width:680px;margin:0 auto;display:flex;list-style:none}
+  nav.tabs li{flex:1}
+  nav.tabs button{width:100%;padding:14px 0;text-align:center;font-size:12px;color:var(--ink-2)}
+  nav.tabs button[aria-current="true"]{color:var(--accent);font-weight:500}
+
+  .hero{margin:48px 0 32px;display:block;width:100%}
+  .hero .verb{font-size:38px;font-weight:500;letter-spacing:-0.02em}
+  .hero .qual{font-size:17px;color:var(--ink-2);margin-top:4px}
+  .hero .recipe{font-size:12px;color:var(--ink-3);margin-top:10px}
+  .fab{position:fixed;bottom:64px;right:max(20px,calc(50% - 320px));background:var(--ink);color:var(--ground);border-radius:20px;padding:10px 18px;font-size:13px;z-index:5}
+
+  .drop{border:0.5px dashed var(--line);min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;border-radius:6px}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px}
+  .dot.ok{background:var(--ink-2)} .dot.err{background:var(--accent)}
+
+  table.cal{width:100%;border-collapse:collapse;table-layout:fixed}
+  .cal th{font-size:10px;font-weight:400;color:var(--ink-2);letter-spacing:.06em;padding:6px 0}
+  .cal td{border:0.5px solid var(--line);height:54px;vertical-align:top;font-size:11px;color:var(--ink-2)}
+  .cal td button{width:100%;height:100%;font-size:11px;color:var(--ink-2);padding:4px}
+  .cal .tss{display:block;width:var(--s,0);height:var(--s,0);border-radius:50%;background:var(--ink-2);margin-top:4px}
+  .cal td.today{border:1.5px solid var(--ink)}
+  .cal td.race button{color:var(--accent)}
+  .cal td.planned button{background:var(--surface)}
+  .cal .micro{display:block;font-size:9px;color:var(--ink-3);margin-top:4px}
+  .cal td.wk{border:none;text-align:right;color:var(--ink-3);padding:4px}
+
+  #sheet{display:none;position:fixed;bottom:48px;left:50%;transform:translateX(-50%);width:min(640px,calc(100% - 40px));border:0.5px solid var(--line);border-radius:10px;background:var(--surface);padding:8px;z-index:6}
+  #sheet.on{display:block}
+  #sheet button{display:block;width:100%;padding:10px 8px}
+
+  .formrow{display:flex;justify-content:space-between;padding:12px 2px;border-bottom:0.5px solid var(--line);width:100%;align-items:baseline}
+  .formrow:last-child{border-bottom:none}
+  .danger{color:var(--accent)}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+  .tiles .card{padding:10px 12px;margin:0}
+  .tiles .card.hl{border-color:rgba(232,66,10,.35)}
+  .tiles .lbl{font-size:10px;color:var(--ink-2);letter-spacing:.06em}
+  .tiles .num{font-size:16px;font-weight:500;margin-top:2px}
+  .tiles .ctx{font-size:11px;color:var(--ink-3)}
+  .seg{display:inline-flex;border:0.5px solid var(--line);border-radius:6px;overflow:hidden}
+  .seg button{font-size:11px;padding:5px 10px;color:var(--ink-2)}
+  .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:500}
+  textarea{width:100%;background:none;border:0.5px dashed var(--line);border-radius:6px;padding:10px;font:italic 400 13px Inter,sans-serif;color:var(--ink-2);min-height:60px;margin-top:4px}
+
+  .block{display:flex;gap:14px;padding:11px 2px;border-bottom:0.5px solid var(--line)}
+  .block:last-child{border-bottom:none}
+  .block .lbl{flex:0 0 84px;font-size:11px;color:var(--ink-2);letter-spacing:.04em}
+  .block .txt{font-size:14px}
+
+  #modal{display:none;position:fixed;inset:0;background:rgba(44,44,42,.25);z-index:10;align-items:center;justify-content:center}
+  #modal.on{display:flex}
+  #modal .box{background:var(--ground);border:0.5px solid var(--line);border-radius:10px;padding:20px;max-width:340px}
+  #modal .box p{font-size:14px}
+  #modal .actions{display:flex;justify-content:flex-end;gap:16px;margin-top:16px;font-size:13px}
+  #modal .actions .go{font-weight:500}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ============ 1. TODAY ============ -->
+<section data-screen="today" class="on">
+  <header class="row">
+    <span class="sub">Tuesday 9 June</span>
+    <span class="pill race">16 days to Battle on the Beach</span>
+  </header>
+
+  <!-- Session widget: verb + qualifier + condensed recipe line. Tap → Session screen. -->
+  <button class="hero" onclick="openSession('today')">
+    <div class="verb" id="t-verb"></div>
+    <div class="qual" id="t-qual"></div>
+    <div class="recipe" id="t-recipe"></div>
+  </button>
+
+  <button class="card" onclick="go('load')">
+    <span class="val" id="t-status">Productive ↑</span>
+    <div class="sub" id="t-statusline">Fitness building faster than fatigue — keep going.</div>
+  </button>
+
+  <h2 id="t-ridelabel">Yesterday</h2>
+  <button class="card" id="t-ridecard" onclick="openRide('r8')">
+    <span class="val" id="t-ridesum">Endurance spin · 1h 42m · 78 TSS</span>
+    <div class="sub" id="t-ridenote">No notable efforts</div>
+  </button>
+
+  <h2>Next race</h2>
+  <button class="card" onclick="openRace('battle')">
+    <span class="val">Battle on the Beach · 16 days</span>
+    <div class="sub">On track</div>
+  </button>
+
+  <button class="fab" onclick="go('upload')">Upload ride</button>
+</section>
+
+<!-- ============ 10. SESSION (drill-through) ============ -->
+<section data-screen="session">
+  <button class="back" onclick="back()">← Back</button>
+  <h1 id="x-verb"></h1>
+  <p class="sub" id="x-context"></p>
+
+  <h2 id="x-recipelabel">Session</h2>
+  <div class="card" style="padding:4px 16px" id="x-blocks"></div>
+
+  <div id="x-variantswrap">
+    <h2>Variants</h2>
+    <div id="x-variants"></div>
+  </div>
+
+  <div id="x-riddenwrap" style="display:none">
+    <h2>Ridden</h2>
+    <div class="card" style="padding:4px 16px" id="x-ridden"></div>
+    <div class="card" style="margin-top:8px"><span class="val" id="x-verdict"></span></div>
+    <h2>&nbsp;</h2>
+    <button class="card" onclick="openRide('r9')"><span class="val">Open ride →</span><div class="sub">Threshold — 4×8 min · 1h 14m · 98 TSS</div></button>
+  </div>
+
+  <h2>Why</h2>
+  <p class="sub" id="x-reason" style="border-left:0.5px solid var(--line);padding-left:10px"></p>
+</section>
+
+<!-- ============ 2. UPLOAD ============ -->
+<section data-screen="upload">
+  <button class="back" onclick="back()">← Back</button>
+  <h1>Upload ride</h1>
+  <h2>&nbsp;</h2>
+  <button class="drop" id="drop" onclick="fakeParse()">
+    <span class="val">Drop .fit file or tap to choose</span>
+    <span class="sub">Garmin · Wahoo · Zwift · trainer export</span>
+  </button>
+  <h2>Recent</h2>
+  <div id="recent">
+    <button class="listrow" onclick="openRide('r8')"><span><span class="dot ok"></span>Mon 8 Jun · 1h 42m</span><span class="sub">Parsed</span></button>
+    <button class="listrow" onclick="openRide('r6')"><span><span class="dot ok"></span>Sat 6 Jun · 2h 18m</span><span class="sub">Parsed</span></button>
+    <div class="listrow"><span><span class="dot err"></span>ride_corrupt.fit</span><span class="sub">Power data looks corrupt — check power meter calibration</span></div>
+  </div>
+</section>
+
+<!-- ============ 3. RIDE DETAIL ============ -->
+<section data-screen="ride">
+  <button class="back" onclick="back()">← Back</button>
+  <header class="row">
+    <div>
+      <h1 id="r-name"></h1>
+      <span class="sub" id="r-date"></span>
+    </div>
+    <span style="white-space:nowrap">
+      <button class="sub" onclick="step(-1)" id="r-prev">‹ prev</button>
+      <button class="sub" onclick="step(1)" id="r-next">next ›</button>
+    </span>
+  </header>
+
+  <button class="card" id="r-callout" onclick="go('curve'); preselect()"></button>
+  <button class="card" id="r-session" onclick="openSession('past')" style="display:none">
+    <span class="sub">Prescribed</span> <span class="val">Threshold — 4 × 8 min</span> <span class="sub">· view session</span>
+  </button>
+
+  <svg class="chart" viewBox="0 0 640 160" width="100%" role="img" aria-label="Power and HR over time">
+    <polyline fill="none" stroke="#2C2C2A" stroke-width="1.5" points="0,120 60,118 90,60 150,58 170,122 230,120 250,55 310,57 330,118 390,120 410,52 470,56 490,124 560,118 640,110"/>
+    <polyline fill="none" stroke="#B4B2A9" stroke-width="1" points="0,140 80,128 160,100 240,96 320,90 400,86 480,92 560,100 640,108"/>
+    <text x="6" y="14" id="r-charttitle">power · hr (fake trace)</text>
+    <text x="6" y="156">0:00</text><text x="600" y="156" id="r-chartend"></text>
+  </svg>
+  <button class="sub" id="r-resetzoom" style="display:none" onclick="zoomInterval(null)">Reset zoom</button>
+
+  <div class="tiles" id="r-tiles"></div>
+
+  <h2 id="r-intlabel">Auto-detected intervals</h2>
+  <div id="r-intervals"></div>
+
+  <h2>Note</h2>
+  <textarea id="r-note" placeholder="How did the legs feel?"></textarea>
+</section>
+
+<!-- ============ 4. TRAINING LOAD ============ -->
+<section data-screen="load">
+  <header class="row">
+    <h1>Training load</h1>
+    <span class="seg" data-seg="range">
+      <button onclick="seg(this)" aria-pressed="false">30d</button><button onclick="seg(this)" aria-pressed="true">90d</button><button onclick="seg(this)" aria-pressed="false">1y</button><button onclick="seg(this)" aria-pressed="false">All</button>
+    </span>
+  </header>
+
+  <div class="card" style="display:flex;gap:20px;align-items:center">
+    <span style="font-size:48px;font-weight:500" class="accent" id="l-tsb">+4</span>
+    <div>
+      <span class="val" id="l-status">Productive ↑</span>
+      <div class="sub" id="l-statusline">Fitness building faster than fatigue — keep going.</div>
+    </div>
+  </div>
+
+  <div class="strip" style="margin-top:8px">
+    <div><div class="lbl">Fitness · CTL</div><div class="num" id="l-ctl">68</div><div class="ctx">↑ 4</div></div>
+    <div><div class="lbl">Fatigue · ATL</div><div class="num" id="l-atl">64</div><div class="ctx" id="l-atlctx">↓ 2</div></div>
+    <div><div class="lbl">This week · TSS</div><div class="num" id="l-wk">412</div><div class="ctx">5 rides</div></div>
+  </div>
+
+  <svg class="chart" viewBox="0 0 640 200" width="100%" role="img" aria-label="CTL, ATL, TSB over time">
+    <line x1="0" y1="130" x2="640" y2="130" stroke="rgba(0,0,0,.08)" stroke-width="0.5"/>
+    <polyline fill="none" stroke="#2C2C2A" stroke-width="1.5" points="0,150 80,144 160,140 240,128 320,124 400,112 480,108 560,100 640,96"/>
+    <polyline fill="none" stroke="#888780" stroke-width="1" stroke-dasharray="4 3" points="0,160 80,140 160,148 240,118 320,130 400,100 480,116 560,92 640,104"/>
+    <polyline fill="none" stroke="#E8420A" stroke-width="1.5" points="0,134 80,142 160,128 240,144 320,130 400,146 480,128 560,138 640,126"/>
+    <text x="6" y="14">CTL — solid · ATL — dashed · TSB — accent, zero line</text>
+    <text x="6" y="196" id="l-x0">Mar</text><text x="300" y="196" id="l-x1">Apr</text><text x="600" y="196">Jun</text>
+  </svg>
+
+  <svg class="chart" viewBox="0 0 640 70" width="100%" role="img" aria-label="Weekly TSS bars">
+    <g fill="#888780">
+      <rect x="20" y="40" width="30" height="20"/><rect x="70" y="34" width="30" height="26"/>
+      <rect x="120" y="44" width="30" height="16"/><rect x="170" y="28" width="30" height="32"/>
+      <rect x="220" y="24" width="30" height="36"/><rect x="270" y="38" width="30" height="22"/>
+      <rect x="320" y="20" width="30" height="40"/><rect x="370" y="16" width="30" height="44"/>
+      <rect x="420" y="36" width="30" height="24"/><rect x="470" y="14" width="30" height="46"/>
+      <rect x="520" y="12" width="30" height="48"/>
+    </g>
+    <rect x="570" y="18" width="30" height="42" fill="#2C2C2A"/>
+    <text x="6" y="12">Weekly TSS</text>
+  </svg>
+</section>
+
+<!-- ============ 5. CALENDAR ============ -->
+<section data-screen="calendar">
+  <header class="row">
+    <h1>‹ June 2026 ›</h1>
+    <span class="seg" data-seg="calview"><button onclick="seg(this)" aria-pressed="true">Month</button><button onclick="seg(this)" aria-pressed="false">Week</button></span>
+  </header>
+  <table class="cal">
+    <thead><tr><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th><th style="width:36px">TSS</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><button onclick="openRide('r1')">1<span class="tss" style="--s:8px"></span></button></td>
+        <td><button onclick="sheet()">2</button></td>
+        <td><button onclick="openRide('r3')">3<span class="tss" style="--s:10px"></span></button></td>
+        <td><button onclick="sheet()">4</button></td>
+        <td><button onclick="openRide('r5')">5<span class="tss" style="--s:6px"></span></button></td>
+        <td><button onclick="openRide('r6')">6<span class="tss" style="--s:16px"></span></button></td>
+        <td><button onclick="sheet()">7</button></td>
+        <td class="wk">388</td>
+      </tr>
+      <tr>
+        <td><button onclick="openRide('r8')">8<span class="tss" style="--s:10px"></span></button></td>
+        <td class="today" id="cal9"><button onclick="sheet()">9</button></td>
+        <td class="planned"><button onclick="openSession('planned')">10<span class="micro">planned</span></button></td>
+        <td><button onclick="sheet()">11</button></td>
+        <td><button onclick="sheet()">12</button></td>
+        <td><button onclick="sheet()">13</button></td>
+        <td><button onclick="sheet()">14</button></td>
+        <td class="wk" id="wk2">78</td>
+      </tr>
+      <tr>
+        <td><button onclick="sheet()">15</button></td><td><button onclick="sheet()">16</button></td>
+        <td><button onclick="sheet()">17</button></td><td><button onclick="sheet()">18</button></td>
+        <td><button onclick="sheet()">19</button></td><td><button onclick="sheet()">20</button></td>
+        <td><button onclick="sheet()">21</button></td><td class="wk">—</td>
+      </tr>
+      <tr>
+        <td><button onclick="sheet()">22</button></td><td><button onclick="sheet()">23</button></td>
+        <td><button onclick="sheet()">24</button></td>
+        <td class="race"><button onclick="openRace('battle')">25 ⚑</button></td>
+        <td><button onclick="sheet()">26</button></td><td><button onclick="sheet()">27</button></td>
+        <td><button onclick="sheet()">28</button></td><td class="wk">—</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ 6. RACE DETAIL ============ -->
+<section data-screen="race">
+  <button class="back" onclick="back()">← Back</button>
+  <h1 id="e-name"></h1>
+  <p class="sub" id="e-countdown"></p>
+
+  <h2>Event</h2>
+  <div class="card" style="padding:0 16px" id="e-form"></div>
+
+  <h2>Projection</h2>
+  <div class="card" id="e-proj"></div>
+
+  <h2>Notes</h2>
+  <textarea placeholder="Goals, course memory, kit notes…"></textarea>
+</section>
+
+<!-- ============ 7. POWER CURVE ============ -->
+<section data-screen="curve">
+  <button class="back" id="c-back" style="display:none" onclick="back()">← Back to ride</button>
+  <header class="row">
+    <h1>Power curve</h1>
+    <span style="display:flex;gap:8px">
+      <span class="seg" data-seg="cmp"><button onclick="seg(this)" aria-pressed="true">vs 90d</button><button onclick="seg(this)" aria-pressed="false">vs season</button><button onclick="seg(this)" aria-pressed="false">vs 12mo</button></span>
+      <span class="seg" data-seg="unit"><button onclick="seg(this); units('W')" aria-pressed="true">W</button><button onclick="seg(this); units('wkg')" aria-pressed="false">W/kg</button></span>
+    </span>
+  </header>
+
+  <svg class="chart" viewBox="0 0 640 220" width="100%" role="img" aria-label="Power-duration curve">
+    <polyline fill="none" stroke="#2C2C2A" stroke-width="1.5" points="0,30 90,70 180,110 270,140 360,158 450,172 540,184 640,196"/>
+    <polyline fill="none" stroke="#888780" stroke-width="1" stroke-dasharray="4 3" points="0,38 90,80 180,120 270,150 360,168 450,180 540,192 640,204"/>
+    <polyline fill="none" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="4 3" points="0,44 90,86 180,128 270,158 360,176 450,188 540,198 640,210"/>
+    <text x="6" y="14" id="c-legend">Current — solid · Prior 90d — dashed · Season best — light</text>
+    <text x="4" y="216">5s</text><text x="120" y="216">30s</text><text x="220" y="216">1m</text>
+    <text x="330" y="216">5m</text><text x="440" y="216">20m</text><text x="540" y="216">1h</text><text x="616" y="216">3h</text>
+  </svg>
+
+  <div class="tiles">
+    <div class="card"><div class="lbl">5s peak</div><div class="num" data-w="1124"></div><div class="ctx">↑ 12 W vs 90d</div></div>
+    <div class="card"><div class="lbl">1min peak</div><div class="num" data-w="612"></div><div class="ctx">↑ 8 W</div></div>
+    <div class="card"><div class="lbl">5min peak</div><div class="num" data-w="342"></div><div class="ctx">↑ 14 W</div></div>
+    <div class="card" id="c-20m"><div class="lbl">20min peak</div><div class="num" data-w="298"></div><div class="ctx">↑ 6 W</div></div>
+  </div>
+</section>
+
+<!-- ============ 8. SETTINGS ============ -->
+<section data-screen="settings">
+  <h1>Settings</h1>
+
+  <h2>Rider</h2>
+  <div class="card" style="padding:0 16px">
+    <button class="formrow" onclick="editWeight()"><span class="sub">Body weight</span><span class="val" id="s-weight">74 kg</span></button>
+    <button class="formrow" onclick="editFtp()"><span class="sub">FTP <span class="pill" id="s-ftptag">computed</span></span><span class="val" id="s-ftp">284 W</span></button>
+    <div class="formrow"><span class="sub">HR zones <span class="pill">default</span></span><span class="val">›</span></div>
+  </div>
+
+  <h2>Data</h2>
+  <div class="card" style="padding:0 16px">
+    <div class="formrow"><span class="sub">Connected services</span><span class="sub">None</span></div>
+    <button class="formrow" onclick="go('equipment')"><span class="sub">Equipment</span><span class="val">›</span></button>
+    <div class="formrow"><span class="sub">Export rides</span><span class="val">›</span></div>
+  </div>
+
+  <h2>Account</h2>
+  <div class="card" style="padding:0 16px">
+    <div class="formrow"><span class="sub">Email</span><span class="sub">ivo@example.com</span></div>
+    <div class="formrow"><span class="sub">Sign out</span><span></span></div>
+    <div class="formrow danger"><span>Delete account</span><span></span></div>
+  </div>
+
+  <p class="sub" style="text-align:center;margin-top:24px">Wattlog v0.1.0 — smoke test</p>
+</section>
+
+<!-- ============ 9. EQUIPMENT ============ -->
+<section data-screen="equipment">
+  <button class="back" onclick="back()">← Back</button>
+  <header class="row"><h1>Equipment</h1><span class="sub">Add bike</span></header>
+
+  <h2>Stumpjumper · 4 218 km</h2>
+  <div class="listrow"><span class="val">Chain</span><span>2 410 km</span><span class="sub">of 3 000 km</span><span class="dot ok"></span></div>
+  <div class="listrow"><span class="val">Tyres</span><span>1 180 km</span><span class="sub">of 2 500 km</span><span class="dot ok"></span></div>
+  <div class="listrow"><span class="val">Brake pads</span><span>2 940 km</span><span class="sub">of 3 000 km</span><span class="dot err"></span></div>
+
+  <h2>Tarmac SL7 · 9 644 km</h2>
+  <div class="listrow"><span class="val">Chain</span><span>880 km</span><span class="sub">of 3 500 km</span><span class="dot ok"></span></div>
+  <div class="listrow"><span class="val">Cassette</span><span>6 120 km</span><span class="sub">of 8 000 km</span><span class="dot ok"></span></div>
+</section>
+
+</main>
+
+<div id="sheet">
+  <button onclick="sheet(); alert('Planned workout form — out of smoke-test scope')">Add planned workout</button>
+  <button onclick="sheet(); openRace('new')">Add race event</button>
+  <button onclick="sheet()">Cancel</button>
+</div>
+
+<div id="modal">
+  <div class="box">
+    <p id="m-text"></p>
+    <div class="actions">
+      <button onclick="modalCancel()">Cancel</button>
+      <button class="go" onclick="modalConfirm()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<nav class="tabs" id="tabs" aria-label="Primary">
+  <ul>
+    <li><button data-tab="today" onclick="tab('today')" aria-current="true">Today</button></li>
+    <li><button data-tab="calendar" onclick="tab('calendar')">Calendar</button></li>
+    <li><button data-tab="load" onclick="tab('load')">Load</button></li>
+    <li><button data-tab="curve" onclick="tab('curve')">Curve</button></li>
+    <li><button data-tab="settings" onclick="tab('settings')">Settings</button></li>
+  </ul>
+</nav>
+
+<script>
+/* ---------- Rider state ---------- */
+let ftp = 284;
+let weightKg = 74;
+const W = p => Math.round(ftp * p);
+
+/* ---------- Session library: hardcoded structure, computed numbers ---------- */
+const sessions = {
+  threshold: {
+    verb: "Threshold",
+    qual: () => "Intervals at "+W(.95)+"–"+W(1.05)+" W",
+    reason: "TSB is between −5 and +5 and yesterday's ride was easy. Rule: threshold.",
+    variants: [
+      { name: "4 × 8 min",
+        summary: () => "15 min up · 4 × 8 min at "+W(.95)+"–"+W(1.05)+" W · 10 min down",
+        blocks: () => [
+          ["Warmup","15 min Z2, building to ~"+W(.75)+" W"],
+          ["Main","4 × 8 min at "+W(.95)+"–"+W(1.05)+" W · cadence 90+"],
+          ["Between","5 min under "+W(.55)+" W"],
+          ["Cooldown","10 min easy spin"]]},
+      { name: "2 × 20 min",
+        summary: () => "15 min up · 2 × 20 min at "+W(.95)+"–"+W(1.0)+" W · 10 min down",
+        blocks: () => [
+          ["Warmup","15 min Z2, building to ~"+W(.75)+" W"],
+          ["Main","2 × 20 min at "+W(.95)+"–"+W(1.0)+" W · cadence 85–95"],
+          ["Between","10 min under "+W(.55)+" W"],
+          ["Cooldown","10 min easy spin"]]},
+      { name: "Over-unders — 3 × 12 min",
+        summary: () => "15 min up · 3 × 12 min alternating "+W(.9)+" / "+W(1.05)+" W",
+        blocks: () => [
+          ["Warmup","15 min Z2, building to ~"+W(.75)+" W"],
+          ["Main","3 × 12 min · 2 min at "+W(.9)+" W, 1 min at "+W(1.05)+" W, repeating"],
+          ["Between","6 min under "+W(.55)+" W"],
+          ["Cooldown","10 min easy spin"]]}
+    ]},
+  recovery: {
+    verb: "Recovery",
+    qual: () => "Keep power under "+W(.75)+" W",
+    reason: "TSB dropped to −16 after today's threshold session. Rule: recovery.",
+    variants: [
+      { name: "Easy spin — 45–60 min",
+        summary: () => "45–60 min flat · under "+W(.75)+" W · cadence 90+",
+        blocks: () => [
+          ["Whole ride","45–60 min under "+W(.75)+" W · cadence 90+ · HR under 135"],
+          ["Terrain","Flat. No surges, no sprints for signs."]]},
+      { name: "Short spin — 30 min",
+        summary: () => "30 min · under "+W(.75)+" W",
+        blocks: () => [
+          ["Whole ride","30 min under "+W(.75)+" W · cadence 90+"],
+          ["Terrain","Flat or trainer."]]}
+    ]},
+  endurance: {
+    verb: "Endurance",
+    qual: () => "Steady at "+W(.66)+"–"+W(.75)+" W, 90+ min",
+    reason: "Planned by you for Wednesday 10 June.",
+    variants: [
+      { name: "Steady — 90 min",
+        summary: () => "90 min at "+W(.66)+"–"+W(.75)+" W",
+        blocks: () => [
+          ["Warmup","10 min easy"],
+          ["Main","90 min at "+W(.66)+"–"+W(.75)+" W · cadence 85–95"],
+          ["Cooldown","Roll home easy"]]},
+      { name: "Long — 2 h 30",
+        summary: () => "2 h 30 at "+W(.66)+"–"+W(.75)+" W · 3 × 1 min pickups",
+        blocks: () => [
+          ["Warmup","10 min easy"],
+          ["Main","2 h 30 at "+W(.66)+"–"+W(.75)+" W · 3 × 1 min pickups, spread out"],
+          ["Cooldown","Roll home easy"]]}
+    ]}
+};
+
+/* Prescription state: engine picks category + recommended variant (index 0).
+   User can swap variant; chosen index persists for the day. */
+let presc = { cat:"threshold", variant:0 };
+let uploaded = false;
+
+/* Stored prescription for the ridden session (past mode) */
+const pastSession = { cat:"threshold", variant:0 };
+
+/* ---------- Rides ---------- */
+const rides = {
+  r1:{name:"Endurance — Sljeme road", date:"Mon 1 Jun · 17:10", dur:"2:02",
+      tiles:{Duration:"2h 02m", TSS:"84", IF:"0.68", NP:"196 W", "Avg power":"188 W", Max:"604 W", "Avg HR":"138", kJ:"1374"},
+      callout:null, intervals:[]},
+  r3:{name:"Tempo blocks", date:"Wed 3 Jun · 18:05", dur:"1:31",
+      tiles:{Duration:"1h 31m", TSS:"96", IF:"0.80", NP:"227 W", "Avg power":"219 W", Max:"540 W", "Avg HR":"148", kJ:"1196"},
+      callout:null, intervals:[["1","20:00","226 W","NP 228 · IF 0.80 · 21 TSS"],["2","20:00","229 W","NP 231 · IF 0.81 · 22 TSS"]]},
+  r5:{name:"Openers", date:"Fri 5 Jun · 12:20", dur:"0:48",
+      tiles:{Duration:"0h 48m", TSS:"31", IF:"0.62", NP:"176 W", "Avg power":"162 W", Max:"688 W", "Avg HR":"124", kJ:"468"},
+      callout:null, intervals:[]},
+  r6:{name:"Threshold intervals — Vrhovec loop", date:"Sat 6 Jun · 16:42", dur:"2:18",
+      tiles:{Duration:"2h 18m", TSS:"142", IF:"0.82", NP:"248 W", "Avg power":"214 W", Max:"812 W", "Avg HR":"156", kJ:"1772"},
+      callout:"2nd-best 20min power",
+      intervals:[["1","8:34","282 W","NP 286 · IF 0.95 · 38 TSS"],["2","8:30","279 W","NP 284 · IF 0.94 · 37 TSS"],["3","8:31","274 W","NP 280 · IF 0.93 · 36 TSS"]]},
+  r8:{name:"Endurance spin", date:"Mon 8 Jun · 17:30", dur:"1:42",
+      tiles:{Duration:"1h 42m", TSS:"78", IF:"0.66", NP:"190 W", "Avg power":"184 W", Max:"512 W", "Avg HR":"136", kJ:"1118"},
+      callout:null, intervals:[]},
+  r9:{name:"Threshold — 4×8 min", date:"Tue 9 Jun · 19:55", dur:"1:14",
+      tiles:{Duration:"1h 14m", TSS:"98", IF:"0.89", NP:"253 W", "Avg power":"221 W", Max:"742 W", "Avg HR":"161", kJ:"982"},
+      callout:"Best 5min power this year", hasSession:true,
+      intervals:[["1","8:02","284 W","NP 291 · IF 1.02 · 14 TSS"],["2","8:00","279 W","NP 287 · IF 1.01 · 13 TSS"],["3","8:01","276 W","NP 283 · IF 1.00 · 13 TSS"],["4","8:00","268 W","NP 274 · IF 0.97 · 12 TSS"]]}
+};
+let rideOrder = ["r1","r3","r5","r6","r8"];
+
+const races = {
+  battle:{name:"Battle on the Beach", countdown:"16 days · 25 June 2026",
+    form:[["Date","25 Jun 2026"],["Discipline","XC"],["Priority","A race"],["Distance","42 km"],["Elevation","980 m"],["Course file","battle_beach.gpx"]],
+    proj:'<div style="display:flex;gap:20px;align-items:center"><span style="font-size:34px;font-weight:500">218 W</span><div><span class="val">On track</span><div class="sub">Begin taper 17 June</div></div></div>'},
+  new:{name:"New race", countdown:"Set a date",
+    form:[["Date","Set date"],["Discipline","Pick"],["Priority","Pick"],["Distance","—"],["Elevation","—"],["Course file","Upload GPX"]],
+    proj:'<span class="sub">Projection appears once date and distance are set.</span>'}
+};
+
+/* ---------- Router ---------- */
+const TOP = ["today","calendar","load","curve","settings"];
+const stack = [];
+let current = "today";
+
+function show(id){
+  current = id;
+  document.querySelectorAll("[data-screen]").forEach(s => s.classList.toggle("on", s.dataset.screen === id));
+  document.getElementById("tabs").style.display = TOP.includes(id) ? "" : "none";
+  document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-current", b.dataset.tab === id));
+  document.getElementById("c-back").style.display = (id === "curve" && stack.length) ? "" : "none";
+  document.getElementById("sheet").classList.remove("on");
+  window.scrollTo(0,0);
+}
+function go(id){ if (id !== current) stack.push(current); show(id); }
+function tab(id){ stack.length = 0; show(id); }
+function back(){ show(stack.pop() || "today"); }
+
+/* ---------- Today widget ---------- */
+function renderToday(){
+  const s = sessions[presc.cat];
+  const v = s.variants[presc.variant];
+  document.getElementById("t-verb").textContent = s.verb;
+  document.getElementById("t-qual").textContent = s.qual();
+  document.getElementById("t-recipe").textContent = v.summary();
+}
+
+/* ---------- Session screen ---------- */
+let sessionMode = "today";
+function openSession(mode){
+  sessionMode = mode;
+  renderSession();
+  go("session");
+}
+function renderSession(){
+  const cfg = sessionMode === "today"   ? {cat:presc.cat, variant:presc.variant, ctx: uploaded ? "Tomorrow · Wed 10 June" : "Today · Tue 9 June"}
+            : sessionMode === "planned" ? {cat:"endurance", variant:0, ctx:"Planned · Wed 10 June"}
+            :                             {cat:pastSession.cat, variant:pastSession.variant, ctx:"Ridden · Tue 9 June"};
+  const s = sessions[cfg.cat];
+  const v = s.variants[cfg.variant];
+  document.getElementById("x-verb").textContent = s.verb;
+  document.getElementById("x-context").textContent = cfg.ctx;
+  document.getElementById("x-blocks").innerHTML = v.blocks()
+    .map(([k,t])=>'<div class="block"><span class="lbl">'+k+'</span><span class="txt">'+t+'</span></div>').join("");
+  document.getElementById("x-reason").textContent = s.reason;
+
+  const vw = document.getElementById("x-variantswrap");
+  const rw = document.getElementById("x-riddenwrap");
+  if (sessionMode === "past"){
+    vw.style.display = "none";
+    rw.style.display = "";
+    document.getElementById("x-ridden").innerHTML = rides.r9.intervals
+      .map(iv=>'<div class="block"><span class="lbl">Interval '+iv[0]+'</span><span class="txt">'+iv[1]+' · '+iv[2]+'</span></div>').join("");
+    document.getElementById("x-verdict").textContent =
+      "All four efforts within the "+W(.95)+"–"+W(1.05)+" W target.";
+  } else {
+    vw.style.display = "";
+    rw.style.display = "none";
+    const swappable = sessionMode === "today";
+    document.getElementById("x-variants").innerHTML = s.variants.map((vv,i)=>
+      '<button class="listrow'+(i===cfg.variant?" sel":"")+'" '+(swappable?'onclick="pickVariant('+i+')"':'')+'>'+
+      '<span class="val">'+vv.name+'</span><span class="sub">'+vv.summary()+'</span>'+
+      (i===0?'<span class="pill">recommended</span>':'')+'</button>').join("");
+  }
+}
+function pickVariant(i){
+  presc.variant = i;
+  renderSession();
+  renderToday();   // hero qualifier and recipe line follow the chosen variant
+}
+
+/* ---------- Ride detail ---------- */
+let currentRide = null;
+function openRide(id){ renderRide(id); go("ride"); }
+function renderRide(id){
+  currentRide = id;
+  const r = rides[id];
+  document.getElementById("r-name").textContent = r.name;
+  document.getElementById("r-date").textContent = r.date;
+  document.getElementById("r-chartend").textContent = r.dur;
+  const co = document.getElementById("r-callout");
+  if (r.callout){ co.style.display=""; co.innerHTML = '<span class="pb">'+r.callout+'</span>'; } else co.style.display="none";
+  document.getElementById("r-session").style.display = r.hasSession ? "" : "none";
+  document.getElementById("r-tiles").innerHTML = Object.entries(r.tiles)
+    .map(([k,v])=>'<div class="card"><div class="lbl">'+k+'</div><div class="num">'+v+'</div></div>').join("");
+  const il = document.getElementById("r-intervals");
+  document.getElementById("r-intlabel").style.display = r.intervals.length ? "" : "none";
+  il.innerHTML = r.intervals.map((iv,i)=>
+    '<button class="listrow" onclick="zoomInterval('+i+')"><span class="sub">'+iv[0]+'</span><span class="val">'+iv[1]+'</span><span>'+iv[2]+'</span><span class="sub">'+iv[3]+'</span></button>').join("");
+  zoomInterval(null);
+  const i = rideOrder.indexOf(id);
+  document.getElementById("r-prev").style.visibility = i>0 ? "visible":"hidden";
+  document.getElementById("r-next").style.visibility = i<rideOrder.length-1 ? "visible":"hidden";
+  document.getElementById("r-note").value = "";
+}
+function step(d){
+  const i = rideOrder.indexOf(currentRide) + d;
+  if (i>=0 && i<rideOrder.length) renderRide(rideOrder[i]);
+}
+function zoomInterval(i){
+  const rows = document.querySelectorAll("#r-intervals .listrow");
+  rows.forEach((row,j)=>row.classList.toggle("sel", j===i));
+  const title = document.getElementById("r-charttitle");
+  const reset = document.getElementById("r-resetzoom");
+  if (i===null){ title.textContent = "power · hr (fake trace)"; reset.style.display="none"; }
+  else {
+    const iv = rides[currentRide].intervals[i];
+    title.textContent = "Zoomed — interval "+iv[0]+" · "+iv[1]+" · "+iv[2];
+    reset.style.display="";
+  }
+}
+function preselect(){
+  document.getElementById("c-20m").classList.add("hl");
+  setTimeout(()=>document.getElementById("c-20m").classList.remove("hl"), 2500);
+}
+
+/* ---------- Race detail ---------- */
+function openRace(id){
+  const e = races[id];
+  document.getElementById("e-name").textContent = e.name;
+  document.getElementById("e-countdown").textContent = e.countdown;
+  document.getElementById("e-form").innerHTML = e.form
+    .map(([k,v])=>'<div class="formrow"><span class="sub">'+k+'</span><span class="'+(v.includes("Set")||v.includes("Pick")||v==="—"||v.includes("Upload")?"sub":"val")+'">'+v+'</span></div>').join("");
+  document.getElementById("e-proj").innerHTML = e.proj;
+  go("race");
+}
+
+/* ---------- Upload + the closed loop ---------- */
+function fakeParse(){
+  if (uploaded){ openRide("r9"); return; }
+  const el = document.getElementById("drop");
+  el.innerHTML = '<span class="val">ride_2026-06-09.fit</span><span class="sub" id="parsestep">Parsing power data…</span>';
+  setTimeout(()=>document.getElementById("parsestep").textContent="Detecting intervals…",600);
+  setTimeout(()=>document.getElementById("parsestep").textContent="Comparing to your history…",1200);
+  setTimeout(()=>{
+    applyUpload();
+    const i = stack.indexOf("upload"); if (i>-1) stack.splice(i,1);
+    renderRide("r9"); show("ride");
+    el.innerHTML='<span class="val">Drop .fit file or tap to choose</span><span class="sub">Garmin · Wahoo · Zwift · trainer export</span>';
+  },1800);
+}
+function applyUpload(){
+  uploaded = true;
+  rideOrder.push("r9");
+  presc = { cat:"recovery", variant:0 };   // engine rolls to next session
+  renderToday();
+  document.getElementById("t-status").textContent = "Fatigued ↓";
+  document.getElementById("t-statusline").textContent = "Carrying load. Form will return after recovery.";
+  document.getElementById("t-ridelabel").textContent = "Today";
+  document.getElementById("t-ridesum").textContent = "Threshold — 4×8 min · 1h 14m · 98 TSS";
+  document.getElementById("t-ridenote").innerHTML = '<span class="pb">Best 5min power this year</span>';
+  document.getElementById("t-ridecard").setAttribute("onclick","openRide('r9')");
+  document.getElementById("l-tsb").textContent = "−16";
+  document.getElementById("l-status").textContent = "Fatigued ↓";
+  document.getElementById("l-statusline").textContent = "Carrying load. Form will return after recovery.";
+  document.getElementById("l-atl").textContent = "84";
+  document.getElementById("l-atlctx").textContent = "↑ 20";
+  document.getElementById("l-ctl").textContent = "69";
+  document.getElementById("l-wk").textContent = "176";
+  document.getElementById("cal9").innerHTML = '<button onclick="openRide(\'r9\')">9<span class="tss" style="--s:10px"></span></button>';
+  document.getElementById("wk2").textContent = "176";
+  document.getElementById("recent").insertAdjacentHTML("afterbegin",
+    '<button class="listrow" onclick="openRide(\'r9\')"><span><span class="dot ok"></span>Tue 9 Jun · 1h 14m</span><span class="sub">Parsed</span></button>');
+}
+
+/* ---------- Settings ---------- */
+function editWeight(){
+  const row = document.getElementById("s-weight");
+  if (row.querySelector("input")) return;
+  const old = weightKg;
+  row.innerHTML = '<input type="number" value="'+old+'"> kg';
+  const inp = row.querySelector("input"); inp.focus();
+  inp.onblur = () => { weightKg = Number(inp.value)||old; row.textContent = weightKg+" kg"; units(unitMode); };
+}
+let pendingFtp = null;
+function editFtp(){
+  const row = document.getElementById("s-ftp");
+  if (row.querySelector("input")) return;
+  const old = ftp;
+  row.innerHTML = '<input type="number" value="'+old+'"> W';
+  const inp = row.querySelector("input"); inp.focus();
+  inp.onblur = () => {
+    const v = Number(inp.value)||old;
+    if (v === old){ row.textContent = old+" W"; return; }
+    pendingFtp = {old, v};
+    document.getElementById("m-text").textContent =
+      "Setting a manual FTP will recompute training load, TSS, and session targets for all rides. Continue?";
+    document.getElementById("modal").classList.add("on");
+  };
+}
+function modalCancel(){
+  document.getElementById("modal").classList.remove("on");
+  if (pendingFtp){ document.getElementById("s-ftp").textContent = pendingFtp.old+" W"; pendingFtp = null; }
+}
+function modalConfirm(){
+  document.getElementById("modal").classList.remove("on");
+  if (!pendingFtp) return;
+  const row = document.getElementById("s-ftp");
+  row.innerHTML = '<span class="sub">Recomputing 6 rides…</span>';
+  const v = pendingFtp.v; pendingFtp = null;
+  setTimeout(()=>{
+    ftp = v;                      // session targets fan out from here
+    row.textContent = v+" W";
+    document.getElementById("s-ftptag").textContent = "override";
+    renderToday();                // hero numbers update — the ripple, visible
+  }, 900);
+}
+
+/* ---------- Toggles ---------- */
+function seg(btn){
+  btn.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b===btn));
+  if (btn.parentElement.dataset.seg === "range"){
+    const labels = {"30d":["May",""],"90d":["Mar","Apr"],"1y":["Jul ’25","Jan"],"All":["’24","’25"]};
+    const l = labels[btn.textContent];
+    document.getElementById("l-x0").textContent = l[0];
+    document.getElementById("l-x1").textContent = l[1];
+  }
+  if (btn.parentElement.dataset.seg === "cmp"){
+    const t = btn.textContent;
+    document.getElementById("c-legend").textContent =
+      "Current — solid · " + (t==="vs 90d"?"Prior 90d":t==="vs season"?"Season best":"12 months ago") + " — dashed · Season best — light";
+  }
+}
+let unitMode = "W";
+function units(mode){
+  unitMode = mode;
+  document.querySelectorAll('[data-w]').forEach(el=>{
+    const w = Number(el.dataset.w);
+    el.textContent = mode==="W" ? w+" W" : (w/weightKg).toFixed(2)+" W/kg";
+  });
+}
+function sheet(){ document.getElementById("sheet").classList.toggle("on"); }
+
+units("W");
+renderToday();
+</script>
+</body>
+</html>

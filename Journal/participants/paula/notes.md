@@ -64,3 +64,14 @@ Playful but purposeful. Color-coded scoring, satisfying micro-animations on poin
 - Quote from the brief: *"Waiting for the first points."* — the pre-leaderboard state copy.
 - Four open questions to resolve: negative point display, leaderboard visibility, day-one avatar state, teacher's current system.
 - **Push for week 05:** At minimum, decide on negative point display before building. It affects what the class sees every time points are deducted.
+
+### Week 05
+- Single-file clickable smoke test, full app: Class Picker, Main Arcade, two-step New Classroom, Edit Roster, Give Points panel, classroom dropdown, on real seed rosters. Three versions in session on Fable 5.
+- Teacher-walkthrough found three trust-level failures, all fixed in session: slowest action was +1 to one student (→ per-row ± buttons), no undo for a point (→ one-level undo chip), feedback lost to early re-sort (→ flash-then-resort). Good instinct to walk it as the teacher rather than review it.
+- W04 30-second delete timer replaced with "nothing is real until Save." Cleaner model, removes the anxiety instead of timing it.
+- Best discipline of the session: three out-of-scope features (search, sort, categories) handled by a written reconciliation brief, not silent drift. Amended and re-armed the scope lock, realigned wireframes and state map, named eight previously unnamed UI states. This is exactly the move Marko asked the group for after the session (update the brief, don't rework the artifact). She's the template.
+- Honest about the regression: the vertically stacked podium now reads as a shorter student list and lost its designed moment. That's the visual debt going into the next sessions, and it matches her stated next step (UX + visuals).
+- **W04 open questions — partly forced by the build.** The ± buttons mean a minus action exists, and categories add per-category tallies. Both land on the projected screen. The unanswered "ask the room" from Q5: do per-category tallies and a minus button belong on the class-facing screen at all, given "calm, not surveillance"? **Push for week 06:** make that decision before the first real screen.
+- Q&A: worst moment "Claude adding some things that weren't specified anywhere." Committed to giving the project more time and building reusable visuals. Nothing flagged as stuck.
+- Reference-image work (the 3 images flagged for week 5–6 in the case study) still outstanding. Visuals are now her own stated priority, so watch that it actually happens and doesn't slip to the end.
+- First peer-review round: reviewed the others' prototypes and got feedback on ClassArcade. Took part in the group agreeing a shared set of UX rules.

@@ -254,6 +254,12 @@ All path construction goes through `dashboard/util/paths.js`. No hard-coded path
 | Week image, dashboard URL | `/week-images/NN/<filename>` |
 | Week image, public entry `<img src>` | `../assets/weeks/NN/<filename>` |
 | Participant images | `Journal/participants/<pid>/images/` |
+| Artifacts, week folder | `content/artifacts/week-NN/` |
+| Artifact folder | `content/artifacts/week-NN/<slug>/` |
+| Artifact HTML | `content/artifacts/week-NN/<slug>/index.html` |
+| Artifact metadata | `content/artifacts/week-NN/<slug>/meta.json` |
+| Artifact, dashboard preview URL | `/artifact-preview/week-NN/<slug>/` |
+| Artifact, public entry placeholder | `<artifact slug="week-NN/<slug>"></artifact>` |
 | Workshop story | `Journal/workshop-story.md` future |
 | Final case study | `Journal/participants/<pid>/case-study-final.md` future |
 
@@ -273,6 +279,20 @@ paths.weekImages(4)             // "Journal/week-images/04"
 paths.weekImageFile(4, "x.jpg") // "Journal/week-images/04/x.jpg"
 paths.weekImageUrl(4, "x.jpg")  // "/week-images/04/x.jpg"
 paths.weekImageSrc(4, "x.jpg")  // "../assets/weeks/04/x.jpg"
+paths.artifactsWeekDir(5)
+                                       // "content/artifacts/week-05"
+paths.artifactDir(5, "ivo-wattlog")
+                                       // "content/artifacts/week-05/ivo-wattlog"
+paths.artifactIndex(5, "ivo-wattlog")
+                                       // "content/artifacts/week-05/ivo-wattlog/index.html"
+paths.artifactMeta(5, "ivo-wattlog")
+                                       // "content/artifacts/week-05/ivo-wattlog/meta.json"
+paths.artifactSlug(5, "ivo-wattlog")
+                                       // "week-05/ivo-wattlog"
+paths.artifactPreviewUrl(5, "ivo-wattlog")
+                                       // "/artifact-preview/week-05/ivo-wattlog/"
+paths.artifactTag(5, "ivo-wattlog")
+                                       // '<artifact slug="week-05/ivo-wattlog"></artifact>'
 ```
 
 If a path changes, change it in `util/paths.js` and nowhere else.
@@ -492,6 +512,14 @@ Serves `Journal/week-images/NN/<filename>` directly with the right MIME type so 
 
 Read-only from the client's perspective. Writes go through `/api/write-image`.
 
+### `GET /artifact-preview/week-NN/<slug>/`
+
+Static route. Implemented.
+
+Serves `content/artifacts/week-NN/<slug>/index.html` with `text/html` MIME so the dashboard's Artifacts tab can preview prototypes in an iframe. Trailing slash matters — the route serves the directory's `index.html`.
+
+Read-only. Both the HTML and its `meta.json` are written through `POST /api/write-file` (both are text).
+
 ### `GET /dashboard`, `GET /dashboard/*`
 
 Static route serving files from `./dashboard/`.
@@ -512,7 +540,7 @@ dashboard/
   activity-log.js         200-line log with localStorage persistence, toggle
   views/
     sessions.js           12-week grid, status badges, click routes to Week Detail
-    week-detail.js        tabbed Synthesis | Notes | Public Entry | Images
+    week-detail.js        tabbed Synthesis | Notes | Public Entry | Images | Artifacts
     write-entry.js        DEPRECATED — remove in Punchlist #1
     case-studies.js       five participant overview cards, detail editor
     entries.js            flat reverse-chronological list with type filters
@@ -537,7 +565,7 @@ dashboard/
 | `state.js` | In-memory state, buffer factories, `getBuffer`, `setBuffer`. |
 | `activity-log.js` | Append, render, and persist last 200 log lines. localStorage-backed. |
 | `views/sessions.js` | 12-week grid from `weeks.json` with derived statuses. Routes weeks to Week Detail. |
-| `views/week-detail.js` | Tabbed Week Detail with Synthesis, Notes, Public Entry, Images. Per-tab buffers and save buttons. Image flow. |
+| `views/week-detail.js` | Tabbed Week Detail with Synthesis, Notes, Public Entry, Images, Artifacts. Per-tab buffers and save buttons. Image flow. Artifact create + insert flow. |
 | `views/write-entry.js` | Deprecated. Scheduled for deletion. Do not extend. |
 | `views/case-studies.js` | Participant overview grid and detail editor. Frontmatter editing. |
 | `views/entries.js` | Reverse-chrono list, type filter chips. |
@@ -825,6 +853,8 @@ Current implementation derives `synthesised` and `hasNotes`. `published` and `ha
 | `Journal/participants/<pid>/case-study.md` | Internal | Long-form participant case study. | live |
 | `Journal/participants/<pid>/notes.md` | Internal | Private participant notes. | live |
 | `Journal/week-images/NN/*` | Internal | Week images for journal entries. | implemented, unvalidated |
+| `content/artifacts/week-NN/<slug>/index.html` | Public site | Participant HTML prototypes embedded in journal entries as sandboxed iframes. | implemented |
+| `content/artifacts/week-NN/<slug>/meta.json` | Public site | Artifact metadata (title, participant, project, height, status, etc.). | implemented; status toggle pending — Punchlist #2 |
 | `Journal/workshop-story.md` | Internal | Whole-workshop story after week 12. | future |
 | `Journal/participants/<pid>/case-study-final.md` | Internal | Final per-participant case study. | future |
 
@@ -1042,7 +1072,7 @@ Statuses re-derive when the user navigates back to Sessions.
 
 ### Week Detail
 
-Tabbed view with four tabs:
+Tabbed view with five tabs:
 
 | Tab | Tooltip | What it does |
 |---|---|---|
@@ -1050,6 +1080,7 @@ Tabbed view with four tabs:
 | Notes | Raw notes from the room. Reference only. | Edit/save `Journal/notes/session-NN.md`. |
 | Public Entry | Public journal entry shown on the site. | Frontmatter inputs + body textarea for `content/journal/NN.md`. |
 | Images | Images for this week's journal entries. | Drop zone + thumbnail tray. Insert figure tags into Public Entry body. |
+| Artifacts | Embed participant prototypes in this week's entry. | Cards for each artifact in `content/artifacts/week-NN/`. Preview, copy tag, insert into Public Entry body. New-artifact uploader. |
 
 Each tab owns its own buffer. Dirty dot per section. Save button per tab. Conflict detection per save.
 
@@ -1057,7 +1088,7 @@ The Synthesis and Notes tabs are plain textareas.
 
 The Public Entry tab has one input per frontmatter field plus a body textarea.
 
-The Images tab drops images, names them, and exposes an **Insert after paragraph N** picker that injects a `<figure>` tag into the Public Entry body through `pendingImageInsert` in `week-detail.js`.
+The Images tab drops images, names them, and exposes an **Insert after paragraph N** picker that injects a `<figure>` tag into the Public Entry body through `pendingBodyInsert` in `week-detail.js`. The Artifacts tab uses the same `pendingBodyInsert` channel to inject `<artifact slug="...">` tags.
 
 `Cmd/Ctrl+S` is currently wired in Week Detail and triggers Save on the active tab's buffer.
 
@@ -1172,7 +1203,84 @@ Use Week 03 or another real image-friendly week.
 
 ---
 
-## Empty states
+## Artifact flow — implemented
+
+Participant prototypes are interactive HTML pages embedded inside public journal entries as sandboxed iframes. The dashboard manages them through the **Artifacts** tab in Week Detail.
+
+### Storage shape
+
+Each artifact is a folder. The folder name is the slug.
+
+```txt
+content/artifacts/
+  week-05/
+    ivo-wattlog/
+      index.html        — the prototype
+      meta.json         — metadata
+    naucimo-hrvatski-smoketest/
+      index.html
+      meta.json
+```
+
+Slug convention: lowercase, dashed, typically `<participant>-<project>` or `<project>-<descriptor>`. Slugs only need to be unique within their week folder.
+
+### `meta.json` shape
+
+```json
+{
+  "title": "Wattlog — Training Range",
+  "participant": "Ivo",
+  "project": "Wattlog",
+  "week": "05",
+  "height": 540,
+  "heightMobile": 660,
+  "description": "Set your FTP and the power zones recompute live.",
+  "status": "published"
+}
+```
+
+| Field | Type | Notes |
+|---|---|---|
+| `title` | string | Display title for the artifact card and the public-site caption. |
+| `participant` | string | Display name. Used for the participant badge. |
+| `project` | string | Project name. |
+| `week` | string | Zero-padded `"NN"`. Matches the folder. |
+| `height` | number | Desktop iframe height in pixels. |
+| `heightMobile` | number | Optional. Mobile iframe height. Falls back to `height` when missing. |
+| `description` | string | Optional. Surfaced in the dashboard preview. May be used by the public site. |
+| `status` | string | `"draft"` or `"published"`. Controls how `build.js` renders the embed. |
+
+Unknown fields in `meta.json` must be preserved on write.
+
+### Public entry placeholder
+
+In the public entry body markdown, an artifact appears as a single tag:
+
+```html
+<artifact slug="week-05/ivo-wattlog"></artifact>
+```
+
+The placeholder carries no metadata. `build.js` expands it at render time by reading the corresponding `content/artifacts/<slug>/meta.json` and producing the final iframe markup.
+
+### Build expansion
+
+`build.js` rewrites every `<artifact slug="...">` placeholder during the public-site build.
+
+Behaviour depends on `meta.status`:
+
+- **`"published"`** — placeholder becomes a `<section class="journal-artifact">` containing a sandboxed `<iframe>` pointed at `dist/artifacts/<slug>/index.html`, with `height` from `meta.json` and a `<figcaption>` from `meta.title` (and optionally `meta.description`).
+- **`"draft"`** — placeholder becomes a `<section class="journal-artifact journal-artifact--draft">` with the placeholder copy *"Artifact in progress: <title>"*. No iframe is rendered.
+
+`build.js` also copies `content/artifacts/` → `dist/artifacts/` so the iframes resolve.
+
+### Dashboard surfaces
+
+- **Week Detail → Artifacts tab.** Lists every artifact for the current week as a card. Each card shows title, participant badge, project name, slug, and a status pill (`PUBLISHED` or `DRAFT`). Clicking a card opens the detail panel with a live iframe preview, the placeholder tag, and actions: Insert into entry, Copy tag, Open preview. The tab also has a `New artifact` disclosure for uploading a fresh HTML file plus filling in the meta fields.
+- **Case Studies → Artifacts tab.** Not implemented. Artifacts live in `content/artifacts/`, not in `Journal/participants/`, so the Case Studies tab does not own them. Cross-participant browsing happens in Week Detail.
+
+### What's open
+
+Nothing on the artifact flow itself. The `draft`↔`published` status toggle (Punchlist #2) is now wired into the Artifacts tab; hand-editing `meta.json` is no longer required.
 
 | Where | When | What appears |
 |---|---|---|
@@ -1182,6 +1290,8 @@ Use Week 03 or another real image-friendly week.
 | Notes tab | File missing | Empty textarea with placeholder: `Raw notes for this session. Saved to Journal/notes/session-NN.md.` |
 | Public Entry tab | File missing | Frontmatter prefilled from `weeks.json`; empty body and quote. |
 | Images tab | No images | Drop zone shown with placeholder text. |
+| Artifacts tab | No artifacts for the week | Grid shows `No artifacts yet — add one below.` New-artifact disclosure visible. |
+| Artifacts tab | `meta.json` malformed or missing | Card still renders using the folder name as fallback title. Detail panel preview may fail; activity log records the parse error. |
 | Case Studies | Case study file missing | Card renders with `weeks_completed: 0`. Detail view opens an empty editor. |
 | Entries | No files written | Empty list. |
 | Dashboard boot | Status check pending | Loading shell + activity log. |
@@ -1230,6 +1340,10 @@ These are locked. Do not re-litigate without a strong reason.
 | Backup before overwrite? | Not implemented. Optional improvement unless recovery requirements change. |
 | Search across files? | Not built. Worth adding once Entries view sees real use. |
 | Image insertion? | Implemented, unvalidated end-to-end. |
+| Artifact insertion (HTML embeds)? | Implemented, including the in-dashboard draft↔published status toggle (Punchlist #2 done). |
+| Where do artifacts live? | `content/artifacts/week-NN/<slug>/` with `index.html` + `meta.json`. Week-scoped, slug typically `<participant>-<project>`. |
+| Artifact embed format? | `<artifact slug="week-NN/<slug>"></artifact>` placeholder in the public entry body. `build.js` expands it to a sandboxed iframe at build time, pulling height and status from `meta.json`. |
+| Artifact status values? | `draft` (renders as placeholder card) or `published` (renders as live iframe). |
 | Public-site rebuild? | No. Dashboard is separate from the public build. |
 | Frontmatter parser? | Hand-rolled in `util/frontmatter.js`. No YAML library. |
 | Markdown preview? | Minimal fallback. May upgrade later. |
@@ -1268,15 +1382,16 @@ Known confidence gaps. Each one is owned by a punchlist item below — fix the p
 
 | Gap | Owned by |
 |---|---|
-| Image build-copy from `Journal/week-images/NN/` to `dist/assets/weeks/NN/` | Punchlist #4 |
-| Image final-render in `dist/journal/NN.html` | Punchlist #4 |
-| Hand-rolled frontmatter round-trip | Punchlist #5 |
-| Unknown frontmatter field preservation | Punchlist #5 |
-| Quotes inside frontmatter strings | Punchlist #5 |
-| `participants` stays numeric across round-trip | Punchlist #5 |
-| Case-study `weeks_completed` derivation | Punchlist #5 |
+| Image build-copy from `Journal/week-images/NN/` to `dist/assets/weeks/NN/` | Punchlist #5 |
+| Image final-render in `dist/journal/NN.html` | Punchlist #5 |
+| Artifact `meta.json` unknown-field preservation through status toggle | Punchlist #2 — verified |
+| Hand-rolled frontmatter round-trip | Punchlist #6 |
+| Unknown frontmatter field preservation | Punchlist #6 |
+| Quotes inside frontmatter strings | Punchlist #6 |
+| `participants` stays numeric across round-trip | Punchlist #6 |
+| Case-study `weeks_completed` derivation | Punchlist #6 |
 | Entries routing after Write Entry removal | Punchlist #1 |
-| `util/hash.js` usage | Punchlist #11 |
+| `util/hash.js` usage | Punchlist #12 |
 
 ---
 
@@ -1322,7 +1437,58 @@ This makes Public Entry feel gated behind a synthesis save. It also causes stale
 
 ---
 
-### 2. Unsaved-changes guard
+### 2. Artifact status toggle in the Artifacts tab
+
+**Status.** ✅ Done (2026-06-14). Implemented in `showArtifactDetail()` / `toggleArtifactStatus()` in `dashboard/views/week-detail.js` exactly as specced below, and verified end-to-end: draft→published and back, unknown `meta.json` fields preserved, card pill + detail panel update live, conflict detection against the meta hash captured when the panel opened, and the button disables with a tooltip when `meta.json` is missing or malformed. Spec kept below for reference.
+
+The artifact flow is implemented end to end (storage, dev-server route, build expansion, dashboard tab, create flow, insert flow). See the **Artifact flow** section for the contracts. The last missing piece — flipping `status` between `draft` and `published` from inside the dashboard instead of hand-editing `meta.json` — is now done.
+
+**Symptom.** Artifact cards show a `PUBLISHED` / `DRAFT` pill but it's not interactive. To publish a draft you have to open `content/artifacts/week-NN/<slug>/meta.json` in a text editor and change one field.
+
+**Where the change goes.** `showArtifactDetail()` in `dashboard/views/week-detail.js`. The detail panel already has Insert / Copy tag / Open preview. Add one more action.
+
+**UI.** A single button next to the existing actions, label depends on current status:
+
+```txt
+status === 'draft'      →  button: "Publish ✓"      (primary style)
+status === 'published'  →  button: "Move to draft"  (ghost style)
+```
+
+No modal. No confirm. The action is reversible, so confirmation friction would hurt more than it helps.
+
+**Behaviour on click.**
+
+1. `api.readFile(paths.artifactMeta(weekNum, name))` — get current meta.
+2. Parse JSON. If parse fails: toast `Could not read meta.json`, bail.
+3. Flip `meta.status` between `"draft"` and `"published"`.
+4. Conflict check: if the hash returned by step 1 differs from the buffer's stored hash, surface the standard conflict modal (overwrite / reload / cancel).
+5. `api.writeFile(paths.artifactMeta(weekNum, name), JSON.stringify(meta, null, 2) + '\n')`.
+6. Log: `artifact status week-NN/<slug> → published ✓` (or `→ draft`).
+7. Re-render the detail panel with the new status (button label flips).
+8. Call `loadArtifactGrid(weekNum)` so the card's status pill updates without a full tab reload.
+9. Toast: `Artifact published — rebuild to update the journal entry.` (or `→ draft`).
+
+**Edge cases.**
+
+- `meta.json` missing → button disabled, tooltip: `meta.json not found. Recreate the artifact.`
+- `meta.json` malformed → button disabled, tooltip: `meta.json could not be parsed.`
+- Unknown fields in `meta.json` → preserved untouched on write. Read whole object, modify `status` only, write whole object back.
+
+**Acceptance.**
+
+- Open the Naučimo Hrvatski card in Week 05. Click **Publish ✓**. Inspect `content/artifacts/week-05/naucimo-hrvatski-smoketest/meta.json` — `"status"` is now `"published"` and every other field is unchanged. Rebuild. The Week 05 entry now shows the live iframe instead of the *"Artifact in progress"* placeholder.
+- Click **Move to draft** on the same card. Inspect — back to `"draft"`. Rebuild — placeholder returns.
+- Add a custom field to a meta.json (e.g. `"customNote": "hello"`). Run the toggle. The custom field is still present after.
+
+**Out of scope.**
+
+- A `review` status (today's binary draft/published is enough).
+- Bulk publish of every artifact in a week.
+- Auto-rebuild after toggle.
+
+---
+
+### 3. Unsaved-changes guard
 
 **Symptom.** No `beforeunload` handler. No prompt on top-level view switch when buffers are dirty. Refreshing the browser silently discards drafts.
 
@@ -1337,7 +1503,7 @@ This makes Public Entry feel gated behind a synthesis save. It also causes stale
 
 ---
 
-### 3. Manual Sync button
+### 4. Manual Sync button
 
 **Symptom.** No sidebar Sync button. Statuses re-derive only when navigating to Sessions.
 
@@ -1352,7 +1518,7 @@ This makes Public Entry feel gated behind a synthesis save. It also causes stale
 
 ---
 
-### 4. Test image flow end-to-end
+### 5. Test image flow end-to-end
 
 **Symptom.** Image flow is implemented but unvalidated.
 
@@ -1366,7 +1532,7 @@ Journal/week-images/NN/*  →  dist/assets/weeks/NN/
 
 ---
 
-### 5. Public entry and frontmatter regression checks
+### 6. Public entry and frontmatter regression checks
 
 **Symptom.** Public Entry save relies on a hand-rolled frontmatter parser touching public-site build inputs.
 
@@ -1376,7 +1542,7 @@ No new dependency required unless the hand-rolled parser proves unreliable.
 
 ---
 
-### 6. `published` and `hasImages` status derivation
+### 7. `published` and `hasImages` status derivation
 
 **Symptom.** Sessions cards show Synthesis and Notes badges, but not Public Entry or image status.
 
@@ -1391,7 +1557,7 @@ Sessions cards add:
 
 ---
 
-### 7. Full keyboard shortcuts
+### 8. Full keyboard shortcuts
 
 **Symptom.** Only `Cmd/Ctrl+S` is wired in Week Detail.
 
@@ -1416,7 +1582,7 @@ Capture `Cmd/Ctrl+S` globally even when a textarea is focused. Prevent the brows
 
 ---
 
-### 8. Markdown preview upgrade
+### 9. Markdown preview upgrade
 
 **Symptom.** `components/markdown.js` is a minimal fallback. Public Entry and Case Study previews look raw.
 
@@ -1440,7 +1606,7 @@ Rules:
 
 ---
 
-### 9. Backup-on-overwrite
+### 10. Backup-on-overwrite
 
 **Symptom.** Conflict modal's Overwrite path is destructive. No copy of the disk version is kept.
 
@@ -1458,7 +1624,7 @@ If skipped, document that the dashboard relies on git history and conflict warni
 
 ---
 
-### 10. Status pill behaviors beyond online/offline
+### 11. Status pill behaviors beyond online/offline
 
 **Symptom.** Pill toggles between checking, online, and offline. No states for saving or unsaved changes.
 
@@ -1476,7 +1642,7 @@ Option B:
 
 ---
 
-### 11. `util/hash.js` cleanup
+### 12. `util/hash.js` cleanup
 
 **Symptom.** `util/hash.js` may be unused because conflict detection uses the server-returned hash from `/api/read-file`.
 

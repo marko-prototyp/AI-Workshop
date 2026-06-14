@@ -2,8 +2,8 @@
 participant: "Marin"
 project: "Naučimo Hrvatski"
 status: "draft"
-sessions_completed: 4
-last_updated: "2026-05-27"
+sessions_completed: 5
+last_updated: "2026-06-10"
 hero_image: ""
 final_url: ""
 ---
@@ -111,7 +111,23 @@ Still open: five prototype questions — chip placement gesture, sentence-end ge
 *Artifact: Wireframes v1 markdown — six screens, all required states, grayscale schematic SVGs embedded inline.*
 *Keep alongside: Build Brief v2.1, the spec the wireframes implement against.*
 
-### Session 05 — _to come_
+### Session 05 — Clicked through it as Kenzie.
+
+I made a clickable prototype of the future app. One HTML file, the whole flow working: recap, chapter shelf, Chapter 1 cover, scene player, story rebuild, chapter complete, then the vocab shelf and the texting bridge. Fake data throughout, no polish. A flow test, not a craft pass.
+
+Two corrections reshaped the build fast. The cast is two people, Marin and Kenzie, and one invented character got removed entirely. Claude kept inserting imaginary characters, so one line kept repeating: "No Marko, just Marin here." Only good moments today otherwise, but I'm glad we erased the extra character. Only Marin exists in this project. The other correction changed the interaction model from typing to drag-a-word-into-the-blank on every screen. Writing Croatian unprompted is too hard for a beginner.
+
+Chapter 1 is now fixed at 11 scenes. 11 photos, one photo and one interaction per scene. I've picked the 11 photos and written 11 descriptions, one for each.
+
+Clicking through the prototype as Kenzie surfaced the real gaps. The wrong-answer state gates her progress but doesn't teach her anything. She can't flip back to an earlier photo. The vocabulary shelf unlocks only after she no longer needs it. Nothing reassures her that her place is saved. And the chapter ends in a dead end. That list is what v2 has to fix.
+
+The planned comparison against the session 04 wireframes and state maps didn't run, the files weren't available in the session, so the build itself became the document of the states a v2 will need.
+
+It was also the first time we went through each other's prototypes and suggested changes, and we agreed on a few UX rules as a group.
+
+I like the prototype Claude made. What I committed to: structuring and preparing the content for it. That's next, with Cowork.
+
+*Artifact: the working prototype of the app.*
 
 *…through Session 12.*
 

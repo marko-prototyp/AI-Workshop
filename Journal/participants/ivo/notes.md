@@ -57,3 +57,13 @@ Clean, data-dense UI. No decorative fluff. Dieter Rams applied to athletic data.
 - Quote: *"If a flat list ever feels necessary, Calendar isn't doing its job."*
 - **Still stuck:** Form factor — web, mobile, or both. Gates the tech stack. No defensible answer yet.
 - **Push for week 05:** Commit to form factor before anything else. Then stand up the skeleton.
+
+### Week 05
+- Smoke test built: single HTML file, all nine screens end to end. Five tabs, drill-throughs with back affordance and no nav, simulated three-step upload parse landing on Ride Detail, Calendar blank-day sheet routing to both creation flows.
+- Fake data internally consistent (FTP 284 → threshold prescription 270–298 W). Deliberate. The walkthrough reads as the product, not a slideshow.
+- Claude surfaced a wireframe/brief conflict (two different Today screens) before building instead of silently picking one. Cite in the case study and the program documentation.
+- Prompt of the session: *"Walk through my artifact as if you were me… Don't critique the design. Critique the experience."* Seven-point walkthrough as a Tuesday-evening upload. Biggest finding: the core loop never closes — upload a ride, the prescription doesn't change. Claude's phrase: "a static poster of the concept." File updated in response. Candidate for the handbook prompt library.
+- Committed: planned sessions in detail. Deferred: styling, to the design phase. Right order.
+- Form factor decision from W04 still not visibly made. The tabbed HTML is a prototype convenience, not an answer.
+- First peer-review round: gave and got feedback on the others' prototypes. Took part in the group agreeing a shared set of UX rules.
+- **Push for week 06:** Make the prescription respond to one upload, so the prescriptive layer can be felt. And get the form factor decision on paper.

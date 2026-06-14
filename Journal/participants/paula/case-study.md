@@ -2,8 +2,8 @@
 participant: "Paula"
 project: "Classroom Behavior Tracker"
 status: "draft"
-weeks_completed: 4
-last_updated: "2026-05-27"
+weeks_completed: 5
+last_updated: "2026-06-10"
 hero_image: ""
 final_url: ""
 ---
@@ -102,7 +102,24 @@ Four questions still open from the spec: what negative point display looks like 
 *Screenshot: Main Arcade wireframe — student list left, flat podium right.*
 *Screenshot: New Classroom flow — two-step modal, Class Picker view.*
 
-### Week 05 — _to come_
+### Week 05 — Clickable, and a brief that admits what changed.
+
+I built the whole thing as one clickable HTML file: Class Picker, Main Arcade, the two-step New Classroom flow, Edit Roster, the Give Points panel, the classroom dropdown, all of it on the real seed rosters. It went through three versions in the session. The first one worked but had the usual mistakes. By the third it held.
+
+The most useful thing I did was walk through it as the teacher. That found three problems, and none of them were about how it looks. Giving one point to one student was the slowest thing in the app, which is backwards because it's the thing she does most. There was no way to undo a point once I tapped it. And the feedback flash got swallowed because the list re-sorted before you could see it. I fixed all three in the session: per-row plus and minus buttons, a one-level undo chip, and a flash that plays before the board re-sorts.
+
+I also dropped the 30-second delete timer from the wireframes. It was solving the wrong problem. The new rule is simpler: nothing is real until you Save. No countdown to feel anxious about.
+
+The hard part was scope. Claude added three things nobody asked for: search, sort, and point categories. They're not bad ideas, but they broke the week-3 lock, and my worst moment of the day was watching it add things that weren't specified anywhere. Instead of pretending it didn't happen, I wrote a reconciliation brief: what the W04 plan said, what the build actually does, and the difference between them. I amended the scope lock to allow the three, re-armed it, and updated the wireframes and the state map to match. The brief named eight UI states the original plan never had.
+
+The brief is also honest about what got worse. The podium ended up stacked vertically, and now it just reads as a shorter copy of the student list. It lost the moment it was supposed to be. Getting that back is the visual work I'm going into next.
+
+This was also the first session where we looked at each other's work. I clicked through the others' prototypes and they clicked through mine, and we agreed on a few UX rules between us.
+
+What I committed to: giving the project more time to make it really good, and building the visuals I'll reuse later instead of leaving them for the end.
+
+*Screenshot: the clickable smoke test — Main Arcade with the seed roster, per-row ± buttons, undo chip.*
+*Screenshot: the reconciliation brief — W04 plan vs. build diff, the eight named states.*
 
 *…through Week 12.*
 

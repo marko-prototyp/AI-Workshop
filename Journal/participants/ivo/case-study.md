@@ -2,8 +2,8 @@
 participant: "Ivo"
 project: "Wattlog"
 status: "draft"
-weeks_completed: 4
-last_updated: "2026-05-27"
+weeks_completed: 5
+last_updated: "2026-06-10"
 hero_image: ""
 final_url: ""
 ---
@@ -91,7 +91,19 @@ What's genuinely stuck: web, native mobile, or both. The answer gates the tech s
 *Screenshot: sitemap diagram with cut list rationale.*
 *Screenshot: sample screen wireframe — Calendar or Power Profile.*
 
-### Week 05 — _to come_
+### Week 05 — Clickable, and the loop doesn't close.
+
+The smoke-test session. One HTML file, all nine screens, end to end. Five top-level tabs, drill-throughs that hide the nav and offer a way back, a simulated three-step upload parse that lands on Ride Detail, and the Calendar blank-day sheet routing to both creation flows. I kept the fake data internally consistent on purpose: an FTP of 284 produces a threshold prescription of 270 to 298 W. If the numbers contradict each other, the walkthrough stops feeling like the product.
+
+This was the first session on Fable 5, which launched a few days before. The first version was okay but had visual, logical and UI errors. A couple of iterations later it held together.
+
+Two moments from the build are worth keeping. Claude found a conflict between my wireframes and my design brief, two different Today screens, and raised it before building instead of silently picking one. And the prompt I'll reuse: *"Walk through my artifact as if you were me. Don't critique the design. Critique the experience."* That produced a seven-point walkthrough framed as a real Tuesday-evening upload session. Its biggest finding: the core loop never closes. I upload a ride and the prescription doesn't change, which leaves the prototype a static poster of the concept until the prescriptive layer can be felt at least once. The file got updated in response.
+
+This was also the first session where we reviewed each other's prototypes and agreed on some shared UX rules.
+
+The decision I committed to: planned sessions, in detail. Worst moment of the day: bad styling. That's fine. *"I'd work a bit more on the way of displaying things, but I guess I'll cover that in the design phase."*
+
+*Artifact: the final version of the smoke test html.*
 
 *…through Week 12.*
 
