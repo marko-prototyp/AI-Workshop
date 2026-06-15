@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Capture prompts — {{site.title_short}}</title>
+<meta name="description" content="The prompts the team runs after each session to turn it into a journal entry. One for each participant, one for the facilitator." />
+
+<script>(function(){try{var t=localStorage.getItem('theme');if(t==='clarity')document.documentElement.setAttribute('data-theme','clarity');}catch(e){}})()</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{base}}/styles/tokens.css">
+<link rel="stylesheet" href="{{base}}/styles/base.css">
+<link rel="stylesheet" href="{{base}}/styles/components.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+{{include:partials/nav.html}}
+
+<main id="main" class="page-main">
+
+  {{journalCapture.html}}
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+<script type="module" src="{{base}}/scripts/main.js"></script>
+</body>
+</html>

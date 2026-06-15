@@ -53,6 +53,11 @@ function collectItems() {
     items.push({ id: section.id, label: labelFor(el), level: 0 });
   });
 
+  // Journal entry section headings — the id lives on the heading itself.
+  document.querySelectorAll('.journal-entry-body h2[id], .journal-entry-body h3[id]').forEach(el => {
+    items.push({ id: el.id, label: labelFor(el), level: el.tagName === 'H3' ? 1 : 0 });
+  });
+
   // De-dupe by id, preserve order.
   const seen = new Set();
   return items.filter(i => (seen.has(i.id) ? false : seen.add(i.id)));

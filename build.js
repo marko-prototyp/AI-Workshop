@@ -558,7 +558,7 @@ function buildJournalEntry(entry) {
     : '';
   const phase = entry.phase ? `<span class="phase">${entry.phase}</span>` : '';
   const date  = dateLabel ? `<span class="date">${dateLabel}</span>` : '';
-  const bodyHtml = processArtifacts(marked.parse(entry.body || ''), `content/journal/${num}.md`);
+  const bodyHtml = addHeadingIds(rewriteJournalAssets(processArtifacts(marked.parse(entry.body || ''), `content/journal/${num}.md`)));
 
   const quoteBlock = (entry.quote && entry.quoteAttribution)
     ? `<aside class="journal-entry-quote">
@@ -874,30 +874,250 @@ function buildJournalPromptsSection(weeks) {
   </section>`;
 }
 
+function fmtDate(d) {
+  return d
+    ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+}
+
+function journalEntryHref(num) {
+  return siteUrl(`/journal/${num}/`);
+}
+
+// Journal recaps reference images with relative paths (e.g. ../assets/...),
+// authored back when every entry lived on /journal/. Now entries render at
+// /journal/NN/, so rewrite those to base-absolute paths that resolve at any
+// depth and on GitHub Pages (BASE_PATH).
+function rewriteJournalAssets(html) {
+  return html.replace(
+    /(\ssrc=")(?:\.\.\/|\.\/)*\/?assets\//gi,
+    `$1${BASE_PATH}/assets/`
+  );
+}
+
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/&#?[a-z0-9]+;/g, '')   // strip entities (&#39; &amp; etc.)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Give entry section headings stable ids so the "On this page" jump-pill can
+// link to them. Ids are slugged from the heading text, de-duped per page.
+function addHeadingIds(html) {
+  const used = new Set();
+  return html.replace(/<(h2|h3)>([\s\S]*?)<\/\1>/gi, (_m, tag, inner) => {
+    const text = inner.replace(/<[^>]+>/g, '');
+    let base = slugify(text) || tag;
+    let id = base, i = 2;
+    while (used.has(id)) id = `${base}-${i++}`;
+    used.add(id);
+    return `<${tag} id="${id}">${inner}</${tag}>`;
+  });
+}
+
+// Pull the first real paragraph out of a recap body for use as a card excerpt.
+function journalExcerpt(body, max = 190) {
+  const para = (body || '')
+    .split(/\n\n+/)
+    .map(s => s.trim())
+    .find(s => s && !s.startsWith('#') && !s.startsWith('<') && !s.startsWith('!['));
+  if (!para) return '';
+  let text = para
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (text.length > max) text = text.slice(0, max).replace(/\s+\S*$/, '') + '…';
+  return escapeHtml(text);
+}
+
+// The latest entry, given real scale: big serif title, a serif lead excerpt,
+// hairline top and bottom. This is the page's visual anchor.
+function buildJournalFeatured(entry) {
+  const meta = [`Session ${entry.num}`, entry.phase, fmtDate(entry.date)].filter(Boolean).join('  ·  ');
+  return `<a class="jfeature" href="${journalEntryHref(entry.num)}">
+      <div class="jfeature-head">
+        <span class="jfeature-flag">Latest entry</span>
+        <span class="jfeature-meta">${meta}</span>
+      </div>
+      <h2 class="jfeature-title">${entry.title}</h2>
+      ${entry.quote
+        ? `<p class="jfeature-excerpt jfeature-excerpt--quote">${entry.quote}</p>`
+        : `<p class="jfeature-excerpt">${journalExcerpt(entry.body, 260)}</p>`}
+      <span class="jfeature-cta">Read the entry <span aria-hidden="true">→</span></span>
+    </a>`;
+}
+
+// Earlier entries as full-width hairline rows — the site's weeks/projects list
+// pattern: big serif title, session number, hover shift.
+function buildJournalRow(entry) {
+  return `<a class="jrow" href="${journalEntryHref(entry.num)}">
+      <span class="jrow-num">${entry.num}</span>
+      <span class="jrow-body">
+        <span class="jrow-title">${entry.title}</span>
+        <span class="jrow-meta">${fmtDate(entry.date)}</span>
+      </span>
+      <span class="jrow-arrow" aria-hidden="true">→</span>
+    </a>`;
+}
+
+// The canonical four-phase arc of the workshop (per Journal/weeks.json). The
+// per-file phase strings are too granular to group on, so the list uses these.
+const JOURNAL_PHASES = [
+  { name: 'Discover', nums: [1, 2, 3] },
+  { name: 'Define',   nums: [4, 5] },
+  { name: 'Make',     nums: [6, 7, 8, 9, 10] },
+  { name: 'Ship',     nums: [11, 12] },
+];
+
+const pad2 = n => String(n).padStart(2, '0');
+
+// A session not written yet: faint, unlinked, showing the plan title. The very
+// next one carries a "Next up" marker.
+function buildJournalPendingRow(n, week, isNext) {
+  const title = week ? week.title : `Session ${pad2(n)}`;
+  const tail = isNext
+    ? '<span class="jrow-next">Next up</span>'
+    : '<span class="jrow-soon">To come</span>';
+  return `<div class="jrow jrow--pending"${isNext ? ' data-next="true"' : ''} aria-disabled="true">
+      <span class="jrow-num">${pad2(n)}</span>
+      <span class="jrow-body">
+        <span class="jrow-title">${title}</span>
+        <span class="jrow-meta">Not written yet</span>
+      </span>
+      ${tail}
+    </div>`;
+}
+
+// The full twelve-session arc, grouped by phase. Written entries are linked and
+// prominent; the rest are faint placeholders, so the reader sees the whole shape.
+function buildJournalArc(entries, weeks) {
+  const byNum = new Map(entries.map(e => [parseInt(e.num), e]));
+  const weekByNum = new Map(weeks.map(w => [parseInt(w.num), w]));
+  let nextNum = null;
+  for (let i = 1; i <= 12; i++) { if (!byNum.has(i)) { nextNum = i; break; } }
+
+  const groups = JOURNAL_PHASES.map(ph => {
+    const rows = ph.nums.map(n => {
+      const e = byNum.get(n);
+      if (e) return buildJournalRow(e);
+      return buildJournalPendingRow(n, weekByNum.get(n), n === nextNum);
+    }).join('\n');
+    const range = `${pad2(ph.nums[0])}–${pad2(ph.nums[ph.nums.length - 1])}`;
+    return `<section class="jphase">
+        <header class="jphase-head">
+          <span class="jphase-name">${ph.name}</span>
+          <span class="jphase-range">${range}</span>
+        </header>
+        <div class="jlist">${rows}</div>
+      </section>`;
+  }).join('\n');
+
+  return `<div class="jarc">${groups}</div>`;
+}
+
+// The journal index: a finite, scannable list. Latest entry featured, the rest
+// as hairline rows, with the next session shown as a pending row.
 function buildJournalHtml(entries, weeks) {
+  const total = weeks.length || 12;
+  const written = entries.length;
+  const pct = total ? Math.round((written / total) * 100) : 0;
   const header = `<header class="journal-header">
     <span class="journal-eyebrow">/journal</span>
     <h1 class="journal-title display" id="journal-title">I designed a 12-session workshop to see if I could teach my colleagues AI by just doing <em class="italic-wonk">it.</em></h1>
     <p class="journal-lead">The idea was simple enough. One hour a week, twelve weeks, real projects. Each person picked something based on their own personality, their vision, their goals. So every project ended up being its own universe. And with Claude, we started actually building them.</p>
     <p class="journal-lead-note">Turns out the best thing you can do is just start. These are the notes from that. Tag along.</p>
+    ${written ? `<div class="journal-progress" aria-label="${written} of ${total} sessions written">
+      <span class="journal-progress__label">${written} of ${total} sessions written</span>
+      <span class="journal-progress__track"><span class="journal-progress__fill" style="width: ${pct}%"></span></span>
+    </div>` : ''}
   </header>`;
 
-  const jumpPill = buildJournalJumpPill(entries, weeks.length);
-  const rail     = buildJournalRail(entries, weeks);
-  const sheet    = buildJournalJumpSheet(entries, weeks);
+  if (!entries.length) {
+    return header
+      + `<div class="journal-empty">No entries yet — first session writeup lands soon.</div>`;
+  }
 
-  const entriesHtml = entries.length
-    ? entries.map(buildJournalEntry).join('\n')
-    : `<div class="journal-empty">No entries yet — first session writeup lands soon.</div>`;
+  const byNew = [...entries].sort((a, b) => parseInt(b.num) - parseInt(a.num));
+  const latest = byNew[0];
+  // The list shows every session chronologically, 1 → 12, including the latest
+  // (which is also featured above).
+  return header + buildJournalFeatured(latest) + buildJournalArc(entries, weeks);
+}
 
-  const layout = `<div class="journal-layout">
-    ${rail}
-    <div class="journal-main" id="journal-main">
-      ${entriesHtml}
+// One standalone page per session entry. Reuses the journal-entry styling, adds
+// a breadcrumb, cross-links to the session plan and capture prompts, and
+// prev/next navigation between entries.
+function buildJournalEntryPage(entry, prev, next, totalWeeks) {
+  const num = entry.num;
+  const phase = entry.phase ? `<span class="phase">${entry.phase}</span>` : '';
+  const date = entry.date ? `<span class="date">${fmtDate(entry.date)}</span>` : '';
+  const present = entry.participants ? `<span class="present">${entry.participants} present</span>` : '';
+  const bodyHtml = addHeadingIds(rewriteJournalAssets(processArtifacts(marked.parse(entry.body || ''), `content/journal/${num}.md`)));
+
+  const quoteBlock = (entry.quote && entry.quoteAttribution)
+    ? `<aside class="journal-entry-quote"><q>${entry.quote}</q><span class="attr">${entry.quoteAttribution}.</span></aside>`
+    : '';
+
+  const weekNum = parseInt(num);
+  const crosslinks = `<nav class="journal-crosslinks" aria-label="Related">
+      <a class="journal-crosslink" href="${siteUrl('/#week-' + weekNum)}">
+        <span class="journal-crosslink__label">The plan for this session</span>
+        <span class="journal-crosslink__hint">What we set out to do <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="journal-crosslink" href="${siteUrl('/journal/capture/#journal-prompts-w' + num)}">
+        <span class="journal-crosslink__label">Capture prompts</span>
+        <span class="journal-crosslink__hint">Record your own session <span aria-hidden="true">→</span></span>
+      </a>
+    </nav>`;
+
+  const prevLink = prev
+    ? `<a class="journal-prevnext__link journal-prevnext__prev" href="${journalEntryHref(prev.num)}"><span class="dir"><span aria-hidden="true">←</span> Session ${prev.num}</span><span class="t">${prev.title}</span></a>`
+    : `<span class="journal-prevnext__link is-empty" aria-hidden="true"></span>`;
+  const nextLink = next
+    ? `<a class="journal-prevnext__link journal-prevnext__next" href="${journalEntryHref(next.num)}"><span class="dir">Session ${next.num} <span aria-hidden="true">→</span></span><span class="t">${next.title}</span></a>`
+    : `<span class="journal-prevnext__link is-empty" aria-hidden="true"></span>`;
+
+  return `<section class="section journal-section journal-entry-page">
+    <div class="wrap">
+      <nav class="journal-breadcrumb" aria-label="Breadcrumb">
+        <a href="${siteUrl('/journal/')}"><span aria-hidden="true">←</span> Journal</a>
+        <span class="sep">·</span>
+        <span>Session ${num} of ${String(totalWeeks).padStart(2, '0')}</span>
+      </nav>
+      <article class="journal-entry journal-entry--solo" id="entry-${num}">
+        <div class="journal-entry-meta"><span class="num">Session ${num}</span>${phase}${date}${present}</div>
+        <h1 class="journal-entry-title">${entry.title}</h1>
+        ${quoteBlock}
+        <div class="journal-entry-body">
+          ${bodyHtml}
+        </div>
+      </article>
+      ${crosslinks}
+      <nav class="journal-prevnext" aria-label="More sessions">${prevLink}${nextLink}</nav>
     </div>
-  </div>`;
+  </section>`;
+}
 
-  return header + jumpPill + layout + sheet + buildJournalPromptsSection(weeks);
+// The capture page: the per-session prompt accordions, lifted off the journal
+// index and given their own home.
+function buildJournalCaptureHtml(weeks) {
+  const items = weeks.map(buildJournalPromptItem).join('\n');
+  return `<section class="section journal-section journal-capture-page" aria-labelledby="capture-title">
+    <div class="wrap">
+      <header class="journal-header">
+        <a class="journal-back" href="${siteUrl('/journal/')}"><span aria-hidden="true">←</span> Back to the journal</a>
+        <span class="journal-eyebrow">/capture</span>
+        <h1 class="journal-title" id="capture-title">Prompts for capturing each <em class="italic-wonk">session.</em></h1>
+        <p class="journal-lead">Run these after each session. Each participant captures their own version. The facilitator synthesises what happened. Together they build the journal.</p>
+      </header>
+      <div class="weeks-grid" id="journal-prompts">${items}</div>
+    </div>
+  </section>`;
 }
 
 // ── Facilitator builders ──────────────────────────────────────────────────────
@@ -1237,7 +1457,7 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, jo
     E('Facilitator guide', 'Page', '/facilitator/', 'page', 'facilitator running guide how to program'),
     E('Prompt library', 'Page', '/prompts/', 'page', 'prompts library copy paste search'),
     E('Journal', 'Page', '/journal/', 'page', 'journal weekly notes recap session writeup case study participants'),
-    E('Journal — Prompts for journaling each week', 'Journal · Tools', '/journal/#journal-prompts', 'section', 'prompts facilitator participant interview synthesis check-in tools'),
+    E('Journal prompts', 'Capture & record each session', '/journal/capture/', 'page', 'journal journaling journal prompt journal prompts journal recording journal record journal recap journal entry recording record recap capture capturing session prompt session prompts session record session recording record session write-up writeup document log notes check-in interview synthesis facilitator participant weekly prompts tools'),
 
     // Home sections
     E('The anti-stock principle', 'Home', '/#principle', 'section', 'principle anti-stock photography originality stock images design'),
@@ -1300,9 +1520,18 @@ function buildSearchIndex(weeks, projects, figmaLoop, facilitator, promptLib, jo
     ...journal.map(e => E(
       `Journal — Week ${e.num}: ${e.title}`,
       e.phase || 'Journal entry',
-      `/journal/#entry-${e.num}`,
+      `/journal/${e.num}/`,
       'journal',
       `${e.quote || ''} ${e.title || ''} journal week ${e.num}`,
+    )),
+
+    // Capture prompts — one per session
+    ...weeks.map(w => E(
+      `Journal prompt — Week ${w.num}: ${w.title}`,
+      'Journal · Capture',
+      `/journal/capture/#journal-prompts-w${w.num}`,
+      'journal',
+      `journal journaling journal prompt journal recording recording record recap capture capturing prompts facilitator participant check-in synthesis interview session ${parseInt(w.num)} week ${w.num} ${w.title}`,
     )),
 
     // Prompts
@@ -1441,6 +1670,24 @@ function build() {
   emit('facilitator/index.html',    buildPage(src('pages/facilitator.html'),    vars, srcDir));
   emit('prompts/index.html',        buildPage(src('pages/prompts.html'),        vars, srcDir));
   emit('journal/index.html',        buildPage(src('pages/journal.html'),        vars, srcDir));
+
+  // Per-session journal entry pages: /journal/NN/
+  journal.forEach(entry => {
+    const n = parseInt(entry.num);
+    const prev = journal.find(e => parseInt(e.num) === n - 1); // older session
+    const next = journal.find(e => parseInt(e.num) === n + 1); // newer session
+    const entryVars = {
+      ...vars,
+      'journalEntry.html':      buildJournalEntryPage(entry, prev, next, weeks.length),
+      'journalEntry.pagetitle': `Session ${entry.num}: ${entry.title}`,
+      'journalEntry.desc':      journalExcerpt(entry.body, 150),
+    };
+    emit(`journal/${entry.num}/index.html`, buildPage(src('pages/journal-entry.html'), entryVars, srcDir));
+  });
+
+  // Capture prompts page: /journal/capture/
+  const captureVars = { ...vars, 'journalCapture.html': buildJournalCaptureHtml(weeks) };
+  emit('journal/capture/index.html', buildPage(src('pages/journal-capture.html'), captureVars, srcDir));
 
   // Search index for command palette
   fs.mkdirSync(dist(''), { recursive: true });
