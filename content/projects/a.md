@@ -8,15 +8,15 @@ pickIf: |
 goesWrong: |
   Designers spend most of the time exploring direction and the last sessions panicking. Pick your case studies in session 1, even roughly. Two strong ones beat four mediocre ones. Resist the urge to include everything.
 goodLooks: |
-  Visiting the site, you'd recognize this designer's taste in 10 seconds. The case studies are written, not just screenshotted. There's a point of view about what this designer cares about — embedded in the type choices, the section structure, the writing voice. The site itself is the proof.
+  Visiting the site, you’d recognize this designer’s taste in 10 seconds. The case studies are written, not just screenshotted. There’s a point of view about what this designer cares about — embedded in the type choices, the section structure, the writing voice. The site itself is the proof.
 trap: |
-  Lots of portfolios end up as a hero name + 3 thumbnails + a footer. That's not minimal, it's underdesigned. Minimal sites earn it through type, rhythm, and density — not by removing things.
+  Lots of portfolios end up as a hero name + 3 thumbnails + a footer. That’s not minimal, it’s underdesigned. Minimal sites earn it through type, rhythm, and density — not by removing things.
 ---
 PROJECT NAME
 A working title. Can change.
 
 ONE SENTENCE
-"It's a portfolio that ____." Finish the sentence. If you write
+"It’s a portfolio that ____." Finish the sentence. If you write
 "showcases my work" or "reflects who I am," scrap it and try again
 with something specific to you.
 
@@ -26,7 +26,7 @@ hiring senior IC roles" beats "potential employers."
 
 THE TWO OR THREE CASE STUDIES
 List them now, even roughly. For each: project name, one-line of
-what it was, why it's in. If you list four or more, cut.
+what it was, why it’s in. If you list four or more, cut.
 
 THE POINT OF VIEW
 What does this site argue about you as a designer? One paragraph.
@@ -47,8 +47,8 @@ Three sites you admire and what specifically you admire about each.
 Not "everything about it." One sentence per reference, naming the
 specific move.
 
-WHAT IT'S NOT
+WHAT IT’S NOT
 At least three things. Examples:
-- It's NOT a list of every project I've ever done.
-- It's NOT going to have a blog or "thoughts" section in v1.
-- It's NOT trying to be photographic — type-led only.
+- It’s NOT a list of every project I’ve ever done.
+- It’s NOT going to have a blog or "thoughts" section in v1.
+- It’s NOT trying to be photographic — type-led only.

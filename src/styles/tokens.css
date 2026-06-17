@@ -9,6 +9,7 @@
   --muted:       #8a807a;
   --accent:      #d97757;
   --accent-soft: #e89a7d;
+  --accent-ui:   var(--accent); /* dark: ~5.7:1 on --bg — safe for small text */
 
   /* Supplemental tokens (default) */
   --accent-subtle: color-mix(in srgb, var(--accent) 15%, var(--bg));
@@ -22,6 +23,15 @@
   --sans:  'Inter Tight', ui-sans-serif, system-ui, sans-serif;
   --mono:  'JetBrains Mono', ui-monospace, monospace;
 
+  /* Type scale */
+  --t-display:   clamp(48px, 9vw, 124px);
+  --t-h2:        clamp(34px, 5vw, 56px);
+  --t-h3:        clamp(22px, 3vw, 30px);
+  --t-lead:      clamp(20px, 1.8vw, 22px);
+  --t-body:      17px;
+  --t-secondary: 15px;
+  --t-label:     12px;
+
   /* Layout */
   --max:    1280px;
   --gutter: clamp(20px, 4vw, 48px);
@@ -29,19 +39,21 @@
 
 /* Light mode overrides */
 /* Contrast ratios on #F6F5F1 bg:
-   --ink  #1A1A1A : 17.1:1  (AAA ✓)
-   --muted #5C5C5C : 7.1:1  (AAA ✓)
-   --accent #C8421C : 6.1:1  (AA ✓ — used for UI affordances, not body text) */
+   --ink    #1A1A1A : 17.1:1 (AAA ✓)
+   --muted  #5C5C5C :  7.1:1 (AAA ✓)
+   --accent #C8421C :  ~4.5:1 (large display text only — not suitable for small labels)
+   --accent-ui #A8341A : ~6:1 (AA ✓ — use for 11-12px mono labels and small UI affordances) */
 [data-theme="clarity"] {
   --bg:          #F6F5F1; /* slightly cool off-white */
   --bg-2:        #FFFFFF; /* elevated: cards, modals */
   --bg-3:        #EDECEA; /* mid-elevation */
-  --rule:        #E0DFD9;
+  --rule:        #D8D6CE;
   --ink:         #1A1A1A;
   --ink-bright:  #111111;
   --muted:       #5C5C5C;
   --accent:      #C8421C; /* shifted ~7° toward red — stays vibrant when darkened */
   --accent-soft: #A8341A; /* hover/active */
+  --accent-ui:   #A8341A; /* ~6:1 on #F6F5F1 — use for small mono labels instead of --accent */
 
   --accent-subtle: #FCE8E0;
   --border-strong: #C4C2BB;

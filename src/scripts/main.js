@@ -6,8 +6,10 @@ import { initTOC } from './toc.js';
 import { initPromptLibrary } from './prompts.js';
 import { initSearch } from './search.js';
 import { initJournal } from './journal.js';
+import { initWeekTabs } from './tabs.js';
 
 initTOC();
 initPromptLibrary();
 initSearch();
 initJournal();
+initWeekTabs();

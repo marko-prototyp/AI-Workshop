@@ -98,8 +98,10 @@ function loadJournal() {
 // ── HTML fragment builders ────────────────────────────────────────────────────
 
 function buildNavLinks(links) {
-  return links.map(({ label, href }) =>
-    `<a href="${siteUrl(href)}">${label}</a>`
+  return links.map(({ label, href, type }) =>
+    type === 'sep'
+      ? `<span class="nav-sep" aria-hidden="true"></span>`
+      : `<a href="${siteUrl(href)}">${label}</a>`
   ).join('\n      ');
 }
 
@@ -118,10 +120,9 @@ function buildStats(stats) {
 }
 
 function buildPitchPanels(panels) {
-  return panels.map(({ num, heading, body }) => {
+  return panels.map(({ heading, body }) => {
     const headingHtml = heading.replace(/\*([^*]+)\*/g, '<em>$1</em>');
     return `    <article class="pitch-item">
-      <div class="num">${num}</div>
       <h2>${headingHtml}</h2>
       <p>${body.trim()}</p>
     </article>`;
@@ -140,8 +141,7 @@ function buildPrincipleBodyHtml(body) {
 }
 
 function buildTechniquesList(techs) {
-  return techs.map(({ num, title, body }) => `      <article class="tech">
-        <div class="tech-num">${num}</div>
+  return techs.map(({ title, body }) => `      <article class="tech">
         <div>
           <h3>${title}</h3>
           <p>${emph(body.trim())}</p>
@@ -152,6 +152,13 @@ function buildTechniquesList(techs) {
 
 function buildWeeksList(weeks) {
   return weeks.map(w => {
+    const wNum = parseInt(w.num);
+    const tabIdInstr  = `w${w.num}-tab-instr`;
+    const tabIdPr     = `w${w.num}-tab-prompts`;
+    const panelIdInstr = `w${w.num}-panel-instr`;
+    const panelIdPr   = `w${w.num}-panel-prompts`;
+
+    const promptCount = (w.prompts || []).length;
     const promptsHtml = (w.prompts || []).map((p, i) => {
       const id = `prompt-w${w.num}-p${i}`;
       const preambleHtml = p.preamble
@@ -169,6 +176,7 @@ function buildWeeksList(weeks) {
               </div>
               <pre class="prompt-body" id="${id}">${p.body.trimEnd()}</pre>
             </div>
+            ${p.note ? `<p class="prompt-note">${p.note}</p>` : ''}
           </div>`;
     }).join('\n');
 
@@ -178,10 +186,30 @@ function buildWeeksList(weeks) {
     const outputItems   = (w.outputs  || []).map(o => `<li>${o}</li>`).join('');
     const watchItems    = (w.watch    || []).map(o => `<li>${o}</li>`).join('');
 
-    return `    <details class="week" id="week-${parseInt(w.num)}">
-      <summary class="week-summary" aria-label="Week ${parseInt(w.num)}: ${w.title}">
+    // At-a-glance: first clause of capability + toolkit
+    const capShort  = w.capability ? w.capability.split(';')[0].trim() : '';
+    const glanceHtml = `<p class="week-glance">${capShort}${w.toolkit ? `<span class="week-glance-sep" aria-hidden="true"> · </span><span class="week-glance-tool">${w.toolkit}</span>` : ''}</p>`;
+
+    // Instructions panel content
+    const instrHtml = `
+        <div class="week-info-blocks">
+          <div class="week-block"><span class="block-label">Capability</span><p>${w.capability}</p></div>
+          ${w.toolkit ? `<div class="week-block"><span class="block-label">Run it in</span><p>${w.toolkit}</p></div>` : ''}
+          ${outputItems ? `<div class="week-block"><span class="block-label">Outputs</span><ul>${outputItems}</ul></div>` : ''}
+          ${watchItems  ? `<div class="week-block"><span class="block-label">Watch out for</span><ul>${watchItems}</ul></div>` : ''}
+        </div>
+        <div class="week-exercise">
+          <h4>Hands-on exercise</h4>
+          <ul>${exerciseItems}</ul>
+        </div>`;
+
+    return `    <details class="week" id="week-${wNum}">
+      <summary class="week-summary" aria-label="Week ${wNum}: ${w.title}">
         <span class="week-num">W ${w.num}</span>
-        <span class="week-title">${w.title}</span>
+        <span class="week-title-group">
+          <span class="week-title">${w.title}</span>
+          ${w.capability ? `<span class="week-subtitle">${capShort}</span>` : ''}
+        </span>
         <span class="week-meta">
           <span class="week-phase">${w.phase}</span>
           <svg class="week-icon" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -191,15 +219,20 @@ function buildWeeksList(weeks) {
         </span>
       </summary>
       <div class="week-content">
-        <div class="spacer"></div>
-        <div>
-          <div class="week-section"><h4>Capability focus</h4><p>${w.capability}</p></div>
-          ${w.toolkit ? `<div class="week-section week-section--toolkit"><h4>Run it in</h4><p>${w.toolkit}</p></div>` : ''}
-          <div class="week-section"><h4>Hands-on exercise</h4><ul>${exerciseItems}</ul></div>
-          ${promptsHtml ? `<div class="week-section week-section--prompts"><h4>Try it yourself first. Prompts as backup.</h4>${aimHtml}${promptsHtml}</div>` : ''}
-          <div class="week-section"><h4>Outputs</h4><ul>${outputItems}</ul></div>
-          <div class="week-section"><h4>Watch out for</h4><ul>${watchItems}</ul></div>
+        ${glanceHtml}
+        <div class="week-tabbar" role="tablist" aria-label="Week ${wNum} sections">
+          <button class="week-tab is-active" role="tab" aria-selected="true"
+            id="${tabIdInstr}" aria-controls="${panelIdInstr}">Instructions</button>
+          ${promptCount ? `<button class="week-tab" role="tab" aria-selected="false"
+            id="${tabIdPr}" aria-controls="${panelIdPr}">Prompts · ${promptCount}</button>` : ''}
         </div>
+        <div class="week-panel" role="tabpanel" id="${panelIdInstr}" aria-labelledby="${tabIdInstr}">
+          ${instrHtml}
+        </div>
+        ${promptCount ? `<div class="week-panel" role="tabpanel" id="${panelIdPr}" aria-labelledby="${tabIdPr}" hidden>
+          ${aimHtml}
+          ${promptsHtml}
+        </div>` : ''}
       </div>
     </details>`;
   }).join('\n');
@@ -222,8 +255,7 @@ function buildProjectsList(projects) {
       : '';
 
     return `    <details class="project" id="project-${p.letter.toLowerCase()}">
-      <summary class="project-summary" aria-label="Option ${p.letter}: ${p.name}">
-        <span class="project-letter">${p.letter}</span>
+      <summary class="project-summary" aria-label="${p.name}">
         <span class="project-name">${p.name}</span>
         <span class="project-meta">
           <span class="project-bestfor">for: ${p.bestFor}</span>

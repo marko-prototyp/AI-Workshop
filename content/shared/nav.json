@@ -3,6 +3,7 @@
     { "label": "Principle",   "href": "/#principle" },
     { "label": "Sessions",    "href": "/#weeks" },
     { "label": "Projects",    "href": "/#projects" },
+    { "type": "sep" },
     { "label": "Figma Loop",  "href": "/figma-loop/" },
     { "label": "Journal",     "href": "/journal/" },
     { "label": "Facilitator", "href": "/facilitator/" },
