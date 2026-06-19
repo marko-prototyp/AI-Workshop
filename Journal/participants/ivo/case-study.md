@@ -2,8 +2,8 @@
 participant: "Ivo"
 project: "Wattlog"
 status: "draft"
-weeks_completed: 5
-last_updated: "2026-06-10"
+weeks_completed: 6
+last_updated: "2026-06-17"
 hero_image: ""
 final_url: ""
 ---
@@ -104,6 +104,22 @@ This was also the first session where we reviewed each other's prototypes and ag
 The decision I committed to: planned sessions, in detail. Worst moment of the day: bad styling. That's fine. *"I'd work a bit more on the way of displaying things, but I guess I'll cover that in the design phase."*
 
 *Artifact: the final version of the smoke test html.*
+
+### Week 06 — Wrote the brief as a skill. The tool ignored it.
+
+This was supposed to be the payoff, and it mostly wasn't. I took everything from planning and design direction and folded it into one Design System Document, about 580 lines: art direction, the banned-moves list, the full token layer, the content libraries, and a redraw recipe for each of the ten screens. I turned the anti-stock rules into a reusable SKILL.md, scoped to Wattlog only. Then I hardened the comp brief for the Today screen into a single paste-ready block, naming the three places accent is allowed and the six banned moves most likely to break on that specific screen.
+
+I also closed the form factor. Narrow web, about 680px. That's been the open question since the wireframes, and it gates the stack, so it's good to have it settled.
+
+The decisions landed through one-question-at-a-time loops. I folded Session 05's recipe model (ten screens) into the consolidation instead of forcing five files into one. I scoped the skill to Wattlog only. I kept the visual-direction name, "Paper and steel."
+
+Then the brief went into Claude Design and the comp didn't hold to it. I got something acceptable only after building the whole design system inside Claude Design and applying it as a unit, not the brief on its own. The best-looking result didn't come from my brief at all. It came from an outside material-design skill, and it was the cleanest comp I made all day. The line I'd keep about writing a brief like this: *"leave as little unspecified space as possible."*
+
+What I committed to: stepping back from Claude Design as the comp tool, since it wouldn't hold the brief. Whether a custom design system earns its keep is the thing still in question, not yet settled. Three files exist regardless of how the comps looked: wattlog-design-system.md, the wattlog-design-system SKILL.md, and the hardened comp brief.
+
+*Artifact: wattlog-design-system.md (the ~580-line Design System Document).*
+*Artifact: the wattlog-design-system SKILL.md.*
+*Artifact: the hardened Today-screen comp brief.*
 
 *…through Week 12.*
 

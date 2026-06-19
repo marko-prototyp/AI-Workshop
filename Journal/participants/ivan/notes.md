@@ -51,3 +51,9 @@ Simple to the point of feeling obvious. Six input dimensions combine into pre-en
 - Absent again. Three sessions missed in a row (03, 04, 05).
 - The path-back-in conversation flagged after week 04 hasn't produced a return.
 - **Action before week 06:** Decide the re-entry plan for real. Compressed onboarding, or rejoin at the build phase with reduced scope. Past the point where "tag along" works.
+
+### Week 06
+- Absent again. Four sessions missed in a row (03, 04, 05, 06).
+- Now half the program behind: no design direction, no wireframes, no smoke test, and as of this session no design system or anti-stock skill either. The others all produced those this week.
+- The re-entry decision flagged after W04 and again after W05 still hasn't been made or acted on. Letting it slide is now the active failure.
+- **Action before week 07:** Make the call and tell him. Realistic options: (1) a compressed onboarding track to get him a brief + direction fast, or (2) accept he rejoins at the build phase with a deliberately reduced scope. No third "catch up on his own" option remains.

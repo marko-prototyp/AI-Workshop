@@ -75,3 +75,19 @@ Playful but purposeful. Color-coded scoring, satisfying micro-animations on poin
 - Q&A: worst moment "Claude adding some things that weren't specified anywhere." Committed to giving the project more time and building reusable visuals. Nothing flagged as stuck.
 - Reference-image work (the 3 images flagged for week 5–6 in the case study) still outstanding. Visuals are now her own stated priority, so watch that it actually happens and doesn't slip to the end.
 - First peer-review round: reviewed the others' prototypes and got feedback on ClassArcade. Took part in the group agreeing a shared set of UX rules.
+
+### Week 06
+- Produced the anti-stock skill, a first build of the main view ("Today's roster"), and a reworked visual direction.
+- Design-system reconciliation in chat: locked **DM Serif Display italic** for names, over Fraunces. (Supersedes the W04 Fraunces-italic lock; still serif italic, just a different face. Update the brief + W04 case study reference if it matters.) Flipped the leaderboard podium to **1·2·3 order** — start of recovering the W05 podium regression. Resolved a brief contradiction: **point number always the largest/heaviest element on a row, name stays the most expressive.**
+- Consolidated project + visual + Week-4 briefs into one Design System Document. **Eight underspecified items flagged for sign-off** (type scale, spacing, flash colors, button color among them) rather than guessed.
+- The friction: comp lost the dashboard's character; Claude repeated the same move after she told it not to. This is part of why the output went generic — eight unsigned items + a near-default aesthetic gave the model room to average.
+- Q&A: "Skill and the first version of the app. Changed the visual design and some other stuff." Best: a good update to the visual brief. Worst: Claude doing things she didn't want, repeating the same move over and over. Committed: decided on the visual direction. Artifact: "Today's roster" comp — "this is something I want." No quote-worthy line. Next: many things in flight, not specified.
+- **Watch:** sign off the eight items before the next build or defaults leak again. The character loss is the central problem; the 1·2·3 podium flip is the start of the visual recovery flagged in W05.
+- **Push for week 07:** Sign off the underspecified items. Recover the dashboard's character (consider the adapted material-design skill). Narrow the "many things in flight" to one next move.
+
+#### Week 06 — after-session update
+- **Character recovered via a skill.** After the session, the material-design-skill workflow was run for ClassArcade: a Material Design skill template adapted with image references, rewritten by Claude into `classarcade-design` v2 ("Arcade Dusk"). It built two screens (main roster view + player profile) in near-perfect sync. Files in `Journal/participants/paula/classarcade-v2/`.
+- **v2 supersedes earlier decisions.** The skill is now ClassArcade's art-direction source of truth. Names are Fraunces serif (with Space Grotesk for chrome), which overrides the in-session DM Serif Display call. It also retires the Session 02 visual brief on typography, avatars, ground, and palette. **Action: write the v2 addendum to the Session 02 brief, or mark it superseded and point to the skill.**
+- The "eight items for sign-off" are mostly closed inside the skill's token layer and type scale. Verify each against the shipped screens rather than assuming.
+- **Skill's named known unknowns to confirm with Paula:** negative projected display, leaderboard top-3 vs all ranks, the streak (`×N`) mechanic introduced in the build, and whether search comes back on the roster.
+- This is the standout result of the session for any project. Use ClassArcade as the worked example when rolling the skill workflow out to Wattlog and Naučimo.

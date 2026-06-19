@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClassArcade — Player profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,500;1,9..144,600;1,9..144,900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --stage:#EFEDE6; --board:#FBFAF6; --line:#E7E2D8; --ink:#17150F; --muted:#9A958A;
+  --black:#100F0C; --acid:#C7F03B; --pos:#3A4A00;
+  --flash-pos:#F4FBDB; --flash-neg:#F2EFE7; --error:#FF5252;
+  --serif:'Fraunces',Georgia,serif; --sans:'Space Grotesk',sans-serif; --r:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{font-family:var(--sans); color:var(--ink); background:var(--stage); -webkit-font-smoothing:antialiased; font-weight:400;}
+button{font:inherit; color:inherit; cursor:pointer; background:none; border:none;}
+.label{font-family:var(--serif); font-style:italic; font-size:13px; color:var(--muted); font-weight:400;}
+em{font-style:italic;}
+
+.stage{min-height:100vh; padding:18px; display:flex; justify-content:center;}
+.shell{position:relative; width:100%; max-width:1180px; background:var(--board); border-radius:30px;
+  box-shadow:0 18px 50px -30px rgba(23,21,15,.35); overflow:hidden; display:flex;}
+
+/* rail */
+.rail{width:72px; flex-shrink:0; background:var(--black); display:flex; flex-direction:column; align-items:center; padding:18px 0 16px;}
+.rail .home .splat-svg{width:34px; height:34px;}
+.rail .grow{flex:1;}
+.rail .me{width:40px; height:40px; border-radius:50%; background:#fff; color:var(--black);
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;}
+
+.inner{flex:1; display:flex; min-width:0;}
+.main{flex:1; min-width:0; padding:28px 34px 34px;}
+.wall{width:312px; flex-shrink:0; border-left:1.5px solid var(--line); padding:28px 28px;}
+
+/* breadcrumb + identity */
+.crumbs{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); font-weight:500;}
+.crumbs b{color:var(--ink); font-weight:500;}
+.crumbs .gd{width:7px; height:7px; border-radius:50%; background:var(--acid);}
+.crumbs .back{color:var(--ink); border-bottom:1.5px solid var(--line);}
+.crumbs .back:hover{border-color:var(--ink);}
+.idrow{display:flex; align-items:center; gap:18px; margin:18px 0 6px;}
+.bigava{width:62px; height:62px; border-radius:50%; border:1.5px solid var(--ink); display:flex; align-items:center;
+  justify-content:center; font-weight:700; font-size:20px; flex-shrink:0;}
+.idmeta{flex:1; min-width:0;}
+.idmeta h1{font-family:var(--serif); font-weight:900; font-size:40px; line-height:1; margin:0; letter-spacing:-.01em; display:flex; align-items:center; gap:4px;}
+.idmeta h1 .splat-svg{width:20px; height:20px; transform:translateY(-6px);}
+.idmeta .sub{font-size:13px; color:var(--muted); font-weight:500; margin-top:7px;}
+.award{display:flex; align-items:center; gap:8px;}
+.aw{border:1.5px solid var(--ink); border-radius:999px; min-width:44px; padding:8px 0; font-size:13px; font-weight:500; text-align:center; transition:transform .1s;}
+.aw:hover{transform:translateY(-1px);}
+.aw.minus{color:var(--muted); border-color:var(--line);}
+.aw.minus:hover{border-color:var(--ink); color:var(--ink);}
+.aw.solid{background:var(--ink); color:var(--board); border-color:var(--ink);}
+
+/* chart */
+.section-lead{display:flex; align-items:baseline; justify-content:space-between; margin:26px 0 8px;}
+.section-lead .now{font-family:var(--serif); font-weight:900; font-size:30px; display:flex; align-items:baseline; gap:7px;}
+.section-lead .now small{font-family:var(--serif); font-style:italic; font-weight:400; font-size:14px; color:var(--muted);}
+.chart{border:1.5px solid var(--line); border-radius:var(--r); padding:16px 18px 12px; background:#fff;}
+.chart svg{display:block; width:100%; height:auto;}
+
+/* filter + history */
+.histhead{display:flex; align-items:baseline; justify-content:space-between; margin:30px 0 6px;}
+.histhead h2{font-family:var(--serif); font-style:italic; font-weight:900; font-size:24px; margin:0;}
+.filters{display:flex; gap:14px;}
+.filt{font-size:13px; color:var(--muted); font-weight:500; padding-bottom:2px;}
+.filt.on{color:var(--ink); border-bottom:2px solid var(--ink);}
+.feed{margin-top:6px;}
+.ev{display:grid; grid-template-columns:64px 1fr auto auto; align-items:center; gap:14px;
+  padding:13px 2px; border-top:1.5px solid var(--line); transition:background .25s;}
+.ev.in{background:var(--flash-pos);}
+.ev .when{font-size:13px; color:var(--muted); font-weight:500;}
+.ev .what{font-family:var(--serif); font-style:italic; font-size:17px;}
+.ev .what.spot{color:var(--muted);}
+.ev .badge{font-weight:600; font-size:12px; padding:3px 9px; border-radius:999px; min-width:34px; text-align:center;}
+.ev .badge.pos{background:var(--acid); color:var(--ink);}
+.ev .badge.neg{background:var(--line); color:var(--muted);}
+.ev .run{font-family:var(--serif); font-style:italic; font-size:15px; color:var(--muted); min-width:46px; text-align:right;}
+.feed-empty{padding:22px 2px; font-family:var(--serif); font-style:italic; color:var(--muted);}
+
+/* wall */
+.wall .kick{font-size:12px; color:var(--muted); font-weight:500;}
+.wall h2{font-family:var(--serif); font-style:italic; font-weight:900; font-size:28px; margin:2px 0 20px;}
+.bigstat{margin-bottom:6px;}
+.bigstat .v{font-family:var(--serif); font-weight:900; font-size:54px; line-height:.9;}
+.bigstat .v small{font-family:var(--serif); font-style:italic; font-weight:400; font-size:16px; color:var(--muted);}
+.squiggle svg{display:block; width:96px; height:10px; margin:2px 0 18px;}
+.statrow{display:flex; align-items:baseline; justify-content:space-between; padding:11px 0; border-top:1.5px solid var(--line);}
+.statrow .k{font-family:var(--serif); font-style:italic; color:var(--muted); font-size:14px;}
+.statrow .v{font-family:var(--serif); font-weight:600; font-size:18px;}
+.earned{margin-top:24px;}
+.earned .lab{font-family:var(--serif); font-style:italic; color:var(--muted); font-size:14px; margin-bottom:12px;}
+.cat{margin-bottom:14px;}
+.cat .top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;}
+.cat .nm{font-size:13px; font-weight:500;}
+.cat .n{font-family:var(--serif); font-style:italic; font-weight:600; font-size:15px;}
+.bar{height:8px; border-radius:999px; background:var(--line); overflow:hidden;}
+.bar i{display:block; height:100%; border-radius:999px; background:var(--muted);}
+.cat.lead .bar i{background:var(--acid);}
+
+#toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--board);
+  padding:11px 20px; border-radius:999px; font-size:13px; font-weight:500;}
+.splat-svg path{fill:var(--acid);}
+@keyframes fl{0%{opacity:0;transform:translateY(6px)}25%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-16px)}}
+.floatlabel{position:absolute; font-family:var(--serif); font-style:italic; font-weight:600; font-size:18px; color:var(--pos); animation:fl .9s ease forwards; pointer-events:none;}
+@media (prefers-reduced-motion: reduce){*{animation:none!important; transition:none!important;}}
+@media (max-width:920px){ .inner{flex-direction:column;} .wall{width:auto; border-left:none; border-top:1.5px solid var(--line);} }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="shell">
+    <aside class="rail">
+      <div class="home"><svg class="splat-svg" viewBox="0 0 100 100" id="railSplat" aria-hidden="true"></svg></div>
+      <div class="grow"></div>
+      <div class="me">MR</div>
+    </aside>
+
+    <div class="inner">
+      <section class="main">
+        <div class="crumbs">ClassArcade <span>/</span> <b>5.A</b> <span>/</span>
+          <button class="back" onclick="toast('Standalone profile — wire this to your roster route')">← roster</button>
+          <span class="gd" style="margin-left:6px"></span>
+        </div>
+
+        <div class="idrow">
+          <span class="bigava" id="bigAva"></span>
+          <div class="idmeta">
+            <h1 id="pName">Ana Horvat<svg class="splat-svg" viewBox="0 0 100 100" aria-hidden="true" id="nameSplat"></svg></h1>
+            <div class="sub" id="pSub"></div>
+          </div>
+          <div class="award">
+            <button class="aw minus" onclick="grant(-1)" aria-label="Minus 1 XP">−1</button>
+            <button class="aw" onclick="grant(1)" aria-label="Plus 1 XP">+1</button>
+            <button class="aw solid" onclick="grant(3)" aria-label="Plus 3 XP">+3</button>
+          </div>
+        </div>
+
+        <div class="section-lead">
+          <span class="label">xp over the session</span>
+          <span class="now" id="nowXp"></span>
+        </div>
+        <div class="chart" id="chart"></div>
+
+        <div class="histhead">
+          <h2>history.</h2>
+          <div class="filters" id="filters"></div>
+        </div>
+        <div class="feed" id="feed"></div>
+      </section>
+
+      <aside class="wall">
+        <div class="kick">on the wall —</div>
+        <h2>the player.</h2>
+        <div class="bigstat"><div class="v" id="wallTotal"></div></div>
+        <div class="squiggle" id="squiggle"></div>
+        <div class="statrow"><span class="k">rank in squad</span><span class="v" id="wallRank"></span></div>
+        <div class="statrow"><span class="k">current streak</span><span class="v" id="wallStreak"></span></div>
+        <div class="statrow"><span class="k">grants logged</span><span class="v" id="wallEvents"></span></div>
+        <div class="statrow"><span class="k">best single</span><span class="v" id="wallBest"></span></div>
+
+        <div class="earned">
+          <div class="lab">earned for</div>
+          <div id="breakdown"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS=['Homework','Helping others','Answering questions'];
+const SHORT={'Homework':'homework','Helping others':'helping','Answering questions':'answering'};
+const player={ name:'Ana Horvat', squad:'5.A' };
+
+/* seed history (oldest authored first); a is amount, c is category, d is days ago */
+let events=[
+ {a:3,c:'Homework',d:13},{a:1,c:'Answering questions',d:12},{a:2,c:'Helping others',d:11},
+ {a:3,c:'Homework',d:10},{a:1,c:'Answering questions',d:9},{a:2,c:'Helping others',d:8},
+ {a:3,c:'Homework',d:7},{a:1,c:'Homework',d:6},{a:2,c:'Answering questions',d:5},
+ {a:3,c:'Helping others',d:4},{a:-1,c:'Homework',d:3},{a:3,c:'Homework',d:2},
+ {a:2,c:'Helping others',d:1},{a:1,c:'Answering questions',d:1},{a:3,c:'Helping others',d:0},
+ {a:1,c:'Homework',d:0}
+].map((e,i)=>({...e, ts:Date.now()-e.d*86400000 + i*60000}));
+
+/* peers frozen at load so rank stays meaningful as you grant */
+const base=events.reduce((n,e)=>n+e.a,0);
+const peers=[base+6, base-5, base-10, base-15, base-21, base-27, base-33].map(t=>Math.max(0,t));
+const squadSize=peers.length+1;
+
+let filter='all';
+
+/* helpers */
+const initials=n=>{const p=n.trim().split(/\s+/);return ((p[0]?p[0][0]:'?')+(p[1]?p[1][0]:'')).toUpperCase();};
+const total=()=>events.reduce((n,e)=>n+e.a,0);
+const streak=()=>{let s=0;for(let i=events.length-1;i>=0;i--){if(events[i].a>0)s++;else break;}return s;};
+const rank=()=>1+peers.filter(t=>t>total()).length;
+function dayLabel(ts){const d=new Date(ts), now=new Date();
+  const dd=Math.round((new Date(now.getFullYear(),now.getMonth(),now.getDate())-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/86400000);
+  if(dd<=0)return 'today'; if(dd===1)return 'yesterday';
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+
+/* motifs */
+function starPath(spikes=11,outer=50,inner=31,cx=50,cy=50){let p='',st=Math.PI/spikes;
+  for(let i=0;i<spikes*2;i++){const r=i%2?inner:outer,a=i*st-Math.PI/2;
+    p+=(i?'L':'M')+(cx+r*Math.cos(a)).toFixed(1)+' '+(cy+r*Math.sin(a)).toFixed(1)+' ';}return p+'Z';}
+const SP=starPath();
+const SQUIGGLE=`<svg viewBox="0 0 96 10" aria-hidden="true"><path d="M2 7 Q 10 1 18 7 T 34 7 T 50 7 T 66 7 T 82 7 T 94 6" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+
+/* chart */
+function renderChart(){
+  const W=620,H=210,pL=22,pR=18,pT=18,pB=26;
+  const sorted=[...events].sort((a,b)=>a.ts-b.ts);
+  let cum=0; const pts=sorted.map(e=>{cum+=e.a; return Math.max(0,cum);});
+  const maxY=Math.max(...pts,1), n=pts.length;
+  const X=i=>n===1?(pL+(W-pL-pR)/2):pL+i*(W-pL-pR)/(n-1);
+  const Y=v=>(H-pB)-(v/maxY)*(H-pT-pB);
+  const line=pts.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+  const area=line+` L ${X(n-1).toFixed(1)} ${H-pB} L ${X(0).toFixed(1)} ${H-pB} Z`;
+  const dots=pts.map((v,i)=>{const last=i===n-1;
+    return `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${last?4:2.4}" fill="${last?'var(--acid)':'var(--ink)'}" stroke="${last?'var(--ink)':'none'}" stroke-width="${last?1.4:0}"/>`;}).join('');
+  document.getElementById('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative XP over the session">
+    <line x1="${pL}" y1="${H-pB}" x2="${W-pR}" y2="${H-pB}" stroke="var(--line)" stroke-width="1.5"/>
+    <line x1="${pL}" y1="${pT}" x2="${W-pR}" y2="${pT}" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 4"/>
+    <text x="${pL}" y="${pT-5}" font-family="var(--serif)" font-style="italic" font-size="11" fill="var(--muted)">${maxY}</text>
+    <text x="${pL}" y="${H-pB+16}" font-family="var(--sans)" font-size="10" fill="var(--muted)">${dayLabel(sorted[0].ts)}</text>
+    <text x="${W-pR}" y="${H-pB+16}" text-anchor="end" font-family="var(--sans)" font-size="10" fill="var(--muted)">today</text>
+    <path d="${area}" fill="var(--acid)" fill-opacity="0.16"/>
+    <path d="${line}" fill="none" stroke="var(--acid)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}
+  </svg>`;
+}
+
+/* filters + feed */
+function renderFilters(){
+  const wrap=document.getElementById('filters'); wrap.innerHTML='';
+  [['all','all'],...CATS.map(c=>[c,SHORT[c]])].forEach(([key,lab])=>{
+    const b=document.createElement('button'); b.className='filt'+(filter===key?' on':''); b.textContent=lab;
+    b.onclick=()=>{filter=key; renderFilters(); renderFeed();}; wrap.appendChild(b);});
+}
+function runningTotals(){ // map ts -> running total (chronological)
+  const sorted=[...events].sort((a,b)=>a.ts-b.ts); let c=0; const m=new Map();
+  sorted.forEach(e=>{c=Math.max(0,c+e.a); m.set(e.ts,c);}); return m;}
+function renderFeed(flashTs){
+  const feed=document.getElementById('feed'); feed.innerHTML='';
+  const run=runningTotals();
+  const rows=[...events].sort((a,b)=>b.ts-a.ts).filter(e=>filter==='all'||e.c===filter);
+  if(!rows.length){feed.innerHTML='<div class="feed-empty">No grants in this category yet.</div>'; return;}
+  rows.forEach(e=>{
+    const d=document.createElement('div'); d.className='ev'+(e.ts===flashTs?' in':'');
+    const what=e.c?`for ${SHORT[e.c]}`:'spot xp';
+    d.innerHTML=`<span class="when">${dayLabel(e.ts)}</span>
+      <span class="what ${e.c?'':'spot'}">${what}</span>
+      <span class="badge ${e.a>0?'pos':'neg'}">${e.a>0?'+':'−'}${Math.abs(e.a)}</span>
+      <span class="run">→ ${run.get(e.ts)}</span>`;
+    feed.appendChild(d);
+  });
+}
+
+/* wall */
+function renderWall(){
+  document.getElementById('wallTotal').innerHTML=`${total()} <small>xp</small>`;
+  document.getElementById('wallRank').textContent=`${String(rank()).padStart(2,'0')} of ${squadSize}`;
+  document.getElementById('wallStreak').textContent=streak()>0?`×${streak()}`:'—';
+  document.getElementById('wallEvents').textContent=events.length;
+  document.getElementById('wallBest').textContent='+'+Math.max(...events.map(e=>e.a),0);
+  // earned-for breakdown (net per category, positives drive the look)
+  const sums=CATS.map(c=>({c,n:events.filter(e=>e.c===c).reduce((t,e)=>t+e.a,0)}));
+  const max=Math.max(...sums.map(s=>s.n),1);
+  const lead=sums.reduce((a,b)=>b.n>a.n?b:a,sums[0]);
+  document.getElementById('breakdown').innerHTML=sums.map(s=>`
+    <div class="cat ${s.c===lead.c?'lead':''}">
+      <div class="top"><span class="nm">${SHORT[s.c]}</span><span class="n">${s.n}</span></div>
+      <div class="bar"><i style="width:${Math.max(4,Math.round(s.n/max*100))}%"></i></div>
+    </div>`).join('');
+}
+
+/* grant from profile — one tap, flash, live update */
+function grant(delta){
+  const e={a:delta, c:null, ts:Date.now()};
+  events.push(e);
+  // float label near the award buttons
+  const host=document.querySelector('.award'); host.style.position='relative';
+  const fl=document.createElement('span'); fl.className='floatlabel';
+  fl.style.right='6px'; fl.style.top='-14px';
+  fl.textContent=delta>0?'+'+delta:'−'+Math.abs(delta); fl.style.color=delta>0?'var(--pos)':'var(--muted)';
+  host.appendChild(fl); setTimeout(()=>fl.remove(),900);
+  renderAll(e.ts);
+  document.getElementById('pSub').textContent=sub();
+}
+function sub(){return `squad ${player.squad} · player · rank ${String(rank()).padStart(2,'0')} of ${squadSize}`;}
+
+function renderAll(flashTs){
+  document.getElementById('nowXp').innerHTML=`${total()} <small>xp this session</small>`;
+  renderChart(); renderFeed(flashTs); renderWall();
+}
+
+/* boot */
+document.getElementById('railSplat').innerHTML=`<path d="${SP}"/>`;
+document.getElementById('nameSplat').innerHTML=`<path d="${SP}"/>`;
+document.getElementById('squiggle').innerHTML=SQUIGGLE;
+document.getElementById('bigAva').textContent=initials(player.name);
+document.getElementById('pName').childNodes[0].nodeValue=player.name+'.';
+document.getElementById('pSub').textContent=sub();
+renderFilters();
+renderAll();
+function toast(m){const t=document.createElement('div');t.id='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2000);}
+</script>
+</body>
+</html>

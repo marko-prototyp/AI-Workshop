@@ -3,7 +3,7 @@ participant: "Marko Kolić"
 project: "AI for Designers — the program, the website, the journal"
 status: "draft"
 weeks_completed: 4
-last_updated: "2026-05-27"
+last_updated: "2026-06-17"
 hero_image: ""
 final_url: ""
 ---
@@ -128,6 +128,22 @@ Running into token limits on the build itself — this is a full week of work, n
 *Screenshot: the brief structure.*
 
 ### Week 05 — _to come_
+
+### Week 06 — The payoff session that wasn't, and what it tells me to change.
+
+This was meant to be the culmination: take everything from planning and direction, fold it into one design system plus a skill, write a hardened comp brief, and watch the main view come out right. For two of three projects, Claude Design returned AI stock that ignored the guidelines. Paula's dashboard lost all its character. Ivo built the full Wattlog design system inside Claude Design and only got acceptable output once he applied the whole system, not the brief. Marin's held, because his visual language is specific enough that the model has no default to fall back on. A genuinely low day after weeks of build-up.
+
+Three things for the meta-project came out of it. First, the session's fork (comp in Figma and hand Claude the screenshot, or describe it straight to Claude Design) resolved itself: nobody chose Figma, everyone went to Claude Design, and the brief held better there than in an ordinary chat. The format should follow the room. Figma still works and the principle is unchanged, design first then build, but the path I teach now leads with Claude Design.
+
+Second, the handbook is too heavy. The room said it directly: today's page is almost impossible to follow, too much crammed in, too much reading. That's the opposite of week 04, where the handbook carried the room without a question. It needs a redesign for legibility and a heavy content cut.
+
+Third, the one bright spot is a thread worth pulling. Ivo's best comp came from an outside material-design skill, not his own brief or his Claude Design system, and it was the cleanest thing anyone made that day. The plan is to adapt that skill to our own needs and see whether it reproduces stronger design across all the projects.
+
+I ran that plan after the session, and it worked better than anything we'd tried. The reliable way to get the design we want is a skill that references the visual style. I took a Material Design skill template, which already has almost everything defined, and adapted it by feeding the model image references for the look we wanted. The model took the inspiration and rewrote the Material skill to suit our needs. What came out is a skill that fits Paula's product, and using it I built two ClassArcade screens in near-perfect sync with what I told it to do. A brief describes the target and leaves the model room to drift toward its default. A skill hands it the tokens, the type scale, the component recipes, and the refusals as a contract, up front, every time. It's the anti-stock argument we've made since week 03, in its most operational form.
+
+So this is probably the way forward, which means I have to stop and rethink the workshop. Where the skill gets built in the sequence, how the visual-direction and design-system sessions feed into it, and what I can cut now that the skill does the heavy lifting. That's the next real piece of meta-project work, before the build phase runs.
+
+*Screenshots: the overloaded handbook page (before the redesign), the Material skill template next to the adapted ClassArcade skill, the two ClassArcade screens built from it.*
 
 *…through Week 12.*
 

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClassArcade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,500;1,9..144,600;1,9..144,900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --stage:#EFEDE6; --board:#FBFAF6; --ink:#17150F; --muted:#9A958A; --line:#E7E2D8;
+  --black:#100F0C; --acid:#C7F03B; --lav:#E8E2FB; --pink:#FBDEEA;
+  --pos:#3a4a00;                 /* dark ink-green for positive marks on light */
+  --serif:'Fraunces',Georgia,serif; --sans:'Space Grotesk',sans-serif;
+  --r:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{font-family:var(--sans); color:var(--ink); background:var(--stage); -webkit-font-smoothing:antialiased; font-weight:400;}
+button{font:inherit; color:inherit; cursor:pointer; background:none; border:none;}
+button:disabled{opacity:.35; cursor:default;}
+input,select{font:inherit; color:inherit;}
+.hidden{display:none !important;}
+:focus-visible{outline:2.5px solid var(--ink); outline-offset:2px; border-radius:6px;}
+em{font-style:italic;}
+
+/* serif display helpers */
+.ser{font-family:var(--serif);}
+.label{font-family:var(--serif); font-style:italic; font-size:13px; color:var(--muted); font-weight:400;}
+.kicker{font-family:var(--sans); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500;}
+
+/* ===== STAGE / BOARD ===== */
+.stage{min-height:100vh; padding:18px; display:flex; justify-content:center;}
+.shell{position:relative; width:100%; max-width:1280px; background:var(--board); border-radius:30px;
+  box-shadow:0 18px 50px -30px rgba(23,21,15,.35); overflow:hidden; display:flex;}
+
+/* black rail */
+.rail{width:72px; flex-shrink:0; background:var(--black); display:flex; flex-direction:column;
+  align-items:center; padding:18px 0 16px; gap:4px;}
+.rail .home{width:40px; height:40px; display:flex; align-items:center; justify-content:center; margin-bottom:10px;}
+.rail .home .splat-svg{width:34px; height:34px;}
+.railbtn{width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,.55); transition:background .12s, color .12s;}
+.railbtn:hover{background:rgba(255,255,255,.1); color:#fff;}
+.railbtn svg{width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round;}
+.rail .grow{flex:1;}
+.rail .me{width:40px; height:40px; border-radius:50%; background:#fff; color:var(--black);
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; font-family:var(--sans);}
+
+/* inner split */
+.inner{flex:1; display:flex; min-width:0;}
+.main{flex:1; min-width:0; padding:30px 34px 36px; position:relative;}
+.wall{width:340px; flex-shrink:0; border-left:1.5px solid var(--line); padding:30px 30px 30px; position:relative;}
+
+/* decorative faint blobs */
+.blob{position:absolute; background:#F1EEE6; border-radius:50%; filter:blur(2px); pointer-events:none; z-index:0;}
+.blob.b1{width:120px; height:80px; top:8px; right:60px;}
+.blob.b2{width:80px; height:64px; top:34px; right:160px;}
+
+/* ===== HEADER ===== */
+.crumbs{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); font-weight:500; position:relative; z-index:1;}
+.crumbs b{color:var(--ink); font-weight:500;}
+.crumbs .gd{width:7px; height:7px; border-radius:50%; background:var(--acid); display:inline-block;}
+.headrow{display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin:6px 0 22px; position:relative; z-index:1;}
+h1.title{font-family:var(--serif); font-weight:900; font-size:46px; line-height:.98; margin:6px 0 0; letter-spacing:-.01em; display:flex; align-items:flex-start; gap:2px;}
+h1.title em{font-weight:400;}
+h1.title .splat-svg{width:26px; height:26px; margin-left:4px; transform:translateY(2px);}
+.head-actions{display:flex; align-items:center; gap:10px; padding-top:10px; flex-wrap:wrap; justify-content:flex-end;}
+.toggle{display:flex; align-items:center; gap:9px; border:1.5px solid var(--line); border-radius:999px; padding:8px 15px; font-size:13px; font-weight:500;}
+.toggle .gd{width:7px; height:7px; border-radius:50%; background:var(--ink);}
+.toggle:hover{border-color:var(--ink);}
+.pill-dark{background:var(--black); color:#fff; border-radius:999px; padding:10px 18px; font-size:13px; font-weight:500;}
+.pill-dark:hover{transform:translateY(-1px);}
+.pill-ghost{border:1.5px solid var(--ink); border-radius:999px; padding:9px 16px; font-size:13px; font-weight:500;}
+.pill-ghost:hover{background:var(--ink); color:var(--board);}
+
+/* tabs + meta */
+.tabrow{display:flex; align-items:baseline; justify-content:space-between; gap:16px; border-bottom:1.5px solid var(--line); padding-bottom:14px; position:relative; z-index:1;}
+.tabs{display:flex; align-items:baseline; gap:22px;}
+.tab{font-size:15px; color:var(--muted); font-weight:400; position:relative; padding-bottom:2px;}
+.tab b{font-weight:700; color:inherit;}
+.tab.active{color:var(--ink);}
+.tab.active::after{content:""; position:absolute; left:0; right:0; bottom:-15.5px; height:2.5px; background:var(--ink);}
+.tab.newsq{color:var(--ink); font-weight:500;}
+.meta{font-size:13px; color:var(--muted); font-weight:500; display:flex; align-items:center; gap:14px;}
+.sorttoggle{font-family:var(--serif); font-style:italic; color:var(--muted);}
+.sorttoggle b{color:var(--ink); font-style:normal; font-family:var(--sans); font-weight:500;}
+
+/* recent */
+.recent{display:flex; align-items:center; gap:12px; padding:16px 0 6px; flex-wrap:wrap; position:relative; z-index:1;}
+.recent .rlabel{font-family:var(--serif); font-style:italic; color:var(--muted); font-size:14px;}
+.rchip{display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--ink); font-weight:500;}
+.rchip .t{color:var(--muted);}
+.rchip .b{font-weight:600; padding:2px 8px; border-radius:999px; font-size:11px;}
+.rchip .b.pos{background:var(--acid);}
+.rchip .b.neg{background:var(--line); color:var(--muted);}
+.rchip.idle{font-family:var(--serif); font-style:italic; color:var(--muted);}
+.undo{margin-left:auto; display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--line); border-radius:999px; padding:5px 12px; font-size:12px; font-weight:500;}
+.undo:hover{border-color:var(--ink);}
+.undo svg{width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round;}
+
+/* ===== TABLE ===== */
+.thead{display:grid; grid-template-columns:34px 1fr 64px 78px 150px; align-items:center; gap:10px;
+  padding:18px 4px 10px; position:relative; z-index:1;}
+.thead span{font-family:var(--serif); font-style:italic; font-size:13px; color:var(--muted);}
+.thead .r-xp,.thead .r-aw{text-align:right;}
+.trow{display:grid; grid-template-columns:34px 1fr 64px 78px 150px; align-items:center; gap:10px;
+  padding:13px 4px; border-top:1.5px solid var(--line); position:relative; transition:background .25s;}
+.trow.flash-pos{background:#F4FBDB;} .trow.flash-neg{background:#F2EFE7;}   /* never red */
+.rk{font-size:13px; color:var(--muted); font-weight:500; font-variant-numeric:tabular-nums;}
+.who{display:flex; align-items:center; gap:13px; min-width:0;}
+.ava{width:34px; height:34px; border-radius:50%; border:1.5px solid var(--ink); display:flex; align-items:center;
+  justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; letter-spacing:.02em;}
+.ava.empty{border-style:dashed; border-color:var(--muted); color:var(--muted);}
+.nm{font-family:var(--serif); font-weight:600; font-size:18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.streak{font-size:13px; color:var(--muted); font-weight:500;}
+.streak.on{color:var(--ink);}
+.xp{font-family:var(--serif); font-style:italic; font-weight:600; font-size:22px; text-align:right; font-variant-numeric:tabular-nums;}
+.award{display:flex; align-items:center; gap:7px; justify-content:flex-end;}
+.aw{border:1.5px solid var(--ink); border-radius:999px; min-width:42px; padding:6px 0; font-size:13px; font-weight:500; text-align:center; transition:transform .1s;}
+.aw:hover{transform:translateY(-1px);}
+.aw.minus{color:var(--muted); border-color:var(--line);}
+.aw.minus:hover{border-color:var(--ink); color:var(--ink);}
+.aw.solid{background:var(--ink); color:var(--board); border-color:var(--ink);}
+.floatlabel{position:absolute; right:170px; top:-6px; font-family:var(--serif); font-style:italic; font-weight:600;
+  font-size:16px; animation:fl .8s ease forwards; pointer-events:none;}
+.floatlabel.pos{color:var(--pos);} .floatlabel.neg{color:var(--muted);}
+@keyframes fl{0%{opacity:0;transform:translateY(6px)}25%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-16px)}}
+.nomatch{padding:24px 4px; color:var(--muted); font-family:var(--serif); font-style:italic;}
+
+/* ===== WALL / LEADERBOARD ===== */
+.wall .splat-svg{width:30px; height:30px;}
+.wall-head{margin-bottom:18px;}
+.wall-head .k{font-size:12px; color:var(--muted); font-weight:500;}
+.wall-head h2{font-family:var(--serif); font-style:italic; font-weight:900; font-size:30px; margin:2px 0 0; letter-spacing:-.01em;}
+.lb1{background:var(--acid); border-radius:var(--r); padding:18px 18px 16px; position:relative; overflow:hidden; margin-bottom:12px;}
+.lb1 .top{font-size:11px; font-weight:500; color:rgba(23,21,15,.6);}
+.lb1 .splat-svg{position:absolute; top:14px; right:14px; color:var(--black);}
+.lb1 .n{font-family:var(--serif); font-style:italic; font-weight:600; font-size:22px; margin:6px 0 8px; padding-right:34px;}
+.lb1 .v{font-family:var(--serif); font-weight:900; font-size:42px; line-height:1; display:flex; align-items:baseline; gap:8px;}
+.lb1 .v small{font-family:var(--serif); font-style:italic; font-weight:400; font-size:14px; color:rgba(23,21,15,.6);}
+.lb23{display:flex; gap:12px; margin-bottom:18px;}
+.lb2card{flex:1; border-radius:var(--r); padding:14px 15px;}
+.lb2card.l2{background:var(--lav);} .lb2card.l3{background:var(--pink);}
+.lb2card .top{font-size:11px; color:rgba(23,21,15,.5); font-weight:500;}
+.lb2card .n{font-family:var(--serif); font-style:italic; font-weight:600; font-size:17px; margin:8px 0 6px;}
+.lb2card .v{font-family:var(--serif); font-weight:900; font-size:24px; display:flex; align-items:baseline; gap:5px;}
+.lb2card .v small{font-style:italic; font-weight:400; font-size:12px; color:rgba(23,21,15,.5);}
+.lbrow{display:flex; align-items:center; gap:12px; padding:11px 2px; border-top:1.5px solid var(--line);}
+.lbrow .rk{width:22px;}
+.lbrow .n{flex:1; min-width:0; font-family:var(--serif); font-weight:500; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.lbrow .v{font-family:var(--serif); font-style:italic; font-weight:600; font-size:17px;}
+.wall-foot{display:flex; gap:30px; margin-top:24px; padding-top:18px;}
+.foot-stat .lab{font-family:var(--serif); font-style:italic; font-size:12px; color:var(--muted);}
+.foot-stat .num{font-family:var(--serif); font-weight:900; font-size:26px; line-height:1.1; font-variant-numeric:tabular-nums;}
+.squiggle{margin-top:2px;}
+.squiggle svg{display:block; width:96px; height:10px;}
+.wall-empty{font-family:var(--serif); font-style:italic; color:var(--muted); font-size:18px; padding:30px 0;}
+
+/* ===== OVERLAYS ===== */
+.overlay{position:fixed; inset:0; background:rgba(23,21,15,.34); display:flex; align-items:flex-start;
+  justify-content:center; padding-top:64px; z-index:50; backdrop-filter:blur(2px);}
+.modal{background:var(--board); border-radius:26px; padding:26px 28px; width:480px; max-width:calc(100vw - 32px); max-height:82vh; overflow:auto;}
+.modal h2{font-family:var(--serif); font-weight:900; font-size:24px; margin:0 0 4px;}
+.modal h2 em{font-weight:400;}
+.modal .sub{color:var(--muted); font-size:13px; margin:0 0 20px;}
+.grp{margin-bottom:18px;}
+.grp .glab{margin-bottom:10px;}
+.chips{display:flex; gap:8px; flex-wrap:wrap;}
+.chip{border:1.5px solid var(--line); border-radius:999px; padding:8px 16px; font-size:14px; font-weight:500;}
+.chip.on{background:var(--ink); color:var(--board); border-color:var(--ink);}
+.chip.acid.on{background:var(--acid); color:var(--ink); border-color:var(--acid);}
+.chip.neg.on{background:var(--line); color:var(--ink); border-color:var(--muted);}
+.picklist{border:1.5px solid var(--line); border-radius:16px; max-height:240px; overflow:auto;}
+.pickrow{display:flex; align-items:center; gap:12px; padding:11px 15px; cursor:pointer;}
+.pickrow+.pickrow{border-top:1.5px solid var(--line);}
+.pickrow:hover{background:#F4F1EA;}
+.pickrow .box{width:20px; height:20px; border-radius:6px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:transparent; font-size:12px; flex-shrink:0;}
+.pickrow.on .box{background:var(--ink); border-color:var(--ink); color:var(--board);}
+.pickrow .ava{width:30px; height:30px; font-size:10px;}
+.pickrow .nm{flex:1; min-width:0; font-size:15px;}
+.pickrow .pp{font-family:var(--serif); font-style:italic; font-weight:600; color:var(--muted);}
+.selall{display:flex; align-items:center; gap:9px; font-size:14px; font-weight:500; margin:12px 2px 8px; cursor:pointer;}
+.selall .box{width:20px; height:20px; border-radius:6px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:transparent; font-size:12px;}
+.selall.on .box{background:var(--ink); border-color:var(--ink); color:var(--board);}
+.field{width:100%; background:#fff; border:1.5px solid var(--line); border-radius:13px; padding:12px 15px; font-size:15px; font-weight:500;}
+.field:focus{border-color:var(--ink); outline:none;}
+.rrow{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+.rrow .field{flex:1;}
+.rrow.removed .field{text-decoration:line-through; color:var(--muted);}
+.rrow .pp{font-family:var(--serif); font-style:italic; font-weight:600; color:var(--muted); min-width:26px; text-align:right;}
+.linkbtn{font-size:13px; font-weight:600; color:var(--ink);}
+.linkbtn.danger{color:var(--muted);}
+.addrow{font-size:14px; font-weight:600; padding:8px 2px; display:inline-flex; gap:6px;}
+.modal footer{display:flex; gap:10px; justify-content:flex-end; margin-top:22px;}
+.btn{border-radius:13px; padding:11px 20px; font-size:14px; font-weight:500;}
+.btn.ghost{border:1.5px solid var(--line);}
+.btn.ghost:hover{border-color:var(--ink);}
+.btn.dark{background:var(--ink); color:var(--board);}
+
+/* ===== PROJECT MODE ===== */
+.proj{position:fixed; inset:0; z-index:60; background:var(--board); display:flex; flex-direction:column; padding:42px clamp(28px,6vw,96px);}
+.proj .exit{position:absolute; top:26px; right:30px; border:1.5px solid var(--line); border-radius:999px; padding:9px 18px; font-size:14px; font-weight:500;}
+.proj-top{display:flex; align-items:baseline; gap:18px; margin-bottom:auto;}
+.proj-top .k{font-family:var(--serif); font-style:italic; color:var(--muted); font-size:clamp(16px,2vw,22px);}
+.proj-top h2{font-family:var(--serif); font-weight:900; font-size:clamp(34px,5vw,68px); margin:0; letter-spacing:-.01em; line-height:1;}
+.proj-top .live{display:inline-flex; align-items:center; gap:8px; background:var(--acid); border-radius:999px; padding:6px 14px; font-size:13px; font-weight:500; letter-spacing:.1em;}
+.proj-top .live .gd{width:9px; height:9px; border-radius:50%; background:var(--ink);}
+.proj-stage{display:flex; align-items:flex-end; justify-content:center; gap:clamp(24px,5vw,72px); margin:auto 0;}
+.pcol{display:flex; flex-direction:column; align-items:center; text-align:center; animation:rise .4s ease;}
+.pcol .pr{font-family:var(--sans); font-weight:500; color:var(--muted); font-size:clamp(14px,1.4vw,18px); margin-bottom:10px;}
+.pcol .pn{font-family:var(--serif); font-style:italic; font-weight:600;}
+.pcol .pv{font-family:var(--serif); font-weight:900; line-height:.95;}
+.pcol.p1 .pn{font-size:clamp(28px,3.4vw,52px);} .pcol.p1 .pv{font-size:clamp(60px,8vw,120px); color:var(--ink);}
+.pcol.p1 .badge{background:var(--acid); border-radius:24px; padding:14px 26px; margin-bottom:18px; position:relative;}
+.pcol.p1 .badge .splat-svg{position:absolute; top:-14px; right:-14px; width:42px; height:42px; color:var(--ink);}
+.pcol.p2 .pn,.pcol.p3 .pn{font-size:clamp(20px,2.4vw,34px);} .pcol.p2 .pv,.pcol.p3 .pv{font-size:clamp(40px,5vw,72px);}
+.pcol.p2 .pv{color:#6b53c9;} .pcol.p3 .pv{color:#c14d86;}
+.pcol .chiprow{margin-top:10px;}
+.proj-rest{display:flex; justify-content:center; gap:18px; margin-top:30px; flex-wrap:wrap;}
+.proj-rest .pp{font-family:var(--serif); font-size:clamp(16px,1.8vw,22px); color:var(--muted);}
+.proj-rest .pp b{font-style:italic; font-weight:600; color:var(--ink);}
+.proj-foot{display:flex; justify-content:center; gap:46px; margin-top:30px;}
+.proj-foot .num{font-family:var(--serif); font-weight:900; font-size:clamp(26px,3vw,40px);}
+.proj-foot .lab{font-family:var(--serif); font-style:italic; color:var(--muted); font-size:14px;}
+.proj-empty{margin:auto; font-family:var(--serif); font-style:italic; color:var(--muted); font-size:clamp(28px,4vw,56px);}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--board);
+  padding:11px 20px; border-radius:999px; font-size:14px; font-weight:500; z-index:80;}
+
+/* picker */
+#picker{max-width:560px; margin:0 auto; padding:76px 24px 48px;}
+#picker .wm{font-family:var(--serif); font-weight:900; font-size:24px; display:flex; align-items:center; gap:10px; margin-bottom:44px;}
+#picker .wm .splat-svg{width:26px; height:26px; color:var(--ink);}
+#picker h1{font-family:var(--serif); font-weight:900; font-size:34px; margin:0 0 4px; letter-spacing:-.01em;}
+#picker h1 em{font-weight:400;}
+#picker .sub{color:var(--muted); margin:0 0 26px;}
+.sqtile{display:flex; align-items:center; gap:16px; width:100%; text-align:left; background:#fff;
+  border:1.5px solid var(--line); border-radius:var(--r); padding:18px; margin-bottom:12px; transition:border-color .12s, transform .12s;}
+.sqtile:hover{border-color:var(--ink); transform:translateY(-2px);}
+.sqtile .n{font-family:var(--serif); font-weight:600; font-size:20px; flex:1;}
+.sqtile .c{font-size:13px; color:var(--muted); font-weight:500;}
+.sqtile.new{justify-content:center; border-style:dashed; font-weight:500;}
+
+@media (prefers-reduced-motion: reduce){*{animation:none !important; transition:none !important;}}
+@media (max-width:980px){ .inner{flex-direction:column;} .wall{width:auto; border-left:none; border-top:1.5px solid var(--line);} }
+</style>
+</head>
+<body>
+
+<!-- ===== PICKER ===== -->
+<div id="picker">
+  <div class="wm"><span data-splat="ink"></span>ClassArcade</div>
+  <h1><em>Pick</em> a squad.</h1>
+  <p class="sub">Choose a class to run, or start a new one.</p>
+  <p id="pickerEmpty" class="hidden" style="color:var(--muted)">No squads yet. Make your first one to get going.</p>
+  <div id="pickerTiles"></div>
+  <button class="sqtile new" onclick="openNewSquad('picker')">+ New squad</button>
+</div>
+
+<!-- ===== ARCADE ===== -->
+<div id="arcade" class="hidden">
+ <div class="stage">
+  <div class="shell">
+    <aside class="rail">
+      <div class="home" data-splat="acid" title="ClassArcade"></div>
+      <button class="railbtn" onclick="goPicker()" title="Squads">
+        <svg viewBox="0 0 24 24"><path d="M12 3 3 7.5 12 12l9-4.5L12 3Z"/><path d="M3 12.5 12 17l9-4.5"/><path d="M3 17 12 21.5 21 17"/></svg>
+      </button>
+      <button class="railbtn" onclick="openEditRoster()" title="Edit roster">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      </button>
+      <button class="railbtn" onclick="openProject()" title="Project to room">
+        <svg viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M9 21h6M12 17v4"/></svg>
+      </button>
+      <div class="grow"></div>
+      <div class="me">MR</div>
+    </aside>
+
+    <div class="inner">
+      <section class="main">
+        <div class="blob b1"></div><div class="blob b2"></div>
+
+        <div class="crumbs">ClassArcade <span>/</span> Live session <span>/</span> <b id="crumbSquad"></b> <span class="gd"></span></div>
+        <div class="headrow">
+          <h1 class="title"><em>Today's</em>&nbsp;roster<span data-splat="acid"></span>.</h1>
+          <div class="head-actions">
+            <button class="toggle" onclick="openProject()"><span class="gd"></span> Project to room</button>
+            <button class="pill-ghost" onclick="openGiveXP()">Give XP</button>
+            <button class="pill-dark" onclick="quickNewPlayer()">+ New player</button>
+          </div>
+        </div>
+
+        <div class="tabrow">
+          <div class="tabs" id="squadTabs"></div>
+          <div class="meta">
+            <span id="playerCount"></span>
+            <button class="sorttoggle" id="sortToggle" onclick="toggleSort()">by <b id="sortNow">xp</b></button>
+          </div>
+        </div>
+
+        <div class="recent" id="recentRow"></div>
+
+        <div class="thead">
+          <span>#</span><span>player</span><span>streak</span><span class="r-xp">xp</span><span class="r-aw">award</span>
+        </div>
+        <div id="tableBody"></div>
+        <div class="nomatch hidden" id="noMatch">No players yet.</div>
+      </section>
+
+      <aside class="wall">
+        <div class="wall-head">
+          <div class="k">on the wall —</div>
+          <h2>leaderboard.</h2>
+        </div>
+        <div id="wallBody"></div>
+      </aside>
+    </div>
+  </div>
+ </div>
+</div>
+
+<!-- ===== GIVE XP ===== -->
+<div id="gxOverlay" class="overlay hidden">
+  <div class="modal">
+    <h2><em>Give</em> XP</h2>
+    <p class="sub">Award the whole squad, or pick a few.</p>
+    <div class="grp"><div class="glab label">direction</div>
+      <div class="chips" id="gxPol">
+        <button class="chip acid on" data-pol="1" onclick="gxPick('pol',this)">+ XP</button>
+        <button class="chip neg" data-pol="-1" onclick="gxPick('pol',this)">− XP</button>
+      </div></div>
+    <div class="grp"><div class="glab label">amount</div>
+      <div class="chips" id="gxAmt">
+        <button class="chip on" data-amt="1" onclick="gxPick('amt',this)">1</button>
+        <button class="chip" data-amt="2" onclick="gxPick('amt',this)">2</button>
+        <button class="chip" data-amt="3" onclick="gxPick('amt',this)">3</button>
+      </div></div>
+    <div class="grp"><div class="glab label">for</div><div class="chips" id="gxCat"></div></div>
+    <div class="grp"><div class="glab label">players</div>
+      <div class="selall" id="gxAll" onclick="gxToggleAll()"><span class="box">✓</span> Select all</div>
+      <div class="picklist" id="gxPlayers"></div>
+    </div>
+    <footer>
+      <button class="btn ghost" onclick="closeGiveXP()">Cancel</button>
+      <button class="btn dark" id="gxConfirm" onclick="confirmGiveXP()">Give XP</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ===== ROSTER ===== -->
+<div id="rosterOverlay" class="overlay hidden">
+  <div class="modal">
+    <div id="rosterStep1">
+      <h2><em>New</em> squad</h2><p class="sub">Give it a name to start.</p>
+      <div class="grp"><input class="field" type="text" id="rosterSquadName" placeholder="Squad name (e.g. 5.A)" oninput="rosterValidate()"></div>
+      <footer>
+        <button class="btn ghost" onclick="closeRoster()">Cancel</button>
+        <button class="btn dark" id="rosterContinue" onclick="rosterGoStep2()">Continue</button>
+      </footer>
+    </div>
+    <div id="rosterStep2" class="hidden">
+      <h2 id="rosterTitle2">Add players</h2>
+      <div class="grp hidden" id="editNameRow"><input class="field" type="text" id="editSquadName" placeholder="Squad name"></div>
+      <div id="rosterRows"></div>
+      <button class="addrow linkbtn" onclick="rosterAddRow()">+ Add player</button>
+      <footer>
+        <button class="btn ghost" id="rosterBack" onclick="rosterGoStep1()">Back</button>
+        <button class="btn ghost" onclick="closeRoster()">Cancel</button>
+        <button class="btn dark" id="rosterDone" onclick="rosterDone()">Done</button>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROJECT ===== -->
+<div id="projOverlay" class="proj hidden">
+  <button class="exit" onclick="closeProject()">✕ Exit</button>
+  <div class="proj-top">
+    <h2 id="projSquad"></h2>
+    <span class="k">on the wall</span>
+    <span class="live"><span class="gd"></span>LIVE</span>
+  </div>
+  <div id="projBody"></div>
+</div>
+
+<script>
+/* ===== data ===== */
+const CATS=['Homework','Helping others','Answering questions'];
+let state={
+  classrooms:[
+    {id:'c1',name:'5.A',students:[
+      {id:'s1',name:'Ana Horvat',points:42},{id:'s2',name:'Marko Kovačević',points:37},
+      {id:'s3',name:'Petra Novak',points:31},{id:'s4',name:'Lucija Blažević',points:23},
+      {id:'s5',name:'Ivan Jurić',points:22},{id:'s6',name:'Sara Pešić',points:19},
+      {id:'s7',name:'Tomislav Rešetar',points:14},{id:'s8',name:'Maja Đurić',points:9}]},
+    {id:'c2',name:'5.B',students:[
+      {id:'s9',name:'Filip Barić',points:28},{id:'s10',name:'Ema Čolić',points:24},
+      {id:'s11',name:'Roko Perić',points:19},{id:'s12',name:'Nina Vuković',points:15},
+      {id:'s13',name:'Luka Šimić',points:11},{id:'s14',name:'Tena Horvat',points:7}]}
+  ],
+  activeId:null
+};
+state.classrooms.forEach(c=>c.students.forEach(s=>{
+  const hw=Math.floor(s.points*0.5),help=Math.floor(s.points*0.3);
+  s.cats={'Homework':hw,'Helping others':help,'Answering questions':s.points-hw-help};
+  s.streak=0;
+}));
+let uid=100; const newId=()=>'x'+(uid++);
+let lastEvent=null, ticker=[], sortMode='points';
+
+/* ===== helpers ===== */
+const activeClass=()=>state.classrooms.find(c=>c.id===state.activeId);
+const lastName=n=>n.trim().split(/\s+/).slice(-1)[0].toLowerCase();
+const byPoints=(a,b)=>b.points-a.points||lastName(a.name).localeCompare(lastName(b.name));
+const byName=(a,b)=>lastName(a.name).localeCompare(lastName(b.name))||a.name.localeCompare(b.name);
+const emptyCats=()=>({'Homework':0,'Helping others':0,'Answering questions':0});
+const initials=n=>{const p=n.trim().split(/\s+/);return ((p[0]?p[0][0]:'?')+(p[1]?p[1][0]:'')).toUpperCase();};
+const firstName=n=>n.trim().split(/\s+/)[0];
+const totalOf=c=>c.students.reduce((n,s)=>n+s.points,0);
+const medianOf=c=>{const a=c.students.map(s=>s.points).sort((x,y)=>x-y);if(!a.length)return 0;const m=a.length>>1;return a.length%2?a[m]:Math.round((a[m-1]+a[m])/2);};
+const esc=t=>{const d=document.createElement('div');d.textContent=t;return d.innerHTML;};
+
+/* spiky burst motif */
+function starPath(spikes=11,outer=50,inner=31,cx=50,cy=50){let p='',step=Math.PI/spikes;
+  for(let i=0;i<spikes*2;i++){const r=i%2?inner:outer,a=i*step-Math.PI/2;
+    p+=(i?'L':'M')+(cx+r*Math.cos(a)).toFixed(1)+' '+(cy+r*Math.sin(a)).toFixed(1)+' ';}return p+'Z';}
+const SP=starPath();
+const splatSVG=fill=>`<svg class="splat-svg" viewBox="0 0 100 100" aria-hidden="true"><path d="${SP}" fill="${fill}"/></svg>`;
+function paintSplats(root=document){root.querySelectorAll('[data-splat]').forEach(e=>{
+  const k=e.getAttribute('data-splat'); e.innerHTML=splatSVG(k==='acid'?'var(--acid)':'var(--ink)');});}
+const SQUIGGLE=`<svg viewBox="0 0 96 10" aria-hidden="true"><path d="M2 7 Q 10 1 18 7 T 34 7 T 50 7 T 66 7 T 82 7 T 94 6" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+
+/* ===== screens ===== */
+function show(s){document.getElementById('picker').classList.toggle('hidden',s!=='picker');
+  document.getElementById('arcade').classList.toggle('hidden',s!=='arcade');}
+function goPicker(){renderPicker();show('picker');}
+function renderPicker(){
+  const t=document.getElementById('pickerTiles');t.innerHTML='';
+  const cs=[...state.classrooms].sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('pickerEmpty').classList.toggle('hidden',cs.length>0);
+  cs.forEach(c=>{const b=document.createElement('button');b.className='sqtile';
+    b.innerHTML=`<span class="n"></span><span class="c">${c.students.length} players · ${totalOf(c)} xp</span>`;
+    b.querySelector('.n').textContent=c.name;b.onclick=()=>activateClass(c.id);t.appendChild(b);});
+}
+function activateClass(id){state.activeId=id;lastEvent=null;ticker=[];show('arcade');renderArcade();}
+
+/* ===== arcade ===== */
+function renderArcade(){paintSplats();renderTabs();renderRecent();renderTable();renderWall();
+  const c=activeClass();document.getElementById('crumbSquad').textContent=c.name;
+  document.getElementById('playerCount').textContent=c.students.length+' players';}
+
+function renderTabs(){
+  const w=document.getElementById('squadTabs');w.innerHTML='';
+  [...state.classrooms].sort((a,b)=>a.name.localeCompare(b.name)).forEach(c=>{
+    const t=document.createElement('button');t.className='tab'+(c.id===state.activeId?' active':'');
+    t.innerHTML='squad <b></b>';t.querySelector('b').textContent=c.name;
+    t.onclick=()=>{if(c.id!==state.activeId)activateClass(c.id);};w.appendChild(t);});
+  const n=document.createElement('button');n.className='tab newsq';n.textContent='+ squad';
+  n.onclick=()=>openNewSquad('arcade');w.appendChild(n);
+}
+function toggleSort(){sortMode=sortMode==='points'?'name':'points';
+  document.getElementById('sortNow').textContent=sortMode==='points'?'xp':'name';renderTable();}
+
+function timeAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<45)return 'now';const m=Math.round(s/60);return m+'m';}
+function renderRecent(){
+  const row=document.getElementById('recentRow');
+  let html='<span class="rlabel">recent</span>';
+  if(!ticker.length){html+='<span class="rchip idle">nothing yet — the wall is quiet</span>';}
+  else{ticker.slice(0,5).forEach(e=>{html+=`<span class="rchip"><span class="t">${timeAgo(e.ts)}</span> ${esc(firstName(e.name))}
+    <span class="b ${e.pos?'pos':'neg'}">${e.pos?'+':'−'}${Math.abs(e.amt)}</span></span>`;});}
+  if(lastEvent){html+=`<button class="undo" onclick="undoLastEvent()"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M3.5 13a9 9 0 1 0 2.3-9.3L3 6"/></svg> undo</button>`;}
+  row.innerHTML=html;
+}
+
+function renderTable(){
+  const c=activeClass();if(!c)return;
+  const ranked=[...c.students].sort(byPoints);
+  const rankOf=id=>ranked.findIndex(s=>s.id===id)+1;
+  const rows=[...c.students].sort(sortMode==='name'?byName:byPoints);
+  const body=document.getElementById('tableBody');body.innerHTML='';
+  document.getElementById('noMatch').classList.toggle('hidden',rows.length>0);
+  rows.forEach(s=>{
+    const r=document.createElement('div');r.className='trow';r.dataset.id=s.id;
+    const pos=String(rankOf(s.id)).padStart(2,'0');
+    r.innerHTML=`<span class="rk">${pos}</span>
+      <span class="who"><span class="ava">${initials(s.name)}</span><span class="nm"></span></span>
+      <span class="streak ${s.streak>0?'on':''}">${s.streak>0?'×'+s.streak:'·'}</span>
+      <span class="xp">${s.points}</span>
+      <span class="award">
+        <button class="aw minus" aria-label="Minus 1 XP for ${esc(s.name)}">−1</button>
+        <button class="aw" aria-label="Plus 1 XP for ${esc(s.name)}">+1</button>
+        <button class="aw solid" aria-label="Plus 3 XP for ${esc(s.name)}">+3</button>
+      </span>`;
+    r.querySelector('.nm').textContent=s.name;
+    const [m1,p1,p3]=r.querySelectorAll('.aw');
+    m1.onclick=()=>applyPointEvent([s.id],-1,null);
+    p1.onclick=()=>applyPointEvent([s.id],1,null);
+    p3.onclick=()=>applyPointEvent([s.id],3,null);
+    body.appendChild(r);
+  });
+}
+
+function renderWall(){
+  const c=activeClass();if(!c)return;
+  const wall=document.getElementById('wallBody');
+  const ranked=[...c.students].sort(byPoints);
+  if(!ranked.length||ranked[0].points===0){wall.innerHTML='<div class="wall-empty">Nothing on the wall yet.<br>Hand out the first XP.</div>';return;}
+  const [a,b,d]=ranked;
+  let html=`<div class="lb1">${splatSVG('var(--ink)')}<div class="top">01 — top of the room</div>
+    <div class="n">${esc(a.name)}</div><div class="v">${a.points}<small>xp</small></div></div>`;
+  if(b||d){html+='<div class="lb23">';
+    if(b)html+=`<div class="lb2card l2"><div class="top">02</div><div class="n">${esc(b.name)}</div><div class="v">${b.points}<small>xp</small></div></div>`;
+    if(d)html+=`<div class="lb2card l3"><div class="top">03</div><div class="n">${esc(d.name)}</div><div class="v">${d.points}<small>xp</small></div></div>`;
+    html+='</div>';}
+  ranked.slice(3,5).forEach((s,i)=>{html+=`<div class="lbrow"><span class="rk">0${i+4}</span><span class="n">${esc(s.name)}</span><span class="v">${s.points}</span></div>`;});
+  html+=`<div class="wall-foot">
+    <div class="foot-stat"><div class="lab">total xp</div><div class="num">${totalOf(c).toLocaleString()}</div><div class="squiggle">${SQUIGGLE}</div></div>
+    <div class="foot-stat"><div class="lab">median</div><div class="num">${medianOf(c)}</div></div></div>`;
+  wall.innerHTML=html;
+}
+
+/* ===== point events: flash, then re-sort ===== */
+function applyPointEvent(ids,delta,category){
+  const c=activeClass();const changes=[];
+  ids.forEach(id=>{const s=c.students.find(x=>x.id===id);if(!s)return;
+    const before=s.points;s.points=Math.max(0,s.points+delta);const applied=s.points-before;
+    if(category&&applied!==0)s.cats[category]=Math.max(0,s.cats[category]+applied);
+    const prevStreak=s.streak;
+    if(applied>0)s.streak+=1; else if(applied<0)s.streak=0;
+    changes.push({id,applied,category,prevStreak});});
+  lastEvent={classId:c.id,changes,label:eventLabel(ids,delta,category)};
+  ids.forEach(id=>{const s=c.students.find(x=>x.id===id);
+    ticker.unshift({name:s.name,amt:delta,pos:delta>0,ts:Date.now()});});
+  ticker=ticker.slice(0,16);
+
+  changes.forEach(ch=>{const row=document.querySelector(`.trow[data-id="${ch.id}"]`);if(!row)return;
+    const s=c.students.find(x=>x.id===ch.id);
+    row.classList.add(delta>0?'flash-pos':'flash-neg');
+    row.querySelector('.xp').textContent=s.points;
+    const fl=document.createElement('span');fl.className='floatlabel '+(delta>0?'pos':'neg');
+    fl.textContent=ch.applied===0?'0':(ch.applied>0?'+'+ch.applied:'−'+Math.abs(ch.applied));
+    row.appendChild(fl);});
+  setTimeout(()=>{renderTable();renderWall();renderRecent();},720);
+}
+function eventLabel(ids,delta,category){const c=activeClass();const sign=delta>0?'+':'−';
+  const who=ids.length===1?c.students.find(s=>s.id===ids[0]).name:ids.length+' players';
+  return `${who} ${sign}${Math.abs(delta)}`+(category?' · '+category:'');}
+
+function undoLastEvent(){
+  if(!lastEvent||lastEvent.classId!==state.activeId)return;
+  const c=activeClass();
+  lastEvent.changes.forEach(ch=>{const s=c.students.find(x=>x.id===ch.id);if(!s)return;
+    s.points=Math.max(0,s.points-ch.applied);
+    if(ch.category)s.cats[ch.category]=Math.max(0,s.cats[ch.category]-ch.applied);
+    s.streak=ch.prevStreak;});
+  lastEvent.changes.forEach(()=>ticker.shift());
+  lastEvent=null;renderTable();renderWall();renderRecent();
+}
+
+/* ===== give XP ===== */
+let gx={pol:1,amt:1,cat:CATS[0],sel:new Set()};
+function openGiveXP(){
+  gx={pol:1,amt:1,cat:CATS[0],sel:new Set()};
+  document.querySelectorAll('#gxPol .chip').forEach(b=>b.classList.toggle('on',+b.dataset.pol===1));
+  document.querySelectorAll('#gxAmt .chip').forEach(b=>b.classList.toggle('on',+b.dataset.amt===1));
+  const cw=document.getElementById('gxCat');cw.innerHTML='';
+  CATS.forEach(cat=>{const b=document.createElement('button');b.className='chip'+(cat===gx.cat?' on':'');
+    b.dataset.cat=cat;b.textContent=cat;b.onclick=()=>gxPick('cat',b);cw.appendChild(b);});
+  const box=document.getElementById('gxPlayers');box.innerHTML='';
+  [...activeClass().students].sort(byPoints).forEach(s=>{
+    const d=document.createElement('div');d.className='pickrow';d.dataset.id=s.id;
+    d.innerHTML=`<span class="box">✓</span><span class="ava">${initials(s.name)}</span><span class="nm"></span><span class="pp">${s.points}</span>`;
+    d.querySelector('.nm').textContent=s.name;
+    d.onclick=()=>{if(gx.sel.has(s.id))gx.sel.delete(s.id);else gx.sel.add(s.id);
+      d.classList.toggle('on',gx.sel.has(s.id));gxSync();};
+    box.appendChild(d);});
+  document.getElementById('gxAll').classList.remove('on');gxSync();
+  document.getElementById('gxOverlay').classList.remove('hidden');
+}
+function gxPick(k,btn){
+  if(k==='pol'){gx.pol=+btn.dataset.pol;document.querySelectorAll('#gxPol .chip').forEach(b=>b.classList.toggle('on',b===btn));}
+  if(k==='amt'){gx.amt=+btn.dataset.amt;document.querySelectorAll('#gxAmt .chip').forEach(b=>b.classList.toggle('on',b===btn));}
+  if(k==='cat'){gx.cat=btn.dataset.cat;document.querySelectorAll('#gxCat .chip').forEach(b=>b.classList.toggle('on',b===btn));}
+}
+function gxToggleAll(){const all=document.getElementById('gxAll');const on=!all.classList.contains('on');
+  all.classList.toggle('on',on);
+  document.querySelectorAll('#gxPlayers .pickrow').forEach(d=>{d.classList.toggle('on',on);
+    if(on)gx.sel.add(d.dataset.id);else gx.sel.delete(d.dataset.id);});gxSync();}
+function gxSync(){document.getElementById('gxConfirm').disabled=gx.sel.size===0;}
+function closeGiveXP(){document.getElementById('gxOverlay').classList.add('hidden');}
+function confirmGiveXP(){const ids=[...gx.sel];closeGiveXP();applyPointEvent(ids,gx.pol*gx.amt,gx.cat);}
+
+/* ===== roster ===== */
+let rosterMode=null,rosterOrigin=null,rosterDraft=null;
+function openNewSquad(origin){rosterMode='new';rosterOrigin=origin;rosterDraft={name:'',students:[]};
+  document.getElementById('rosterSquadName').value='';
+  document.getElementById('rosterTitle2').textContent='Add players';
+  document.getElementById('editNameRow').classList.add('hidden');
+  document.getElementById('rosterBack').classList.remove('hidden');
+  rosterShowStep(1);rosterValidate();document.getElementById('rosterOverlay').classList.remove('hidden');}
+function openEditRoster(){rosterMode='edit';rosterOrigin='arcade';const c=activeClass();
+  rosterDraft={name:c.name,students:c.students.map(s=>({...s,cats:{...s.cats},removed:false}))};
+  document.getElementById('rosterTitle2').textContent='Edit roster';
+  document.getElementById('editNameRow').classList.remove('hidden');
+  document.getElementById('editSquadName').value=c.name;
+  document.getElementById('rosterBack').classList.add('hidden');
+  rosterShowStep(2);renderRosterRows();document.getElementById('rosterOverlay').classList.remove('hidden');}
+function quickNewPlayer(){openEditRoster();rosterAddRow();
+  const inputs=document.querySelectorAll('#rosterRows .field');if(inputs.length)inputs[inputs.length-1].focus();}
+function rosterShowStep(n){document.getElementById('rosterStep1').classList.toggle('hidden',n!==1);
+  document.getElementById('rosterStep2').classList.toggle('hidden',n!==2);}
+function rosterValidate(){document.getElementById('rosterContinue').disabled=!document.getElementById('rosterSquadName').value.trim();}
+function rosterGoStep2(){rosterDraft.name=document.getElementById('rosterSquadName').value.trim();
+  if(rosterDraft.students.length===0)rosterDraft.students.push({id:newId(),name:'',points:0,cats:emptyCats(),streak:0,removed:false});
+  rosterShowStep(2);renderRosterRows();}
+function rosterGoStep1(){rosterShowStep(1);}
+function renderRosterRows(){const box=document.getElementById('rosterRows');box.innerHTML='';
+  rosterDraft.students.forEach(s=>{const d=document.createElement('div');d.className='rrow'+(s.removed?' removed':'');
+    const inp=document.createElement('input');inp.className='field';inp.type='text';inp.value=s.name;
+    inp.placeholder='Player name';inp.disabled=!!s.removed;inp.oninput=()=>{s.name=inp.value;rosterUpdateDone();};
+    const pts=document.createElement('span');pts.className='pp';pts.textContent=s.points;
+    const btn=document.createElement('button');btn.className='linkbtn'+(s.removed?'':' danger');
+    btn.textContent=s.removed?'Restore':'Remove';btn.onclick=()=>{s.removed=!s.removed;renderRosterRows();};
+    d.append(inp,pts,btn);box.appendChild(d);});rosterUpdateDone();}
+function rosterAddRow(){rosterDraft.students.push({id:newId(),name:'',points:0,cats:emptyCats(),streak:0,removed:false});renderRosterRows();}
+function rosterUpdateDone(){const ok=rosterDraft.students.some(s=>!s.removed&&s.name.trim());
+  document.getElementById('rosterDone').disabled=!ok;}
+function rosterDone(){const kept=rosterDraft.students.filter(s=>!s.removed&&s.name.trim()).map(({removed,...s})=>s);
+  if(rosterMode==='new'){const c={id:newId(),name:rosterDraft.name,students:kept};state.classrooms.push(c);
+    closeRosterModal();if(rosterOrigin==='picker')activateClass(c.id);else{renderArcade();toast(`${c.name} created`);}}
+  else{const c=activeClass();c.name=document.getElementById('editSquadName').value.trim()||c.name;
+    c.students=kept;lastEvent=null;closeRosterModal();renderArcade();}}
+function closeRoster(){closeRosterModal();if(rosterOrigin==='picker')renderPicker();}
+function closeRosterModal(){document.getElementById('rosterOverlay').classList.add('hidden');}
+
+/* ===== project ===== */
+function openProject(){renderProjected();document.getElementById('projOverlay').classList.remove('hidden');}
+function closeProject(){document.getElementById('projOverlay').classList.add('hidden');}
+function renderProjected(){const c=activeClass();
+  document.getElementById('projSquad').textContent=c.name+'.';
+  const body=document.getElementById('projBody');
+  const ranked=[...c.students].sort(byPoints);
+  if(!ranked.length||ranked[0].points===0){body.innerHTML='<div class="proj-empty">Nothing on the wall yet.</div>';return;}
+  const col=(s,rank)=>{
+    if(rank===1)return `<div class="pcol p1"><div class="pr">01 — top of the room</div>
+      <div class="badge">${splatSVG('var(--ink)')}<div class="pv">${s.points}</div></div>
+      <div class="pn">${esc(s.name)}</div></div>`;
+    return `<div class="pcol p${rank}"><div class="pr">0${rank}</div><div class="pv">${s.points}</div><div class="pn">${esc(s.name)}</div></div>`;
+  };
+  const cols=[];
+  if(ranked[1])cols.push(col(ranked[1],2));
+  cols.push(col(ranked[0],1));
+  if(ranked[2])cols.push(col(ranked[2],3));
+  let rest='';const r=ranked.slice(3,5);
+  if(r.length)rest='<div class="proj-rest">'+r.map((s,i)=>`<span class="pp">0${i+4} <b>${esc(s.name)}</b> · ${s.points}</span>`).join('')+'</div>';
+  body.innerHTML=`<div class="proj-stage">${cols.join('')}</div>${rest}
+    <div class="proj-foot"><div><div class="lab">total xp</div><div class="num">${totalOf(c).toLocaleString()}</div></div>
+    <div><div class="lab">median</div><div class="num">${medianOf(c)}</div></div></div>`;
+}
+
+/* ===== toast / keys / boot ===== */
+function toast(m){const t=document.createElement('div');t.id='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeGiveXP();closeRosterModal();closeProject();}});
+
+/* In-memory only (matches the smoke test). Real build: read active squad from
+   localStorage on load and boot straight into the Arcade. */
+paintSplats();
+renderPicker();
+show('picker');
+</script>
+</body>
+</html>

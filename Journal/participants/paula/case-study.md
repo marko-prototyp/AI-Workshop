@@ -2,8 +2,8 @@
 participant: "Paula"
 project: "Classroom Behavior Tracker"
 status: "draft"
-weeks_completed: 5
-last_updated: "2026-06-10"
+weeks_completed: 6
+last_updated: "2026-06-17"
 hero_image: ""
 final_url: ""
 ---
@@ -120,6 +120,19 @@ What I committed to: giving the project more time to make it really good, and bu
 
 *Screenshot: the clickable smoke test — Main Arcade with the seed roster, per-row ± buttons, undo chip.*
 *Screenshot: the reconciliation brief — W04 plan vs. build diff, the eight named states.*
+
+### Week 06 — Lost the character, then built a skill that got it back.
+
+I made my anti-stock skill, reworked the visual direction, and built a first version of the main view, "Today's roster." Most of the real work happened in chat, reconciling the design system. I flipped the leaderboard podium to 1·2·3 order, which started getting back the podium moment I lost in the smoke test. I resolved a contradiction the visual brief had left open: the point number is always the largest and heaviest element on a row, and the name stays the most expressive thing on it. I consolidated the project brief, the visual direction brief, and the Week-4 brief into a single Design System Document, and flagged eight underspecified items (type scale, spacing, flash colors, button color) for sign-off instead of letting the model guess.
+
+Then the comp was a let-down. The dashboard lost the character the brief had given it, and Claude kept repeating the same move after I asked it not to. That was the worst part of the day.
+
+The fix came after the session, and it wasn't a better brief. It was a skill. We took a Material Design skill template, which already has most of a design system defined, fed it image references for the look I wanted, and Claude rewrote it into a ClassArcade skill. That skill carries the whole direction as a build contract: warm-white paper, Fraunces serif against Space Grotesk, one acid-green accent held over black-and-white, a hairline roster table instead of a stack of cards, monochrome initials instead of emoji, and an acid-01 / lavender-02 / pink-03 leaderboard. With it I rebuilt the main view and a player profile in near-perfect sync with what I asked for. The skill is now the source of truth for how ClassArcade looks. It even overrode my own call from earlier in the session: names are Fraunces serif, not the DM Serif Display I'd picked in chat.
+
+*Artifact: the `classarcade-design` v2 skill (`classarcade-v2/classarcade-design-SKILL-v2.md`).*
+*Artifact: the rebuilt main view (`classarcade-v2/classarcade-roster.html`).*
+*Artifact: the player profile screen (`classarcade-v2/classarcade-profile.html`).*
+*Screenshot: the first "Today's roster" comp from the session, before the skill (the one that lost its character).*
 
 *…through Week 12.*
 

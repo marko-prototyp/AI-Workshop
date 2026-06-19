@@ -2,8 +2,8 @@
 participant: "Marin"
 project: "Naučimo Hrvatski"
 status: "draft"
-sessions_completed: 5
-last_updated: "2026-06-10"
+sessions_completed: 6
+last_updated: "2026-06-17"
 hero_image: ""
 final_url: ""
 ---
@@ -128,6 +128,20 @@ It was also the first time we went through each other's prototypes and suggested
 I like the prototype Claude made. What I committed to: structuring and preparing the content for it. That's next, with Cowork.
 
 *Artifact: the working prototype of the app.*
+
+### Session 06 — The first real comp, and it held.
+
+I designed in Claude Design and got the first design version, and it came back the way I asked. I consolidated my four planning docs into one Design System Document, locked the type scale to "Balanced," and reconciled a conflict the two briefs had over the glass recipe. I wrote a reusable anti-stock skill that holds strictly to what I paste in, with no invented defaults. Then I hardened the comp brief for the Scene screen, picked the banned moves most likely to break on that screen, and audited the draft against the skill before running it.
+
+The first comp was Scene 03, "Sarma kod bake," and it held the brief: me as a text pill, the chips as warm tiles with no green or red, a warm toggle instead of a blue one, and a gold-bordered Nastavi instead of a filled Submit button.
+
+I also made the calls that change what the app is. It's no longer narrated by a separate AI tutor character. It's written in the first person, as me, showing Kenzie my photos and talking to her directly. I replaced typing with drag-and-drop everywhere: Kenzie never writes Croatian herself, she drags the right word chip into a blank, because typing was too hard for a beginner and felt like homework. A wrong chip now shows what that word means before she retries, so a wrong answer teaches her something instead of just stopping her. I locked Chapter 1 at 11 scenes, one photo and one interaction each. And I rebuilt the finale: instead of three quick blanks, she drags full sentences into chronological order, a real boss level. The vocab shelf is reachable mid-chapter now, and she can flip back to earlier photos.
+
+The best moment was seeing the first solid example of the future. I'm satisfied with how it's going. *"I'm satisfied with how Claude was steering me."* What's next is organising the content and letting Cowork pull it from my Apple Notes.
+
+*Artifact: the first Claude Design comp of the Scene screen, "Sarma kod bake" (screenshot kept).*
+*Artifact: the consolidated Design System Document.*
+*Artifact: the Naučimo Hrvatski anti-stock SKILL.md.*
 
 *…through Session 12.*
 

@@ -186,6 +186,19 @@ function buildWeeksList(weeks) {
     const outputItems   = (w.outputs  || []).map(o => `<li>${o}</li>`).join('');
     const watchItems    = (w.watch    || []).map(o => `<li>${o}</li>`).join('');
 
+    // Downloadable skills for the session (front-matter `installs`).
+    const installsData = (w.installs || []).map(s => ({
+      name: s.name || '',
+      blurb: s.blurb || '',
+      href: siteUrl('/skills/' + (s.file || ''))
+    }));
+    const installsHtml = installsData.length ? `
+        <div class="week-block week-installs">
+          <span class="block-label">Skills for this session</span>
+          <p class="week-installs-note">Download each file. Add style-extract and system-extract in Settings → Capabilities. The template you hand straight to Claude in step 1.</p>
+          <ul class="week-installs-list">${installsData.map(i => `<li><a class="week-install-link" href="${i.href}" download><span class="week-install-name">${i.name}</span><span class="week-install-dl">Download</span></a><span class="week-install-blurb">${i.blurb}</span></li>`).join('')}</ul>
+        </div>` : '';
+
     // At-a-glance: first clause of capability + toolkit
     const capShort  = w.capability ? w.capability.split(';')[0].trim() : '';
     const glanceHtml = `<p class="week-glance">${capShort}${w.toolkit ? `<span class="week-glance-sep" aria-hidden="true"> · </span><span class="week-glance-tool">${w.toolkit}</span>` : ''}</p>`;
@@ -193,6 +206,8 @@ function buildWeeksList(weeks) {
     // Instructions panel content
     const instrHtml = `
         <div class="week-info-blocks">
+          ${w.principle ? `<div class="week-block"><span class="block-label">The idea</span><p>${w.principle}</p></div>` : ''}
+          ${installsHtml}
           <div class="week-block"><span class="block-label">Capability</span><p>${w.capability}</p></div>
           ${w.toolkit ? `<div class="week-block"><span class="block-label">Run it in</span><p>${w.toolkit}</p></div>` : ''}
           ${outputItems ? `<div class="week-block"><span class="block-label">Outputs</span><ul>${outputItems}</ul></div>` : ''}
@@ -201,9 +216,43 @@ function buildWeeksList(weeks) {
         <div class="week-exercise">
           <h4>Hands-on exercise</h4>
           <ul>${exerciseItems}</ul>
-        </div>`;
+        </div>
+        <p class="week-capture"><a href="${siteUrl('/journal/capture/#journal-prompts-w' + w.num)}">When you're done, send your report &rarr; open this session's capture prompt</a></p>`;
 
-    return `    <details class="week" id="week-${wNum}">
+    // Structured data for the wizard modal (read by week-wizard.js).
+    // Maps the existing week fields onto the stepper model:
+    // overview (goal/tools/how/outcomes) + one step per prompt + a done summary.
+    const wizardData = {
+      num: w.num,
+      title: w.title,
+      phase: w.phase || '',
+      subtitle: capShort,
+      captureHref: siteUrl('/journal/capture/#journal-prompts-w' + w.num),
+      overview: {
+        principle: w.principle || '',
+        installs: installsData,
+        goal: w.aim || '',
+        toolText: w.toolkit || '',
+        toolChips: w.tools || [],          // short chips, e.g. ["Claude chat","Claude Code"]
+        flow: w.flow || [],                // short "how" chips, e.g. ["Write the frame","Build it"]
+        how: w.exercise || [],             // verbose fallback when flow is absent
+        outcomes: w.outputs || [],
+        before: w.before || ''
+      },
+      steps: (w.prompts || []).map(p => ({
+        tool: p.tool || '',
+        title: p.title || '',
+        does: p.does || '',
+        think: p.preamble || '',
+        prompt: (p.body || '').trimEnd(),
+        note: p.note || '',
+        gives: p.gives || ''
+      })),
+      watch: w.watch || []
+    };
+    const wizardJson = JSON.stringify(wizardData).replace(/</g, '\\u003c');
+
+    return `    <details class="week" id="week-${wNum}" data-week="${wNum}">
       <summary class="week-summary" aria-label="Week ${wNum}: ${w.title}">
         <span class="week-num">W ${w.num}</span>
         <span class="week-title-group">
@@ -234,6 +283,7 @@ function buildWeeksList(weeks) {
           ${promptsHtml}
         </div>` : ''}
       </div>
+      <script type="application/json" class="week-data">${wizardJson}</script>
     </details>`;
   }).join('\n');
 }
@@ -1730,6 +1780,7 @@ function build() {
   copyDir(src('styles'),        dist('styles'));
   copyDir(src('scripts'),       dist('scripts'));
   copyDir(src('illustrations'),  dist('illustrations'));
+  copyDir(src('skills'),        dist('skills'));
   copyDir(src('assets'),        dist('assets'));
 
   // Copy week images (Journal/week-images/NN/ → dist/assets/weeks/NN/)

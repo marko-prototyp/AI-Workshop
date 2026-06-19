@@ -5,10 +5,10 @@
   { "n": 4,  "title": "Plan the whole thing. Wireframes and all.",    "date": "2026-05-27", "phase": "Define" },
   { "n": 5,  "title": "Make it clickable. Smoke test the idea.",      "date": "2026-06-10", "phase": "Define" },
   { "n": 6,  "title": "Designing in Figma. Building with Claude.",    "date": "2026-06-10", "phase": "Make" },
-  { "n": 7,  "title": "Build the core view, section by section.",     "date": "2026-06-17", "phase": "Make" },
-  { "n": 8,  "title": "Save your work. Set up the repo.",             "date": "2026-06-24", "phase": "Make" },
-  { "n": 9,  "title": "Secondary views. Real states.",                "date": "2026-07-01", "phase": "Make" },
-  { "n": 10, "title": "Connect the API.",                             "date": "2026-07-08", "phase": "Make" },
-  { "n": 11, "title": "Find what's wrong. Pick three to fix.",        "date": "2026-07-15", "phase": "Ship" },
+  { "n": 7,  "title": "Build a skill. Write the handoff. Build the core view.", "date": "2026-06-17", "phase": "Make" },
+  { "n": 8,  "title": "Secondary views. Real states.",                "date": "2026-06-24", "phase": "Make" },
+  { "n": 9,  "title": "Polish. Make it feel finished.",               "date": "2026-07-01", "phase": "Make" },
+  { "n": 10, "title": "Find what's wrong. Review it hard.",           "date": "2026-07-08", "phase": "Ship" },
+  { "n": 11, "title": "Save your work. Set up the repo.",             "date": "2026-07-15", "phase": "Ship" },
   { "n": 12, "title": "Polish. Ship. Show.",                          "date": "2026-07-22", "phase": "Ship" }
 ]

@@ -2527,3 +2527,214 @@ body:not(:has(main.page-main)) .jump-pill-wrap { display: none; }
     align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 12px 20px;
   }
 }
+
+/* ====== Session wizard modal ======
+   Opens when a week summary is clicked (week-wizard.js). Two-pane on desktop:
+   a left step rail (states + labels, clickable) and the current step on the right,
+   with Previous/Next in the footer. On mobile the rail becomes a horizontal strip. */
+.wiz-overlay {
+  position: fixed; inset: 0; z-index: 210;
+  background: rgba(26, 23, 20, 0.88);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 32px;
+  animation: cmdIn 0.12s ease;
+}
+.wiz-overlay[hidden] { display: none; }
+
+.wiz-modal {
+  width: min(960px, 100%); height: min(640px, 92vh);
+  background: var(--bg-2); border: var(--hairline);
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5);
+  animation: cmdSlide 0.14s ease;
+}
+
+/* Header */
+.wiz-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  padding: 20px 26px; border-bottom: var(--hairline); flex-shrink: 0;
+}
+.wiz-eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent-ui);
+}
+.wiz-title { font-family: var(--serif); font-weight: 500; font-size: 22px; color: var(--ink-bright); margin: 4px 0 0; line-height: 1.1; }
+.wiz-close {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: 22px; line-height: 1; padding: 6px; flex-shrink: 0;
+}
+.wiz-close:hover { color: var(--ink); }
+
+/* Body: rail + content */
+.wiz-body { flex: 1; display: flex; min-height: 0; }
+
+.wiz-rail {
+  width: 232px; flex: none; border-right: var(--hairline);
+  padding: 18px 12px; overflow-y: auto;
+  background: color-mix(in srgb, var(--bg) 40%, var(--bg-2));
+}
+.wiz-rail-item {
+  display: flex; align-items: center; gap: 11px; width: 100%; text-align: left;
+  background: none; border: none; cursor: pointer; color: var(--muted);
+  font-family: var(--sans); font-size: 14px; line-height: 1.25;
+  padding: 9px 11px; border-radius: 2px; transition: background 0.1s, color 0.1s;
+}
+.wiz-rail-item:hover { background: var(--bg-3); color: var(--ink); }
+.wiz-rail-item.is-current { background: var(--accent-subtle); color: var(--ink-bright); }
+.wiz-rail-item.is-current .wiz-bead { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.wiz-rail-item.is-done .wiz-bead { border-color: var(--accent); color: var(--accent); }
+.wiz-rail-item.is-current .wiz-rail-label,
+.wiz-rail-item.is-done .wiz-rail-label { font-weight: 500; }
+.wiz-rail-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wiz-bead {
+  width: 23px; height: 23px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--border-strong); color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+}
+
+/* Content pane */
+.wiz-content { flex: 1; min-width: 0; overflow-y: auto; padding: 30px 36px; }
+.wiz-tool-chips,
+.wiz-chip-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+.wiz-chip {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.02em;
+  padding: 5px 10px; border: var(--hairline); color: var(--ink); border-radius: 2px;
+  white-space: nowrap;
+}
+.wiz-chip--tool { background: var(--bg-3); }
+.wiz-chip--accent { border-color: color-mix(in srgb, var(--accent) 45%, var(--rule)); color: var(--accent-soft); }
+/* "How" flow: chips joined by arrows */
+.wiz-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.wiz-flow .wiz-chip { background: var(--bg-3); }
+.wiz-flow .wiz-arrow { color: var(--muted); font-size: 13px; }
+.wiz-c-title {
+  font-family: var(--serif); font-weight: 500; font-size: 30px; line-height: 1.08;
+  color: var(--ink-bright); margin: 0 0 14px; letter-spacing: -0.01em;
+}
+.wiz-does { font-size: 16px; line-height: 1.5; color: var(--ink); margin: 0 0 20px; max-width: 62ch; }
+.wiz-slab {
+  display: flex; gap: 11px; padding: 13px 15px; border: var(--hairline);
+  background: var(--bg); margin: 0 0 20px; max-width: 62ch;
+}
+.wiz-slab .wiz-ic { flex: none; }
+.wiz-slab .wiz-tx { font-size: 14px; line-height: 1.5; color: var(--muted); }
+.wiz-slab--before { border-color: color-mix(in srgb, var(--accent) 35%, var(--rule)); background: color-mix(in srgb, var(--accent) 7%, var(--bg)); }
+.wiz-slab--before .wiz-tx { color: var(--ink); }
+.wiz-slab--before strong { color: var(--ink-bright); }
+.wiz-slab--principle { border-left: 2px solid var(--ink-bright); }
+.wiz-slab--principle .wiz-tx { color: var(--ink); }
+.wiz-slab--principle strong { color: var(--ink-bright); }
+.wiz-slab--installs .wiz-tx { color: var(--ink); }
+.wiz-slab--installs strong { color: var(--ink-bright); }
+.wiz-installs { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.wiz-installs li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.wiz-installs a { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none; }
+.wiz-install-name { font-family: var(--mono); font-size: 13px; color: var(--accent-ui); }
+.wiz-install-dl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--rule); padding: 1px 6px; }
+.wiz-installs a:hover .wiz-install-dl { color: var(--ink); border-color: var(--accent); }
+.wiz-install-blurb { font-size: 13px; color: var(--muted); flex: 1 1 100%; }
+.week-installs-note { font-size: 14px; color: var(--muted); margin: 4px 0 10px; }
+.week-installs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.week-installs-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.week-install-link { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none; }
+.week-install-name { font-family: var(--mono); font-size: 14px; color: var(--accent-ui); }
+.week-install-dl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--rule); padding: 1px 6px; }
+.week-install-link:hover .week-install-dl { color: var(--ink); border-color: var(--accent); }
+.week-install-blurb { font-size: 14px; color: var(--muted); flex: 1 1 100%; }
+.wiz-slab--capture { border-left: 2px solid var(--accent); margin-top: 20px; }
+.wiz-slab--capture .wiz-tx { color: var(--ink); }
+.wiz-slab--capture strong { color: var(--ink-bright); }
+.wiz-capture-link { display: inline-block; margin-top: 6px; font-family: var(--mono); font-size: 13px; color: var(--accent-ui); }
+.week-capture { margin-top: 18px; padding-top: 14px; border-top: var(--hairline); font-size: 14px; }
+.week-capture a { color: var(--accent-ui); }
+
+/* "Think first" — the orientation line that frames the prompt below.
+   No box; the words lead, the marker is quiet. */
+.wiz-think { margin: 0 0 24px; max-width: 60ch; border-left: 2px solid var(--accent); padding: 1px 0 1px 16px; }
+.wiz-think-label {
+  display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent-ui); margin-bottom: 8px;
+}
+.wiz-think-tx { font-size: 18px; line-height: 1.5; color: var(--ink-bright); margin: 0; }
+
+/* Overview rows */
+.wiz-ov-row { margin: 0 0 18px; }
+.wiz-ov-k {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.wiz-ov-v { font-size: 16px; line-height: 1.5; color: var(--ink); max-width: 62ch; }
+.wiz-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.wiz-list li { display: flex; gap: 9px; align-items: flex-start; font-size: 15px; color: var(--ink); line-height: 1.45; }
+.wiz-list .wiz-tick { color: var(--accent); flex: none; }
+
+/* Prompt box */
+.wiz-prompt-wrap { margin: 0 0 20px; }
+.wiz-prompt-label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.wiz-prompt-label span {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.wiz-copy {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; background: var(--bg-3); color: var(--ink); border: var(--hairline);
+  padding: 6px 11px; border-radius: 2px; transition: 0.1s;
+}
+.wiz-copy:hover { border-color: var(--accent); color: var(--accent-soft); }
+.wiz-copy.is-ok { border-color: var(--accent); color: var(--accent); }
+.wiz-prompt {
+  margin: 0; padding: 16px; background: var(--bg); border: var(--hairline);
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--ink);
+  white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow-y: auto;
+}
+.wiz-note { font-size: 13px; line-height: 1.5; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 13px; margin: 0 0 18px; max-width: 62ch; }
+.wiz-gives { display: flex; gap: 9px; align-items: flex-start; font-size: 15px; color: var(--ink); }
+.wiz-gives .wiz-tick { color: var(--accent); font-weight: 600; flex: none; }
+
+/* Footer */
+.wiz-foot {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 26px; border-top: var(--hairline); flex-shrink: 0;
+}
+.wiz-foot-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); }
+.wiz-foot-btns { display: flex; gap: 10px; margin-left: auto; }
+.wiz-btn {
+  font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer;
+  border: var(--hairline); padding: 10px 20px; border-radius: 2px; transition: 0.1s;
+  background: transparent; color: var(--ink);
+}
+.wiz-btn:hover { background: var(--bg-3); }
+.wiz-btn[disabled] { opacity: 0.35; cursor: not-allowed; }
+.wiz-btn--primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+.wiz-btn--primary:hover { background: var(--accent-soft); }
+
+body.wiz-open { overflow: hidden; }
+
+/* ---- Responsive: stack the rail above the content on narrow screens ---- */
+@media (max-width: 720px) {
+  .wiz-overlay { padding: 0; align-items: stretch; }
+  .wiz-modal { width: 100%; height: 100dvh; max-height: 100dvh; border: none; }
+  .wiz-head { padding: 16px 18px; }
+  .wiz-title { font-size: 19px; }
+  .wiz-body { flex-direction: column; }
+  /* Rail becomes a horizontal, scrollable strip of beads */
+  .wiz-rail {
+    width: 100%; flex: none; display: flex; gap: 6px; overflow-x: auto; overflow-y: hidden;
+    border-right: none; border-bottom: var(--hairline); padding: 12px;
+    scrollbar-width: none;
+  }
+  .wiz-rail::-webkit-scrollbar { display: none; }
+  .wiz-rail-item { width: auto; flex: none; padding: 7px 9px; }
+  /* Hide labels except on the current step, to keep the strip compact */
+  .wiz-rail-item .wiz-rail-label { display: none; }
+  .wiz-rail-item.is-current .wiz-rail-label { display: inline; }
+  .wiz-content { padding: 22px 18px; }
+  .wiz-c-title { font-size: 25px; }
+  .wiz-foot { padding: 14px 18px; }
+  .wiz-foot-meta { display: none; }
+  .wiz-foot-btns { width: 100%; }
+  .wiz-btn { flex: 1; text-align: center; }
+}

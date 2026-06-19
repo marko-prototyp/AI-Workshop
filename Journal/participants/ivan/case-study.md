@@ -65,11 +65,11 @@ What's stuck: I'm scared of the API connection. Marko knows. We're doing a group
 *Screenshot: the 10-tool competitive matrix.*
 *Screenshot: the final brief with the lock-and-shuffle pattern sketched.*
 
-### Weeks 03–05 — _not present_
+### Weeks 03–06 — _not present_
 
-*Ivan missed sessions 03, 04 and 05. Re-entry plan to be decided before session 06.*
+*Ivan missed sessions 03, 04, 05 and 06. Four in a row. Re-entry plan to be decided before session 07: a compressed onboarding track, or rejoining at the build phase with a reduced scope.*
 
-### Week 06 — _to come_
+### Week 07 — _to come_
 
 *…through Week 12.*
 

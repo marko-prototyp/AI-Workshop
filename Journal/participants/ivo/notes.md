@@ -67,3 +67,12 @@ Clean, data-dense UI. No decorative fluff. Dieter Rams applied to athletic data.
 - Form factor decision from W04 still not visibly made. The tabbed HTML is a prototype convenience, not an answer.
 - First peer-review round: gave and got feedback on the others' prototypes. Took part in the group agreeing a shared set of UX rules.
 - **Push for week 06:** Make the prescription respond to one upload, so the prescriptive layer can be felt. And get the form factor decision on paper.
+
+### Week 06
+- Consolidated five planning docs + Session 05's resolutions into one Design System Document (~580 lines): art direction, banned-moves list, full token layer, content libraries, redraw recipe per screen across all ten screens. Turned the anti-stock guardrails into a reusable SKILL.md scoped to Wattlog only. Hardened the comp brief for the Today (main) view into one paste-ready block: three accent uses named, six banned moves picked as most likely to break on that screen.
+- Decisions via one-question-at-a-time loops: folded Session 05's recipe model (ten screens) over a strict five-file consolidation; scoped skill to Wattlog only; kept the visual-direction name "Paper and steel."
+- **Form factor closed:** narrow web at ~680px. This is the W04/W05 standing blocker, finally on paper. Update scope decisions section above (it's no longer "to add").
+- The friction: brief went into Claude Design, the generated comp did not hold to it. Got acceptable output only after building the full design system inside Claude Design and applying it whole. Best-looking result came from an outside material-design skill, not his own brief.
+- Q&A: made a design system, a skill.md, a Claude Design draft. Best: "I've made a design system brief." Worst: "Claude Design wasn't able to follow the design brief as planned." Committed (framing delegated to me): stepping back from Claude Design as the comp tool; whether a custom design system earns its keep left open. Three keepable files regardless: wattlog-design-system.md, the wattlog-design-system SKILL.md, the hardened comp brief.
+- Quote to keep: *"leave as little unspecified space as possible."*
+- **Push for week 07:** Settle the comp tool now that Claude Design didn't hold the brief. Try the (adapted) material-design skill on Wattlog. Decide whether the custom design system is worth continued investment.

@@ -3,7 +3,7 @@ dist/
 .DS_Store
 Claude/
 .claude/
-skills/
+/skills/
 Journal/raw/
 /dashboard/
 .dashboard-backup/
